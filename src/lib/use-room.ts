@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getSupabase, identity } from "./supabase";
 import { roomError } from "./room-error";
 export type Room = {
@@ -19,6 +19,7 @@ export function useRoom(id: string) {
   const [error, setError] = useState("");
   const [status, setStatus] = useState("Connecting");
   const [attempt, setAttempt] = useState(0);
+  const refreshRoom = useRef<(() => Promise<void>) | null>(null);
   useEffect(() => {
     let disposed = false;
     let cleanup = () => {};
@@ -37,7 +38,9 @@ export function useRoom(id: string) {
           "This room could not be restored. Reconnect using the browser you joined with.",
         );
       let presenceConnected = false;
+      let refreshVersion = 0;
       const refresh = async () => {
+        const version = ++refreshVersion;
         try {
           const [r, m] = await Promise.all([
             db.from("rooms").select("*").eq("id", id).single(),
@@ -47,7 +50,7 @@ export function useRoom(id: string) {
               .eq("room_id", id)
               .order("seat"),
           ]);
-          if (disposed) return;
+          if (disposed || version !== refreshVersion) return;
           if (r.error || m.error) {
             setStatus("Reconnecting");
             setError(
@@ -60,12 +63,13 @@ export function useRoom(id: string) {
           setError("");
           if (presenceConnected) setStatus("Connected");
         } catch {
-          if (!disposed) {
+          if (!disposed && version === refreshVersion) {
             setStatus("Reconnecting");
             setError("Your connection was interrupted. Please retry.");
           }
         }
       };
+      refreshRoom.current = refresh;
       await refresh();
       if (disposed) return;
       await db.realtime.setAuth();
@@ -140,6 +144,7 @@ export function useRoom(id: string) {
     });
     return () => {
       disposed = true;
+      refreshRoom.current = null;
       cleanup();
     };
   }, [id, attempt]);
@@ -152,6 +157,7 @@ export function useRoom(id: string) {
       throw new Error(
         "Could not open the game. Check your connection and try again.",
       );
+    await refreshRoom.current?.();
   }
   return {
     room,

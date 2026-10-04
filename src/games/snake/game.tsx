@@ -73,7 +73,9 @@ export function SnakeGame(props: GameViewProps & { replay: () => void }) {
           <span key={p.user_id} className={`snake-player snake-player-${i}`}>
             <i />
             {p.name}
-            <strong>{shown.snakes[p.user_id]?.score || 0}</strong>
+            <strong key={shown.snakes[p.user_id]?.score || 0}>
+              {shown.snakes[p.user_id]?.score || 0}
+            </strong>
           </span>
         ))}
       </div>
@@ -138,6 +140,7 @@ export function SnakeGame(props: GameViewProps & { replay: () => void }) {
             className="snake-grid"
           />
           <circle
+            key={`${shown.food.x}-${shown.food.y}`}
             cx={shown.food.x + 0.5}
             cy={shown.food.y + 0.5}
             r=".32"
@@ -145,22 +148,37 @@ export function SnakeGame(props: GameViewProps & { replay: () => void }) {
           />
           {props.players.map((p, i) =>
             shown.snakes[p.user_id]?.body.map((point, j) => (
-              <rect
-                key={`${p.user_id}-${j}`}
-                x={point.x + 0.06}
-                y={point.y + 0.06}
-                width=".88"
-                height=".88"
-                rx={j === 0 ? ".3" : ".2"}
-                className={`snake-segment snake-segment-${i}`}
-                opacity={j === 0 ? 1 : 0.78}
-              />
+              <g key={`${p.user_id}-${j}`}>
+                <rect
+                  x={point.x + 0.06}
+                  y={point.y + 0.06}
+                  width=".88"
+                  height=".88"
+                  rx={j === 0 ? ".3" : ".2"}
+                  className={`snake-segment snake-segment-${i}`}
+                  opacity={j === 0 ? 1 : 0.78}
+                />
+                {j === 0 && (
+                  <g
+                    transform={`translate(${point.x + 0.5} ${point.y + 0.5}) rotate(${{ right: 0, down: 90, left: 180, up: 270 }[shown.snakes[p.user_id].direction]})`}
+                    aria-hidden="true"
+                  >
+                    <circle cx=".12" cy="-.18" r=".11" fill="#fafffa" />
+                    <circle cx=".12" cy=".18" r=".11" fill="#fafffa" />
+                    <circle cx=".16" cy="-.18" r=".05" fill="#152838" />
+                    <circle cx=".16" cy=".18" r=".05" fill="#152838" />
+                  </g>
+                )}
+              </g>
             )),
           )}
         </svg>
         {(paused || countdown > 0 || !state) && (
           <div className="snake-overlay" role="status">
-            <strong>
+            <strong
+              key={countdown > 0 ? countdown : "status"}
+              data-countdown={countdown > 0 && !paused}
+            >
               {paused
                 ? "Paused"
                 : countdown > 0

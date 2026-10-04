@@ -3,6 +3,7 @@ import { knowMeQuestions } from "../shared/content";
 import type { GameViewProps } from "../shared/types";
 import { Button, Card } from "@/components/ui";
 import { AnswerForm, GameProgress, GameResults } from "../shared/shell";
+import { RoundMoment } from "../shared/effects";
 export function KnowMe({
   session,
   answers,
@@ -51,7 +52,11 @@ export function KnowMe({
   return (
     <>
       <GameProgress round={session.round} total={session.total_rounds} />
-      <Card className="question-stage">
+      <Card className="question-stage" key={session.round}>
+        <div className="role-chip">
+          {isSubject ? "The real you" : "Mind reader"}
+          <span>{subject.name[0]}</span>
+        </div>
         <span className="eyebrow">
           {isSubject ? "ABOUT YOU" : `HOW WOULD ${subject.name} ANSWER?`}
         </span>
@@ -77,11 +82,14 @@ export function KnowMe({
             </div>
             {session.state.judged ? (
               <>
-                <p>
-                  {session.state.accepted
-                    ? "Close enough — one point."
-                    : "Something new to remember."}
-                </p>
+                <RoundMoment
+                  success={!!session.state.accepted}
+                  title={
+                    session.state.accepted
+                      ? "You know them! +1"
+                      : "One more thing to love."
+                  }
+                />
                 <Button disabled={busy} onClick={() => void command("next")}>
                   {session.round + 1 === session.total_rounds
                     ? "See Results"

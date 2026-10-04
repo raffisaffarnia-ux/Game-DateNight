@@ -1,8 +1,10 @@
 "use client";
+import { useState } from "react";
 import { thisOrThatQuestions } from "../shared/content";
 import type { GameViewProps } from "../shared/types";
 import { Button, Card } from "@/components/ui";
 import { GameProgress, GameResults } from "../shared/shell";
+import { ChoiceStamp, RoundMoment } from "../shared/effects";
 export function ThisOrThat({
   session,
   answers,
@@ -12,11 +14,22 @@ export function ThisOrThat({
   busy,
   replay,
 }: GameViewProps & { replay: () => void }) {
+  const [pendingChoice, setPendingChoice] = useState<{
+    round: number;
+    value: string;
+  } | null>(null);
   const question = thisOrThatQuestions.find(
     (q) => q.id === session.question_ids[session.round],
   );
   const current = answers.filter((a) => a.round === session.round);
   const mine = current.find((a) => a.user_id === userId);
+  const selected =
+    mine?.value ||
+    (pendingChoice?.round === session.round ? pendingChoice.value : null);
+  async function choose(value: string) {
+    setPendingChoice({ round: session.round, value });
+    if (!(await command("answer", { value }))) setPendingChoice(null);
+  }
   if (session.status === "finished")
     return (
       <GameResults
@@ -59,15 +72,23 @@ export function ThisOrThat({
           {session.state.matches === 1 ? "match" : "matches"}
         </span>
       </GameProgress>
-      <Card className="question-stage">
+      <Card
+        className="question-stage duel-stage"
+        key={`${session.round}-${session.status}`}
+      >
         <span className="eyebrow">{question.category}</span>
         {session.status === "round_end" ? (
           <div className="reveal" aria-live="polite">
-            <h2>
-              {current.length === 2 && current[0].value === current[1].value
-                ? "A match."
-                : "Two perspectives."}
-            </h2>
+            <RoundMoment
+              success={
+                current.length === 2 && current[0].value === current[1].value
+              }
+              title={
+                current.length === 2 && current[0].value === current[1].value
+                  ? "Same wavelength!"
+                  : "A little different. Still you two."
+              }
+            />
             <div className="answer-pair">
               {players.map((p) => (
                 <div key={p.user_id}>
@@ -92,15 +113,24 @@ export function ThisOrThat({
             <div className="choice-pair">
               {(["A", "B"] as const).map((option) => (
                 <button
-                  className={`choice ${mine?.value === option ? "chosen" : ""}`}
+                  className={`choice ${selected === option ? "chosen" : ""}`}
                   key={option}
-                  disabled={busy || !!mine}
-                  onClick={() => void command("answer", { value: option })}
+                  disabled={busy || !!selected}
+                  aria-pressed={selected === option}
+                  onClick={() => void choose(option)}
                 >
-                  {option === "A" ? question.optionA : question.optionB}
-                  {mine?.value === option && <span>✓ Locked</span>}
+                  <ChoiceStamp selected={selected === option} option={option} />
+                  <strong>
+                    {option === "A" ? question.optionA : question.optionB}
+                  </strong>
+                  {selected === option && (
+                    <span>{mine ? "✓ Locked" : "Saving…"}</span>
+                  )}
                 </button>
               ))}
+              <span className="duel-divider" aria-hidden="true">
+                or
+              </span>
             </div>
             {mine && (
               <p role="status">Answer locked. Waiting for your partner…</p>

@@ -1,6 +1,14 @@
 "use client";
 import type { ReactNode } from "react";
-import { Check, ArrowLeft, RotateCcw } from "lucide-react";
+import {
+  Check,
+  ArrowLeft,
+  RotateCcw,
+  Gamepad2,
+  Sparkles,
+  LockKeyhole,
+} from "lucide-react";
+import { Celebration, ResultTrophy } from "./effects";
 import { Button, Card } from "@/components/ui";
 import type { GamePlayer, GameSession } from "./types";
 
@@ -15,6 +23,9 @@ export function PlayerIndicator({
 }) {
   return (
     <span className="game-player">
+      <span className="player-token" aria-hidden="true">
+        {player.name[0]}
+      </span>
       <span
         className={`presence-dot ${online ? "is-online" : ""}`}
         aria-hidden="true"
@@ -29,6 +40,7 @@ export function PlayerIndicator({
 }
 export function GameShell({
   title,
+  gameId,
   players,
   userId,
   online,
@@ -37,6 +49,7 @@ export function GameShell({
   children,
 }: {
   title: string;
+  gameId: string;
   players: GamePlayer[];
   userId: string;
   online: string[];
@@ -45,12 +58,22 @@ export function GameShell({
   children: ReactNode;
 }) {
   return (
-    <section className="game-shell">
+    <section className="game-shell" data-game={gameId}>
+      <div className="game-atmosphere" aria-hidden="true">
+        <i />
+        <i />
+        <i />
+      </div>
       <button className="back-link" onClick={exit}>
         <ArrowLeft size={16} /> Back to Games
       </button>
       <header className="game-shell-header">
-        <h1>{title}</h1>
+        <div className="game-title">
+          <span className="game-kicker">
+            <Gamepad2 size={14} /> TONIGHT, WE PLAY
+          </span>
+          <h1>{title}</h1>
+        </div>
         <div className="game-player-list">
           {players.map((player) => (
             <PlayerIndicator
@@ -94,10 +117,17 @@ export function ReadyState({
   const locked = session.ready.includes(userId);
   return (
     <Card className="ready-card">
+      <div className="ready-emblem" aria-hidden="true">
+        <Gamepad2 size={48} />
+        <Sparkles size={22} />
+      </div>
       {children}
       <div className="ready-players">
         {players.map((p) => (
-          <div key={p.user_id}>
+          <div
+            key={p.user_id}
+            className={session.ready.includes(p.user_id) ? "player-ready" : ""}
+          >
             <span className="avatar">{p.name[0]}</span>
             <strong>{p.name}</strong>
             <span>
@@ -113,7 +143,15 @@ export function ReadyState({
         ))}
       </div>
       <Button disabled={disabled || locked} onClick={ready}>
-        {locked ? "Waiting for your partner…" : "Ready"}
+        {locked ? (
+          <>
+            <Check size={18} /> You’re ready
+          </>
+        ) : (
+          <>
+            <Sparkles size={18} /> Let’s Play
+          </>
+        )}
       </Button>
       <p className="field-note">The game begins when you’re both ready.</p>
     </Card>
@@ -153,6 +191,8 @@ export function GameResults({
 }) {
   return (
     <Card className="game-results">
+      <Celebration />
+      <ResultTrophy />
       <span className="eyebrow">THE TWO OF YOU</span>
       <h2>{title}</h2>
       {description && <p>{description}</p>}
@@ -194,7 +234,7 @@ export function AnswerForm({
         disabled={disabled}
       />
       <Button type="submit" disabled={disabled}>
-        Lock Answer
+        <LockKeyhole size={16} /> Lock Answer
       </Button>
     </form>
   );

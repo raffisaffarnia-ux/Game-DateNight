@@ -1,0 +1,880 @@
+/* Distinct game worlds, consistent controls. */
+.game-shell {
+  --game-color: #6542ac;
+  --game-tint: #eee7fb;
+  --game-secondary: #dcf1e8;
+  --accent: var(--game-color);
+  --accent-hover: #4b2d87;
+  color: var(--ink);
+  position: relative;
+  isolation: isolate;
+  padding: clamp(20px, 4vw, 38px);
+  border-radius: 32px;
+  background: linear-gradient(145deg, var(--game-tint), var(--surface) 70%);
+  border: 1px solid color-mix(in srgb, var(--game-color) 14%, var(--line));
+  box-shadow: 0 24px 80px color-mix(in srgb, var(--game-color) 9%, transparent);
+}
+.game-shell[data-game="do-you-know-me"] {
+  --game-color: #a64c28;
+  --game-tint: #fff0df;
+  --game-secondary: #ffdfd5;
+  --accent-hover: #843617;
+}
+.game-shell[data-game="daily-us"] {
+  --game-color: #326b99;
+  --game-tint: #e2f1fa;
+  --game-secondary: #ffedc8;
+  --accent-hover: #25567c;
+}
+.game-shell[data-game="draw-together"] {
+  --game-color: #a63e63;
+  --game-tint: #fbe6ed;
+  --game-secondary: #e7e1ff;
+  --accent-hover: #832c4c;
+}
+.game-shell[data-game="deep-talk"] {
+  --game-color: #d9c4ff;
+  --game-tint: #30244e;
+  --game-secondary: #554474;
+  --accent-hover: #eee3ff;
+  --ink: #f6f0ff;
+  --muted: #d0c1e3;
+  --card: #3b2e58;
+  --soft: #4c3a6c;
+  --line: #67527d;
+  --surface: #271f3e;
+  --signal: #96d6b4;
+}
+.game-shell[data-game="snake-squared"] {
+  --game-color: #95efd2;
+  --game-tint: #173346;
+  --game-secondary: #b6a3fa;
+  --accent-hover: #c0ffe9;
+  --ink: #eefaf8;
+  --muted: #b4cbd5;
+  --card: #172e40;
+  --soft: #233e52;
+  --line: #3c586c;
+  --surface: #102536;
+  --signal: #95efd2;
+}
+.game-shell .button.primary {
+  color: #fff;
+  box-shadow: 0 5px 0 color-mix(in srgb, var(--game-color) 65%, #171423);
+  transition:
+    transform 0.16s,
+    box-shadow 0.16s;
+}
+.game-shell:is([data-game="snake-squared"], [data-game="deep-talk"])
+  .button.primary {
+  color: #1d2333;
+}
+.game-shell .button.primary:active:not(:disabled) {
+  transform: translateY(3px);
+  box-shadow: 0 2px 0 color-mix(in srgb, var(--game-color) 65%, #171423);
+}
+.game-atmosphere {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  z-index: -1;
+  pointer-events: none;
+}
+.game-atmosphere i {
+  position: absolute;
+  width: 250px;
+  height: 250px;
+  border: 1px solid color-mix(in srgb, var(--game-color) 12%, transparent);
+  border-radius: 50%;
+  right: -60px;
+  top: -60px;
+}
+.game-atmosphere i:nth-child(2) {
+  width: 170px;
+  height: 170px;
+  right: -20px;
+  top: -20px;
+}
+.game-atmosphere i:nth-child(3) {
+  width: 380px;
+  height: 380px;
+  left: -180px;
+  top: 230px;
+  background: color-mix(in srgb, var(--game-color) 4%, transparent);
+}
+.game-shell-header {
+  margin: 26px 0 28px;
+  align-items: center;
+}
+.game-kicker {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  margin-bottom: 8px;
+}
+.game-title h1 {
+  font-weight: 700;
+  letter-spacing: -0.045em;
+  line-height: 1.1;
+}
+.game-player-list {
+  gap: 8px;
+}
+.game-player {
+  position: relative;
+  grid-template-columns: 34px auto 6px;
+  column-gap: 8px;
+  background: var(--card);
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  font-size: 12px;
+}
+.player-token {
+  grid-row: 1 / 3;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  background: var(--game-tint);
+  color: var(--ink);
+  border-radius: 11px;
+  font-size: 16px;
+  font-weight: 700;
+}
+.game-player:nth-child(2) .player-token {
+  background: var(--game-secondary);
+}
+.game-player .presence-dot {
+  grid-column: 3;
+  grid-row: 1;
+}
+.game-player small {
+  grid-column: 2 / 4;
+  font-size: 11px;
+}
+.game-shell .ready-card,
+.game-shell .question-stage,
+.game-shell .game-results {
+  border-color: color-mix(in srgb, var(--game-color) 16%, var(--line));
+  box-shadow: 0 12px 30px color-mix(in srgb, var(--game-color) 7%, transparent);
+  position: relative;
+}
+.ready-emblem {
+  position: relative;
+  display: grid;
+  place-items: center;
+  margin: 0 auto 24px;
+  width: 104px;
+  height: 104px;
+  border-radius: 30px;
+  background: var(--game-tint);
+  color: var(--game-color);
+  transform: rotate(-8deg);
+  box-shadow: 0 6px 0 color-mix(in srgb, var(--game-color) 20%, var(--card));
+}
+.ready-emblem > svg:last-child {
+  position: absolute;
+  right: -8px;
+  top: -8px;
+}
+.ready-players .avatar {
+  background: var(--game-tint);
+  border: 3px solid transparent;
+  transition:
+    border-color 0.2s,
+    transform 0.2s;
+}
+.ready-players .player-ready .avatar {
+  border-color: var(--signal);
+  transform: scale(1.06);
+}
+.ready-card > .button {
+  min-width: 200px;
+}
+.game-progress {
+  align-items: center;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 16px;
+}
+.game-progress > span:last-of-type:not(:first-child) {
+  padding: 5px 13px;
+  background: var(--card);
+  border-radius: 20px;
+  color: var(--game-color);
+}
+.game-progress progress {
+  height: 6px;
+  border-radius: 8px;
+}
+.game-progress progress::-webkit-progress-value {
+  background: var(--game-color);
+  transition: width 0.3s;
+}
+.question-stage {
+  animation: card-deal 0.4s both;
+}
+.game-shell .eyebrow {
+  color: var(--game-color);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+}
+.duel-stage h2 {
+  font-size: clamp(1.7rem, 4vw, 2.5rem);
+  margin-bottom: 36px;
+  font-weight: 650;
+}
+.duel-stage .choice-pair {
+  position: relative;
+  gap: 24px;
+}
+.duel-stage .choice {
+  background: #e9e0ff;
+  color: #35235b;
+  min-height: 224px;
+  justify-content: space-between;
+  border: 2px solid #d3c2f0;
+  box-shadow: 0 7px 0 #d2c1ef;
+  padding: 24px 24px 30px;
+  transform: rotate(-2deg);
+}
+.duel-stage .choice:nth-child(2) {
+  background: #daf0e6;
+  color: #254e40;
+  border-color: #b4dac8;
+  box-shadow: 0 7px 0 #b4dac8;
+  transform: rotate(2deg);
+}
+.duel-stage .choice strong {
+  font-size: clamp(1.25rem, 2.8vw, 1.7rem);
+  font-weight: 650;
+  line-height: 1.25;
+}
+.duel-stage .choice:hover:not(:disabled) {
+  transform: translateY(-7px) rotate(0);
+  border-color: var(--game-color);
+}
+.duel-stage .choice:active:not(:disabled) {
+  transform: translateY(4px);
+  box-shadow: 0 2px 0 #d2c1ef;
+}
+.duel-stage .choice.chosen {
+  border-color: var(--game-color);
+  transform: rotate(0);
+}
+.duel-stage .choice .choice-stamp {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: #fff9;
+  color: inherit;
+  font-size: 18px;
+  font-weight: 700;
+  align-self: flex-start;
+}
+.duel-divider {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  background: var(--card);
+  color: var(--muted);
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: 650;
+  z-index: 1;
+  pointer-events: none;
+}
+.game-shell .answer-pair > div {
+  border: 1px solid var(--line);
+  background: var(--game-tint);
+  animation: answer-reveal 0.45s both;
+}
+.game-shell .answer-pair > div:nth-child(2) {
+  background: var(--game-secondary);
+  animation-delay: 0.1s;
+}
+.round-moment {
+  position: relative;
+  padding: 8px 0 22px;
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+  overflow: hidden;
+}
+.round-moment strong {
+  font-size: clamp(1.6rem, 4vw, 2.2rem);
+  letter-spacing: -0.035em;
+  line-height: 1.15;
+  z-index: 1;
+  text-wrap: balance;
+}
+.moment-medallion {
+  display: grid;
+  place-items: center;
+  width: 72px;
+  height: 72px;
+  background: var(--game-tint);
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  color: var(--game-color);
+  transform: rotate(-6deg);
+}
+.is-success .moment-medallion {
+  animation: prize-pop 0.55s both;
+}
+.celebration {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  border-radius: inherit;
+}
+.celebration i {
+  position: absolute;
+  left: var(--x);
+  top: -10px;
+  width: 7px;
+  height: 13px;
+  background: var(--game-color);
+  border-radius: 2px;
+  opacity: 0;
+  animation: confetti-fall 1.6s var(--delay) ease-out both;
+}
+.celebration i:nth-child(3n) {
+  background: #e5aa52;
+}
+.celebration i:nth-child(3n + 1) {
+  background: #86b4a0;
+}
+.game-results {
+  overflow: hidden;
+}
+.result-trophy {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 104px;
+  height: 104px;
+  background: #fff0cf;
+  color: #8d5924;
+  border: 6px solid #fff6e5;
+  border-radius: 50%;
+  margin: 4px auto 26px;
+  animation: prize-pop 0.6s both;
+  box-shadow: 0 8px 0 #e9d0a3;
+}
+.result-trophy span {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  background: var(--game-color);
+  border-radius: 5px;
+  right: -28px;
+  top: 8px;
+  transform: rotate(18deg);
+}
+.result-trophy span:last-child {
+  left: -22px;
+  top: 68px;
+  width: 12px;
+  height: 12px;
+}
+.role-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 8px 6px 14px;
+  border-radius: 30px;
+  background: var(--game-tint);
+  margin-bottom: 20px;
+  color: var(--game-color);
+  font-size: 12px;
+  font-weight: 650;
+}
+.role-chip span {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  background: var(--game-color);
+  color: #fff;
+  border-radius: 50%;
+}
+.game-shell .answer-form textarea {
+  background: var(--game-tint);
+  border: 1px solid color-mix(in srgb, var(--game-color) 25%, var(--line));
+  font-size: 18px;
+  min-height: 140px;
+}
+.locked-answer {
+  border: 1px dashed var(--game-color);
+  border-radius: 16px;
+  background: var(--game-tint);
+  font-size: 14px;
+}
+.flip-question {
+  position: relative;
+  min-height: 280px;
+  perspective: 1200px;
+  margin: 22px 0 28px;
+}
+.card-back,
+.card-front {
+  width: 100%;
+  min-height: 280px;
+  border-radius: 22px;
+  backface-visibility: hidden;
+  transition: transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.card-back {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+  color: #f8f0ff;
+  border: 1px solid #947ab0;
+  background: radial-gradient(ellipse at 50% 0%, #765995, #493261 70%);
+  box-shadow:
+    5px 6px 0 #342740,
+    10px 12px 0 #66517e;
+  transform: rotateY(0);
+  cursor: pointer;
+  padding: 26px;
+}
+.card-back > span {
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 11px;
+}
+.card-back strong {
+  font-size: clamp(1.8rem, 5vw, 3rem);
+  letter-spacing: -0.04em;
+}
+.card-back small {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #e0d2ed;
+  font-size: 12px;
+}
+.card-front {
+  display: grid;
+  place-items: center;
+  background: #f7efdf;
+  color: #3c3150;
+  transform: rotateY(-180deg);
+  border: 1px solid #e9d9bd;
+  padding: 30px;
+}
+.card-front h2 {
+  margin: 0;
+  font-size: clamp(1.7rem, 4vw, 2.5rem);
+}
+.is-open .card-back {
+  transform: rotateY(180deg);
+  pointer-events: none;
+}
+.is-open .card-front {
+  transform: rotateY(0);
+}
+.game-shell[data-game="deep-talk"] .conversation-card {
+  background: transparent;
+  border: none;
+  padding: 12px 4px 24px;
+  box-shadow: none;
+}
+.game-shell[data-game="deep-talk"] .saved-conversations {
+  background: #35294d;
+  border-radius: 16px;
+  padding: 0 18px;
+}
+.deck-choice {
+  background: var(--game-tint);
+  font-weight: 550;
+  min-height: 60px;
+  transition:
+    transform 0.2s,
+    border-color 0.2s,
+    background 0.2s;
+}
+.deck-choice:hover:not(:disabled) {
+  transform: translateY(-3px);
+}
+.deck-choice.chosen {
+  box-shadow: inset 0 0 0 1px var(--game-color);
+}
+.daily-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.daily-meta span:last-child {
+  border-radius: 20px;
+  padding: 6px 14px;
+  background: #ffedc8;
+  color: #745019;
+  font-weight: 650;
+}
+.daily-sun {
+  display: grid;
+  place-items: center;
+  width: 96px;
+  height: 96px;
+  margin: 0 auto 24px;
+  background: #ffe7ac;
+  color: #936522;
+  border-radius: 30px;
+  transform: rotate(-7deg);
+}
+.game-shell[data-game="daily-us"] .question-stage {
+  background: linear-gradient(155deg, var(--card), var(--game-tint));
+}
+.drawing-canvas {
+  border: 8px solid var(--card);
+  outline: 1px solid var(--line);
+  box-shadow: 0 12px 30px #633f4c14;
+}
+.drawing-toolbar {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 12px;
+  margin-top: 16px;
+}
+.paint-swatches {
+  display: flex;
+  gap: 4px;
+}
+.paint-swatches button {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 6px solid var(--card);
+  outline: 1px solid transparent;
+  transition: transform 0.15s;
+}
+.paint-swatches button:hover {
+  transform: translateY(-3px);
+}
+.paint-swatches button[aria-pressed="true"] {
+  outline-color: var(--ink);
+}
+.paint-swatches button:focus-visible {
+  outline: 3px solid var(--ink);
+  outline-offset: 2px;
+}
+.game-player > span:not(.player-token):not(.presence-dot) {
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+.snake-player strong {
+  animation: prize-pop 0.25s both;
+}
+.snake-card {
+  background: #142a3c;
+  border-color: #3b546c;
+  box-shadow: 0 12px 40px #030a1240;
+}
+.snake-scores {
+  margin-bottom: 20px;
+  gap: 12px;
+}
+.snake-player {
+  background: #1f3b4f;
+  padding: 10px 14px;
+  border: 1px solid #416075;
+  border-radius: 14px;
+  flex: 1;
+  min-width: 0;
+  flex-wrap: wrap;
+}
+.snake-player strong {
+  font-size: 24px;
+  color: #95efd2;
+  margin-left: auto;
+  line-height: 1.2;
+}
+.snake-player-1 strong {
+  color: #d0b9ff;
+}
+.snake-player i {
+  background: #95efd2;
+  box-shadow: 0 0 10px #95efd250;
+}
+.snake-player-1 i {
+  background: #b6a3fa;
+}
+.snake-board {
+  background: radial-gradient(ellipse at top, #183c4a, #0b1c2b 80%);
+  border: 2px solid #416075;
+  box-shadow:
+    inset 0 0 30px #0004,
+    0 0 24px #95efd20c;
+  border-radius: 20px;
+}
+.snake-grid {
+  color: #2a4c5b;
+}
+.snake-food {
+  fill: #ffc178;
+  filter: drop-shadow(0 0 0.25px #ffb15b);
+}
+.snake-segment-0 {
+  fill: #95efd2;
+  filter: drop-shadow(0 0 0.1px #95efd2);
+}
+.snake-segment-1 {
+  fill: #b6a3fa;
+  filter: drop-shadow(0 0 0.1px #b6a3fa);
+}
+.snake-overlay {
+  background: #0d2031df;
+  color: #eefaf8;
+}
+.snake-overlay strong {
+  font-size: clamp(3rem, 10vw, 6rem);
+  font-weight: 750;
+  text-shadow: 0 0 25px #95efd245;
+}
+.snake-overlay strong[data-countdown="true"] {
+  animation: countdown-pop 0.65s both;
+}
+.direction-pad .button {
+  background: #243f54;
+  border: 1px solid #4d6b82;
+  color: #f0faf7;
+  box-shadow: 0 4px 0 #0b1825;
+}
+.direction-pad .button:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 #0b1825;
+}
+.game-art {
+  transition: transform 0.35s;
+}
+.game-card:hover .game-art {
+  transform: scale(1.015);
+}
+.game-art.orbits {
+  background: #e7dcfb;
+}
+.game-art.tiles {
+  background: #f9dccd;
+}
+.game-art.cards {
+  background: #ded2ed;
+}
+.game-art.snake {
+  background: #233e51;
+  filter: none;
+}
+.game-art.drawing {
+  background: #f3d8e3;
+  color: #8c3155;
+}
+.game-art.daily {
+  background: #d8eaf7;
+  color: #30628c;
+}
+@keyframes card-deal {
+  from {
+    opacity: 0;
+    transform: translateY(12px) rotate(-1deg);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) rotate(0);
+  }
+}
+@keyframes answer-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+@keyframes prize-pop {
+  0% {
+    transform: scale(0.55) rotate(-15deg);
+  }
+  65% {
+    transform: scale(1.08) rotate(5deg);
+  }
+  100% {
+    transform: scale(1) rotate(-6deg);
+  }
+}
+@keyframes confetti-fall {
+  0% {
+    opacity: 0;
+    transform: translateY(0) rotate(0);
+  }
+  15% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--drift), 230px) rotate(var(--turn));
+  }
+}
+@keyframes countdown-pop {
+  from {
+    opacity: 0.3;
+    transform: scale(1.3);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@media (prefers-color-scheme: dark) {
+  .game-shell {
+    --game-color: #d5beff;
+    --game-tint: #3c3052;
+    --game-secondary: #2b493e;
+    --accent-hover: #e4d4ff;
+  }
+  .game-shell[data-game="do-you-know-me"] {
+    --game-color: #ffc29d;
+    --game-tint: #4c352a;
+    --game-secondary: #52362f;
+    --accent-hover: #ffe0cd;
+  }
+  .game-shell[data-game="daily-us"] {
+    --game-color: #a9d6fb;
+    --game-tint: #283e50;
+    --game-secondary: #3c4052;
+    --accent-hover: #d1eaff;
+  }
+  .game-shell[data-game="draw-together"] {
+    --game-color: #ffc0d4;
+    --game-tint: #482f3d;
+    --game-secondary: #3f3655;
+    --accent-hover: #ffe0ea;
+  }
+  .game-shell .button.primary,
+  .role-chip span {
+    color: #241d30;
+  }
+  .duel-stage .choice {
+    background: #4c3c68;
+    color: #f3eaff;
+    border-color: #70558f;
+    box-shadow: 0 7px 0 #30233f;
+  }
+  .duel-stage .choice:nth-child(2) {
+    background: #2e5348;
+    color: #ddf8ed;
+    border-color: #527e6c;
+    box-shadow: 0 7px 0 #1d362d;
+  }
+  .duel-stage .choice .choice-stamp {
+    background: #ffffff18;
+  }
+}
+@media (max-width: 640px) {
+  .game-shell {
+    border-radius: 24px;
+    padding: 18px 14px 24px;
+  }
+  .game-shell-header {
+    align-items: stretch;
+  }
+  .game-player-list {
+    justify-content: flex-start;
+  }
+  .game-player {
+    flex: 1;
+    font-size: 11px;
+    padding: 8px;
+  }
+  .game-shell .question-stage {
+    padding: 26px 16px;
+  }
+  .duel-stage .choice-pair {
+    gap: 16px;
+  }
+  .duel-stage .choice {
+    min-height: 204px;
+    padding: 16px 12px 24px;
+  }
+  .duel-stage .choice strong {
+    font-size: 19px;
+  }
+  .duel-divider {
+    width: 28px;
+    height: 28px;
+    font-size: 10px;
+  }
+  .game-shell .ready-card {
+    padding: 28px 16px;
+  }
+  .flip-question,
+  .card-back,
+  .card-front {
+    min-height: 300px;
+  }
+  .card-front {
+    padding: 22px;
+  }
+  .drawing-toolbar {
+    padding: 10px;
+  }
+  .paint-swatches {
+    width: 100%;
+    justify-content: center;
+  }
+  .snake-card {
+    padding: 14px 10px;
+  }
+  .snake-player {
+    font-size: 12px;
+    padding: 9px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .game-shell *,
+  .game-shell *::before,
+  .game-shell *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  .celebration {
+    display: none;
+  }
+  .game-card:hover .game-art {
+    transform: none;
+  }
+}
+@media (prefers-contrast: more) {
+  .game-shell {
+    --line: var(--muted);
+  }
+  .choice,
+  .deck-choice {
+    border-width: 2px;
+  }
+}
+.game-shell[data-game="snake-squared"] .game-player:nth-child(2) .player-token {
+  color: #24293b;
+}

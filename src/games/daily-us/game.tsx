@@ -4,6 +4,8 @@ import { useDaily, type DailyEntry } from "./use-daily";
 import type { GameViewProps } from "../shared/types";
 import { AnswerForm } from "../shared/shell";
 import { Button, Card, Loading } from "@/components/ui";
+import { Flame, Sun } from "lucide-react";
+import { RoundMoment } from "../shared/effects";
 export function DailyUs({ session, players, userId }: GameViewProps) {
   const daily = useDaily(session.room_id);
   const dateLabel = (day: string) =>
@@ -43,19 +45,28 @@ export function DailyUs({ session, players, userId }: GameViewProps) {
   return (
     <>
       <div className="daily-meta">
-        <span>{dateLabel(daily.context.day)}</span>
         <span>
+          <Sun size={18} /> {dateLabel(daily.context.day)}
+        </span>
+        <span>
+          <Flame size={18} />
           {daily.context.streak} day{daily.context.streak === 1 ? "" : "s"}{" "}
           together
         </span>
       </div>
       <Card className="question-stage">
+        <div className="daily-sun" aria-hidden="true">
+          <Sun size={48} />
+        </div>
         <span className="eyebrow">ONE QUESTION. EVERY DAY.</span>
         <h2>
           {dailyQuestions.find((q) => q.id === current.question_id)?.prompt}
         </h2>
         {current.revealed ? (
-          renderAnswers(current)
+          <>
+            <RoundMoment title="Another day, a little closer." />
+            {renderAnswers(current)}
+          </>
         ) : mine ? (
           <div role="status">
             <p>Answer saved. Waiting for your partner…</p>

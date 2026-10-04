@@ -6,6 +6,7 @@ import type { GameViewProps } from "../shared/types";
 import { Button, Card } from "@/components/ui";
 import { getSupabase } from "@/lib/supabase";
 import { GameProgress, GameResults } from "../shared/shell";
+import { FlipQuestion } from "../shared/effects";
 export function DeepTalkSetup({
   session,
   command,
@@ -75,7 +76,12 @@ export function DeepTalk({
           <GameProgress round={session.round} total={session.total_rounds} />
           <Card className="question-stage conversation-card">
             <span className="eyebrow">{session.state.deck}</span>
-            <h2 key={question?.id}>{question?.prompt}</h2>
+            <FlipQuestion
+              key={question?.id}
+              category={session.state.deck || "Deep Talk"}
+            >
+              <h2>{question?.prompt}</h2>
+            </FlipQuestion>
             <div className="game-actions">
               <Button
                 secondary

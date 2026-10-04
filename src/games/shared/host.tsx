@@ -95,6 +95,7 @@ export function GameHost({
   return (
     <GameShell
       title={definition.title}
+      gameId={session.game_type}
       players={players}
       userId={userId}
       online={online}

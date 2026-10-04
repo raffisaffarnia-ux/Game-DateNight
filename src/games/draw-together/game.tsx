@@ -7,6 +7,7 @@ import type { GameViewProps } from "../shared/types";
 import { GameProgress, GameResults } from "../shared/shell";
 import { DrawingCanvas } from "./canvas";
 import { useDrawing } from "./use-drawing";
+import { RoundMoment } from "../shared/effects";
 export function DrawingSetup({
   session,
   command,
@@ -147,6 +148,28 @@ export function DrawTogether(props: GameViewProps & { replay: () => void }) {
       />
       {canDraw && session.status === "playing" && (
         <div className="drawing-toolbar">
+          <div className="paint-swatches" aria-label="Quick pen colors">
+            {[
+              { color: "#69516b", name: "Plum" },
+              { color: "#db5373", name: "Rose" },
+              { color: "#ed963d", name: "Amber" },
+              { color: "#308b78", name: "Teal" },
+              { color: "#4083d7", name: "Blue" },
+              { color: "#303631", name: "Ink" },
+            ].map((paint) => (
+              <button
+                key={paint.color}
+                type="button"
+                aria-label={`${paint.name} pen`}
+                aria-pressed={color === paint.color && tool === "pen"}
+                style={{ backgroundColor: paint.color }}
+                onClick={() => {
+                  setColor(paint.color);
+                  setTool("pen");
+                }}
+              />
+            ))}
+          </div>
           <button
             aria-label="Pen"
             aria-pressed={tool === "pen"}
@@ -246,9 +269,10 @@ export function DrawTogether(props: GameViewProps & { replay: () => void }) {
       )}
       {session.status === "round_end" && (
         <div className="round-transition" role="status">
-          <h2>
-            {session.state.accepted ? "You got it!" : "Next inspiration."}
-          </h2>
+          <RoundMoment
+            success={!!session.state.accepted}
+            title={session.state.accepted ? "You got it!" : "Next inspiration."}
+          />
           <p>The word was {word || session.state.revealed_word}.</p>
           <Button disabled={busy} onClick={() => void command("next")}>
             {session.round + 1 === session.total_rounds
