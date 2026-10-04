@@ -1,4 +1,77 @@
 /* Distinct game worlds, consistent controls. */
+.app-shell:has(.play-page) {
+  max-width: none;
+  padding-inline: 5%;
+}
+.play-page {
+  width: 100%;
+}
+.game-back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 54px;
+  padding: 14px 22px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--card);
+  color: var(--ink);
+  font-size: 16px;
+  font-weight: 650;
+  cursor: pointer;
+  box-shadow: 0 3px 0 var(--line);
+}
+.game-back-button:hover {
+  background: var(--soft);
+}
+.game-back-button:active {
+  transform: translateY(2px);
+  box-shadow: none;
+}
+.game-back-button:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 4px;
+}
+.room-toolbar:has(> .connection:only-child) {
+  justify-content: flex-end;
+}
+.snake-modes .deck-choice {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: left;
+  padding: 22px;
+}
+.snake-modes .deck-choice span {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--muted);
+}
+.snake-mode-label {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  color: var(--muted);
+  font-size: 12px;
+  margin-bottom: 16px;
+}
+.team-goal {
+  margin: 10px auto 20px;
+  width: min(100%, 78dvh);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.team-goal progress {
+  flex: 1;
+  accent-color: #95efd2;
+  height: 12px;
+}
+.game-shell .snake-board {
+  width: min(100%, 78dvh);
+  max-width: none;
+}
 .game-shell {
   --game-color: #6542ac;
   --game-tint: #eee7fb;

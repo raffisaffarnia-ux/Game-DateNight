@@ -138,6 +138,8 @@ export function useSnake({
           return;
         if (
           validSnapshot(payload, idsRef.current) &&
+          (payload.mode || "versus") ===
+            (metaRef.current.state.snake_mode || "versus") &&
           (!simulation.current || payload.tick > simulation.current.tick)
         ) {
           simulation.current = payload;
@@ -220,7 +222,11 @@ export function useSnake({
           (a, c) => (a * 31 + c.charCodeAt(0)) >>> 0,
           1,
         );
-        simulation.current = initialSnake(idsRef.current, seed);
+        simulation.current = initialSnake(
+          idsRef.current,
+          seed,
+          m.state.snake_mode || "versus",
+        );
       }
       if (simulation.current.status === "finished") {
         void control("checkpoint", simulation.current);

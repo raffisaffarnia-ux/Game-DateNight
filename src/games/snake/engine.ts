@@ -1,6 +1,7 @@
-import type { Direction, Position, SnakeState } from "./types";
+import type { Direction, Position, SnakeState, SnakeMode } from "./types";
 export const GRID = 24;
 export const TICK_MS = 100;
+export const TEAM_GOAL = 20;
 const vectors: Record<Direction, Position> = {
   up: { x: 0, y: -1 },
   down: { x: 0, y: 1 },
@@ -37,8 +38,13 @@ function food(state: SnakeState) {
     state.winner = null;
   }
 }
-export function initialSnake(ids: string[], seed: number): SnakeState {
+export function initialSnake(
+  ids: string[],
+  seed: number,
+  mode: SnakeMode = "versus",
+): SnakeState {
   const state: SnakeState = {
+    mode,
     snakes: {
       [ids[0]]: {
         body: [
@@ -102,13 +108,20 @@ export function tick(
     const d = inputs[id];
     if (d && d !== opposite[s.direction]) s.direction = d;
     const v = vectors[s.direction];
-    heads[id] = { x: s.body[0].x + v.x, y: s.body[0].y + v.y };
+    heads[id] = {
+      x: (s.body[0].x + v.x + GRID) % GRID,
+      y: (s.body[0].y + v.y + GRID) % GRID,
+    };
     growing[id] = same(heads[id], state.food);
   }
+  if (next.mode === "together" && ids.every((id) => growing[id]))
+    growing[ids[1]] = false;
   for (const id of ids) {
     const head = heads[id];
-    let dead = head.x < 0 || head.x >= GRID || head.y < 0 || head.y >= GRID;
+    let dead = false;
     for (const other of ids) {
+      // Team mates can pass through each other; each snake still avoids its own body.
+      if (next.mode === "together" && other !== id) continue;
       const body = state.snakes[other].body;
       const occupied = growing[other] ? body : body.slice(0, -1);
       if (occupied.some((p) => same(head, p))) dead = true;
@@ -134,7 +147,13 @@ export function tick(
   const living = ids.filter((id) => next.snakes[id].alive);
   if (living.length < 2) {
     next.status = "finished";
-    next.winner = living[0] ?? null;
+    next.winner = next.mode === "together" ? null : (living[0] ?? null);
+  } else if (
+    next.mode === "together" &&
+    Object.values(next.snakes).reduce((sum, s) => sum + s.score, 0) >= TEAM_GOAL
+  ) {
+    next.status = "finished";
+    next.winner = null;
   } else if (ate) food(next);
   return next;
 }
@@ -159,6 +178,7 @@ export function validSnapshot(
     s.seed >= 0 &&
     s.seed <= 4294967295 &&
     ["playing", "finished"].includes(s.status) &&
+    (s.mode === undefined || ["versus", "together"].includes(s.mode)) &&
     point(s.food) &&
     !!s.snakes &&
     Object.keys(s.snakes).length === 2 &&

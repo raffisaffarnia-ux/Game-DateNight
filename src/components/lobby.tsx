@@ -112,9 +112,11 @@ export function Lobby({ id }: { id: string }) {
       }
     >
       <div className="room-toolbar">
-        <Link href="/" className="back-link">
-          ← Home
-        </Link>
+        {!room.active_session_id && (
+          <Link href="/" className="back-link">
+            ← Home
+          </Link>
+        )}
         <span className="connection" role="status">
           <i className={status === "Connected" ? "online" : ""} />
           {status}

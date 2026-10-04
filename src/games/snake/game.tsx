@@ -5,8 +5,45 @@ import { Button, Card } from "@/components/ui";
 import { GameResults } from "../shared/shell";
 import type { GameViewProps } from "../shared/types";
 import type { Direction } from "./types";
-import { GRID, initialSnake } from "./engine";
+import { GRID, initialSnake, TEAM_GOAL } from "./engine";
 import { useSnake } from "./use-snake";
+export function SnakeSetup({
+  session,
+  command,
+  busy,
+}: Pick<GameViewProps, "session" | "command" | "busy">) {
+  return (
+    <div className="game-setup">
+      <h2>Two snakes. Your rules.</h2>
+      <div className="choice-pair snake-modes" aria-label="Snake mode">
+        {(["versus", "together"] as const).map((mode) => (
+          <button
+            key={mode}
+            className={`deck-choice ${(session.state.snake_mode || "versus") === mode ? "chosen" : ""}`}
+            aria-pressed={(session.state.snake_mode || "versus") === mode}
+            disabled={busy || session.ready.length > 0}
+            onClick={() => void command("mode", { mode })}
+          >
+            <strong>
+              {mode === "versus" ? "Head to head" : "Better together"}
+            </strong>
+            <span>
+              {mode === "versus"
+                ? "Outlast your partner."
+                : `Collect ${TEAM_GOAL} apples as a team.`}
+            </span>
+          </button>
+        ))}
+      </div>
+      <p className="field-note">
+        Cross an edge to appear on the other side.
+        {session.state.snake_mode === "together"
+          ? " Pass through your partner; avoid your own body."
+          : " Avoid both snakes’ bodies."}
+      </p>
+    </div>
+  );
+}
 
 export function SnakeGame(props: GameViewProps & { replay: () => void }) {
   const { state, meta, error, turn, countdown } = useSnake(props);
@@ -42,17 +79,33 @@ export function SnakeGame(props: GameViewProps & { replay: () => void }) {
     initialSnake(
       props.players.map((p) => p.user_id),
       1,
+      props.session.state.snake_mode || "versus",
     );
+  const together =
+    (shown.mode || props.session.state.snake_mode) === "together";
+  const teamScore = Object.values(shown.snakes).reduce(
+    (sum, snake) => sum + snake.score,
+    0,
+  );
   if (meta.status === "finished")
     return (
       <GameResults
         title={
-          shown.winner
-            ? `${props.players.find((p) => p.user_id === shown.winner)?.name} wins!`
-            : "A perfect tie."
+          together
+            ? teamScore >= TEAM_GOAL
+              ? "Together, you did it!"
+              : "One team. One more try?"
+            : shown.winner
+              ? `${props.players.find((p) => p.user_id === shown.winner)?.name} wins!`
+              : "A perfect tie."
         }
         replay={props.replay}
         busy={props.busy}
+        description={
+          together
+            ? `${teamScore} / ${TEAM_GOAL} apples collected together.`
+            : undefined
+        }
       >
         <div className="score-pair">
           {props.players.map((p) => (
@@ -68,6 +121,22 @@ export function SnakeGame(props: GameViewProps & { replay: () => void }) {
     meta.status === "paused" || !props.connected || props.online.length < 2;
   return (
     <Card className="snake-card">
+      <div className="snake-mode-label">
+        <span>{together ? "BETTER TOGETHER" : "HEAD TO HEAD"}</span>
+        <span>↔ Wraparound arena</span>
+      </div>
+      {together && (
+        <div className="team-goal">
+          <strong>
+            {teamScore} / {TEAM_GOAL} apples
+          </strong>
+          <progress
+            value={teamScore}
+            max={TEAM_GOAL}
+            aria-label="Shared apple goal"
+          />
+        </div>
+      )}
       <div className="snake-scores">
         {props.players.map((p, i) => (
           <span key={p.user_id} className={`snake-player snake-player-${i}`}>

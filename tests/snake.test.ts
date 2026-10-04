@@ -24,13 +24,20 @@ test("Snake is deterministic, grows and rejects reversals and double turns", () 
   assert.ok(validSnapshot(b, ["a", "b"]));
   assert.equal(validSnapshot({ ...b, tick: -1 }, ["a", "b"]), false);
 });
-test("Snake resolves walls, own body, opposing body, head-on and head swap", () => {
+test("Snake wraps around walls and resolves body and head collisions", () => {
   let s = initialSnake(["a", "b"], 1);
   s.snakes.a.body = [
     { x: 23, y: 7 },
     { x: 22, y: 7 },
   ];
-  assert.equal(tick(s).winner, "b");
+  assert.equal(tick(s).snakes.a.body[0].x, 0);
+  assert.equal(tick(s).snakes.a.alive, true);
+  s.snakes.a.body = [
+    { x: 0, y: 0 },
+    { x: 0, y: 1 },
+  ];
+  s.snakes.a.direction = "up";
+  assert.equal(tick(s).snakes.a.body[0].y, 23);
   s = initialSnake(["a", "b"], 1);
   s.snakes.a.body = [
     { x: 4, y: 4 },
@@ -61,6 +68,41 @@ test("Snake resolves walls, own body, opposing body, head-on and head swap", () 
   ];
   assert.equal(tick(s).winner, null);
   assert.equal(tick(s).snakes.a.alive, false);
+});
+test("team snakes pass through each other and share a goal, but self collision ends the run", () => {
+  let s = initialSnake(["a", "b"], 7, "together");
+  s.snakes.b.body = [
+    { x: 6, y: 7 },
+    { x: 7, y: 7 },
+    { x: 8, y: 7 },
+  ];
+  assert.equal(tick(s).status, "playing");
+  assert.equal(tick(s).snakes.a.alive, true);
+  s.snakes.b.body = [
+    { x: 7, y: 7 },
+    { x: 8, y: 7 },
+  ];
+  s.food = { x: 6, y: 7 };
+  const sharedApple = tick(s);
+  assert.equal(sharedApple.snakes.a.score + sharedApple.snakes.b.score, 1);
+  s = initialSnake(["a", "b"], 7, "together");
+  s.snakes.a.score = 10;
+  s.snakes.b.score = 9;
+  s.food = { x: 6, y: 7 };
+  const won = tick(s);
+  assert.equal(won.status, "finished");
+  assert.equal(won.winner, null);
+  assert.equal(won.snakes.a.score + won.snakes.b.score, 20);
+  s = initialSnake(["a", "b"], 7, "together");
+  s.snakes.a.body = [
+    { x: 4, y: 4 },
+    { x: 4, y: 5 },
+    { x: 5, y: 5 },
+    { x: 5, y: 4 },
+    { x: 6, y: 4 },
+  ];
+  assert.equal(tick(s).status, "finished");
+  assert.equal(tick(s).winner, null);
 });
 test("Food never spawns inside either snake", () => {
   for (let seed = 1; seed < 200; seed++) {

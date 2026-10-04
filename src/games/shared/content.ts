@@ -1,4 +1,11 @@
 import type { Question } from "./types.ts";
+import {
+  expandedChoices,
+  expandedConversations,
+  expandedPredictions,
+  expandedDaily,
+  expandedWords,
+} from "./expanded-content.ts";
 
 function deck(
   game: Question["game"],
@@ -487,6 +494,27 @@ export const dailyQuestions = deck("daily-us", {
   ],
 });
 
+// Preserve old IDs for saved histories; never seed duplicate text or reversed choice pairs.
+for (const [bank, extra] of [
+  [thisOrThatQuestions, expandedChoices],
+  [knowMeQuestions, expandedPredictions],
+  [deepTalkQuestions, expandedConversations],
+  [dailyQuestions, expandedDaily],
+  [drawingWords, expandedWords],
+]) {
+  const fingerprint = (q: Question) =>
+    q.optionA
+      ? [q.optionA, q.optionB].sort().join("|").toLowerCase()
+      : q.prompt.toLowerCase();
+  const known = new Set(bank.map(fingerprint));
+  for (const question of extra) {
+    const key = fingerprint(question);
+    if (!known.has(key)) {
+      bank.push(question);
+      known.add(key);
+    }
+  }
+}
 export const content: Question[] = [
   ...thisOrThatQuestions,
   ...knowMeQuestions,

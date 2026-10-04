@@ -28,6 +28,7 @@ export type GameSession = {
     scores?: Record<string, number>;
     deck?: string;
     mode?: "free" | "guess";
+    snake_mode?: import("../snake/types").SnakeMode;
     accepted?: boolean;
     judged?: boolean;
     clear_requested_by?: string | null;

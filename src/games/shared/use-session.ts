@@ -114,10 +114,15 @@ export function useSession(roomId: string, sessionId: string) {
         if (error) throw error;
         await refreshRef.current();
         return true;
-      } catch {
+      } catch (error) {
         await refreshRef.current();
         setError(
-          "That action could not be saved. Refresh the game state and try again.",
+          error &&
+            typeof error === "object" &&
+            "message" in error &&
+            String(error.message).startsWith("No unseen questions remain")
+            ? "You’ve played every card in this deck. Choose another deck for fresh questions."
+            : "That action could not be saved. Refresh the game state and try again.",
         );
         return false;
       } finally {

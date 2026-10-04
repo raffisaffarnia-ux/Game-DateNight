@@ -64,8 +64,8 @@ export function GameShell({
         <i />
         <i />
       </div>
-      <button className="back-link" onClick={exit}>
-        <ArrowLeft size={16} /> Back to Games
+      <button className="game-back-button" onClick={exit}>
+        <ArrowLeft size={21} /> Back to Games
       </button>
       <header className="game-shell-header">
         <div className="game-title">

@@ -6,7 +6,7 @@ import { DeepTalk, DeepTalkSetup } from "./deep-talk/game";
 import { KnowMe } from "./do-you-know-me/game";
 import { DailyUs } from "./daily-us/game";
 import { DrawTogether, DrawingSetup } from "./draw-together/game";
-import { SnakeGame } from "./snake/game";
+import { SnakeGame, SnakeSetup } from "./snake/game";
 export type PlayProps = GameViewProps & { replay: () => void };
 /** All game rendering and optional setup screens are registered here. */
 export const gameViews: Record<
@@ -27,5 +27,5 @@ export const gameViews: Record<
   "do-you-know-me": { Play: KnowMe },
   "daily-us": { Play: DailyUs, immediate: true },
   "draw-together": { Play: DrawTogether, Setup: DrawingSetup },
-  "snake-squared": { Play: SnakeGame },
+  "snake-squared": { Play: SnakeGame, Setup: SnakeSetup },
 };

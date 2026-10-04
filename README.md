@@ -18,7 +18,6 @@ In PowerShell use `Copy-Item .env.example .env.local`. Open http://localhost:300
 
 1. Create a Supabase project. Enable **Anonymous Sign-Ins** under Authentication → Sign In / Providers.
 2. Apply every SQL file in `supabase/migrations/` in numerical order, **001 through 010**, using the SQL editor or the Supabase CLI. If the original foundation is already installed, apply **002–010 only**. Do not rerun 001 over existing tables.
-   For a completely new project, you can instead paste **`supabase/setup.sql`** into the SQL editor and run it once. It combines 001–010 in a transaction and rejects an already installed database. Use either the setup file or the numbered migrations, not both.
 3. In Realtime settings, disable **Allow public access**. All channels are private. The migrations configure the publication and authorization policies.
 4. Put the project's public URL and **publishable** key in `.env.local`:
 
@@ -120,14 +119,19 @@ They create anonymous users/rooms and verify concurrent joins, private presence,
 7. Answer Daily Us in both browsers. Reopen the bookmarked room on another day to verify history and streak. The displayed pair timezone determines midnight.
 8. Check narrow screens, keyboard focus, light/dark appearance and reduced motion.
 
-Live integration checks passed against the configured DateNight.io Supabase project: separate authenticated clients verified room capacity, private presence, database updates, hidden/revealed answers and authorized broadcasts. Browser acceptance on the deployed URL should still be performed on two devices.
+No hosted Supabase credentials were present during implementation: local database/engine tests and UI inspection do not constitute a passed live two-device test.
 
 ## Deploy on Vercel
 
 Import the repository with the Next.js preset. Set the two public environment variables for the relevant environments and deploy. Configure the production Site URL and allowed redirects in Supabase Authentication URL Configuration. Apply the migrations separately. There is no custom server or Vercel secret required. Public environment values are embedded at build time, so redeploy after changing them.
 
-The application uses Supabase for persistent shared state and live connections; Vercel serves the Next.js application. A separate Socket.IO or always-running Node server is not required. Database subscriptions wait for Supabase to confirm they are active before reporting a connected state.
-
 ## Design
 
 The original DateNight.io identity remains: system typography, stone/plum/sage colors, generous spacing, shared rounded controls, visible keyboard focus, OS-driven dark mode and reduced-motion support. No external fonts or image services are required. See `docs/design.md` for tokens and layout decisions.
+# Fresh rounds and Snake modes
+
+Apply `supabase/migrations/20261004201416_wider_games_fresh_rounds.sql` once to an existing installation, after deploying the matching frontend. It adds a private, persistent question allocation history and an expanded, procedurally composed question catalogue. Existing saved cards and answers remain intact. New installations can use the updated `supabase/setup.sql` instead.
+
+Questions are allocated atomically for the two authenticated player identities, across their rooms. Already allocated cards and drawing words are excluded; questions never silently recycle when a finite catalogue is exhausted. Add new authored building blocks in `src/games/shared/expanded-content.ts` and seed them to extend it. This uses no external AI service or API key. Daily Us keeps the same question for both players throughout a calendar day and chooses an unused question on the next day. Anonymous identity changes, such as clearing browser data, create a new pair history.
+
+Snake wraps on all four edges. Head to head ends on a body collision, with the survivor winning. Better together lets partners cross each other, shares a 20-apple goal, and ends the team run on a self collision. Mode changes are synchronized and lock when the first player is ready. A host checkpoint must match the selected mode.
