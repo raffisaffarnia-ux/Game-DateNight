@@ -155,7 +155,9 @@ export function useRoom(id: string) {
     });
     if (error)
       throw new Error(
-        "Could not open the game. Check your connection and try again.",
+        error.message.startsWith("No unseen questions remain")
+          ? "You’ve played every available question for this game. Fresh cards need to be added before another round."
+          : "Could not open the game. Check your connection and try again.",
       );
     await refreshRoom.current?.();
   }

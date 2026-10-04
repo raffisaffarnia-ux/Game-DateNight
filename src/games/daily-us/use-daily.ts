@@ -70,7 +70,10 @@ export function useDaily(roomId: string) {
         if (!channel && active) {
           channel = db
             .channel(`room:${roomId}:daily`, {
-              config: { private: true, postgres_changes_options: { wait: true } },
+              config: {
+                private: true,
+                postgres_changes_options: { wait: true },
+              },
             })
             .on(
               "postgres_changes",
@@ -86,8 +89,16 @@ export function useDaily(roomId: string) {
               if (status === "SUBSCRIBED") void refresh();
             });
         }
-      } catch {
-        if (active) setError("Could not load your daily question. Try again.");
+      } catch (error) {
+        if (active)
+          setError(
+            error &&
+              typeof error === "object" &&
+              "message" in error &&
+              String(error.message).startsWith("No unseen questions remain")
+              ? "You’ve seen every available daily question. Fresh cards need to be added."
+              : "Could not load your daily question. Try again.",
+          );
       } finally {
         refreshing = false;
       }

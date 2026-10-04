@@ -121,7 +121,9 @@ export function useSession(roomId: string, sessionId: string) {
             typeof error === "object" &&
             "message" in error &&
             String(error.message).startsWith("No unseen questions remain")
-            ? "You’ve played every card in this deck. Choose another deck for fresh questions."
+            ? current.game_type === "deep-talk"
+              ? "You’ve played every card in this deck. Choose another deck for fresh questions."
+              : "You’ve played every available prompt. Fresh cards need to be added before another round."
             : "That action could not be saved. Refresh the game state and try again.",
         );
         return false;
