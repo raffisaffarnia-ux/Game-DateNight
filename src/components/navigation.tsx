@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ArrowUpRight } from "lucide-react";
+import { ProfileButton } from "./profile/provider";
 export function Navigation() {
   const inRoom = usePathname().startsWith("/room/");
   const brand = (
@@ -21,13 +22,16 @@ export function Navigation() {
           {brand}
         </Link>
       )}
-      {!inRoom && (
-        <nav aria-label="Main navigation">
-          <Link href="/games">
-            Games <ArrowUpRight size={14} />
-          </Link>
-        </nav>
-      )}
+      <div className="navigation-actions">
+        {!inRoom && (
+          <nav aria-label="Main navigation">
+            <Link href="/games">
+              Games <ArrowUpRight size={14} />
+            </Link>
+          </nav>
+        )}
+        <ProfileButton />
+      </div>
     </header>
   );
 }

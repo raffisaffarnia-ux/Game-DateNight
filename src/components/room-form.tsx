@@ -6,6 +6,7 @@ import { ArrowLeft, ArrowRight, LockKeyhole } from "lucide-react";
 import { Button, Card } from "./ui";
 import { getSupabase, identity } from "@/lib/supabase";
 import { roomError } from "@/lib/room-error";
+import { useProfile } from "./profile/provider";
 export function RoomForm({
   mode,
   initialCode = "",
@@ -13,7 +14,10 @@ export function RoomForm({
   mode: "create" | "join";
   initialCode?: string;
 }) {
-  const [name, setName] = useState("");
+  const [name, setName] = useState<string | null>(null);
+  const { profile, refresh } = useProfile();
+  const displayName =
+    name ?? (profile?.name === "Player" ? "" : profile?.name || "");
   const [code, setCode] = useState(initialCode);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -24,12 +28,17 @@ export function RoomForm({
     setError("");
     try {
       await identity();
+      const saved = await getSupabase().rpc("update_profile", {
+        display_name: displayName.trim(),
+      });
+      if (saved.error) throw saved.error;
+      await refresh();
       const result = await getSupabase().rpc(
         mode === "create" ? "create_room" : "join_room",
         mode === "create"
-          ? { player_name: name.trim() }
+          ? { player_name: displayName.trim() }
           : {
-              player_name: name.trim(),
+              player_name: displayName.trim(),
               invite_code: code.trim().toUpperCase(),
             },
       );
@@ -63,7 +72,7 @@ export function RoomForm({
             placeholder="What should we call you?"
             required
             maxLength={30}
-            value={name}
+            value={displayName}
             onChange={(e) => setName(e.target.value)}
             autoFocus
           />
@@ -91,7 +100,7 @@ export function RoomForm({
               {error}
             </p>
           )}
-          <Button disabled={busy || !name.trim()} type="submit">
+          <Button disabled={busy || !displayName.trim()} type="submit">
             {busy
               ? "Opening your room…"
               : mode === "create"

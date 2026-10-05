@@ -11,6 +11,7 @@ import {
 import { Celebration, ResultTrophy } from "./effects";
 import { Button, Card } from "@/components/ui";
 import type { GamePlayer, GameSession } from "./types";
+import { PlayerLook } from "@/components/profile/room-profiles";
 
 export function PlayerIndicator({
   player,
@@ -22,10 +23,8 @@ export function PlayerIndicator({
   you: boolean;
 }) {
   return (
-    <span className="game-player">
-      <span className="player-token" aria-hidden="true">
-        {player.name[0]}
-      </span>
+    <div className="game-player">
+      <PlayerLook userId={player.user_id} compact />
       <span
         className={`presence-dot ${online ? "is-online" : ""}`}
         aria-hidden="true"
@@ -35,7 +34,7 @@ export function PlayerIndicator({
         {you ? " (you)" : ""}
       </span>
       <small>{online ? "Online" : "Offline"}</small>
-    </span>
+    </div>
   );
 }
 export function GameShell({
@@ -128,7 +127,7 @@ export function ReadyState({
             key={p.user_id}
             className={session.ready.includes(p.user_id) ? "player-ready" : ""}
           >
-            <span className="avatar">{p.name[0]}</span>
+            <PlayerLook userId={p.user_id} compact />
             <strong>{p.name}</strong>
             <span>
               {session.ready.includes(p.user_id) ? (

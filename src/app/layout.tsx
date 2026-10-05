@@ -3,6 +3,8 @@ import { Navigation, Footer } from "@/components/navigation";
 import "./globals.css";
 import "@/games/games.css";
 import "@/games/experience.css";
+import "@/components/profile/profile.css";
+import { ProfileProvider } from "@/components/profile/provider";
 export const metadata: Metadata = {
   title: "DateNight.io — Private games for two",
   description: "Private multiplayer games for couples, wherever you are.",
@@ -17,11 +19,13 @@ export default function RootLayout({
         <a className="skip-link" href="#main">
           Skip to content
         </a>
-        <div className="app-shell">
-          <Navigation />
-          {children}
-          <Footer />
-        </div>
+        <ProfileProvider>
+          <div className="app-shell">
+            <Navigation />
+            {children}
+            <Footer />
+          </div>
+        </ProfileProvider>
       </body>
     </html>
   );

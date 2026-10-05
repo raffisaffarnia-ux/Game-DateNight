@@ -14,6 +14,11 @@ import { games } from "@/lib/games";
 import { Button, Card, Loading } from "./ui";
 import { GamesLibrary } from "./games";
 import { GameHost } from "@/games/shared/host";
+import {
+  RoomProfileProvider,
+  PlayerLook,
+  PairFlames,
+} from "./profile/room-profiles";
 export function PlayerPresence({
   member,
   online,
@@ -25,9 +30,13 @@ export function PlayerPresence({
 }) {
   return (
     <div className={`player ${member ? "" : "waiting"}`}>
-      <div className="avatar">
-        {member ? member.name.charAt(0).toUpperCase() : <Users size={24} />}
-      </div>
+      {member ? (
+        <PlayerLook userId={member.user_id} />
+      ) : (
+        <div className="avatar">
+          <Users size={24} />
+        </div>
+      )}
       <h2>
         {member?.name || "Partner"} {you && <small>(you)</small>}
       </h2>
@@ -39,6 +48,13 @@ export function PlayerPresence({
   );
 }
 export function Lobby({ id }: { id: string }) {
+  return (
+    <RoomProfileProvider roomId={id}>
+      <LobbyContent id={id} />
+    </RoomProfileProvider>
+  );
+}
+function LobbyContent({ id }: { id: string }) {
   const { room, members, online, userId, error, status, selectGame, retry } =
     useRoom(id);
   const [view, setView] = useState<"lobby" | "library">("lobby");
@@ -112,6 +128,7 @@ export function Lobby({ id }: { id: string }) {
       }
     >
       <div className="room-toolbar">
+        <PairFlames />
         {!room.active_session_id && (
           <Link href="/" className="back-link">
             ← Home
