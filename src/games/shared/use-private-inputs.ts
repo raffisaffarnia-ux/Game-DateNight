@@ -9,6 +9,7 @@ export type PrivateInput = {
   kind: string;
   value: Record<string, unknown>;
   revealed: boolean;
+  created_at: string;
 };
 
 export function usePrivateInputs(session: GameSession) {
@@ -18,7 +19,7 @@ export function usePrivateInputs(session: GameSession) {
     let active = true;
     void getSupabase()
       .from("couple_game_inputs")
-      .select("round,user_id,kind,value,revealed")
+      .select("round,user_id,kind,value,revealed,created_at")
       .eq("session_id", session.id)
       .then(({ data, error: queryError }) => {
         if (!active) return;

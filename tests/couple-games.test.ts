@@ -20,7 +20,7 @@ test("Moral Sync keeps choices private, inserts Change My Mind, then advances", 
     await as(1); await action(id, 1, "lock", { choice: "D" });
     await as(0); await action(id, 1, "continue");
     await as(1); await action(id, 1, "continue");
-    let session = (await db.query<{ state: { phase: string } }>("select state from public.game_sessions where id=$1", [id])).rows[0];
+    let session = (await db.query<{ state: { phase: string }; round: number }>("select state,round from public.game_sessions where id=$1", [id])).rows[0];
     assert.equal(session.state.phase, "change");
     assert.equal((await db.query("select * from public.couple_game_inputs where round=1 and kind='next'")).rows.length, 0);
     await as(0); await action(id, 1, "change_mind", { choice: "stay" });
@@ -74,7 +74,7 @@ test("Rank & Draw reveals rankings together and protects the hidden target", asy
     await as(1);
     assert.equal((await db.query("select * from public.couple_game_inputs where kind='ranking'")).rows.length, 1);
     await action(id, 0, "lock", { rank: ranking });
-    let session = (await db.query<{ state: { phase: string } }>("select state from public.game_sessions where id=$1", [id])).rows[0];
+    let session = (await db.query<{ state: { phase: string; creator_id?: string; last_guess?: string } }>("select state from public.game_sessions where id=$1", [id])).rows[0];
     assert.equal(session.state.phase, "reveal");
 
     await as(0); await action(id, 0, "continue");

@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useMemo, useRef, useState, type PointerEvent } from "react";
-import { ArrowDown, ArrowUp, Check, Clock3, Eraser, Pencil, Sparkles } from "lucide-react";
+import { ArrowDown, ArrowRight, ArrowUp, Check, Clock3, Eraser, Pencil, Sparkles } from "lucide-react";
 import { Button, Card } from "@/components/ui";
 import { usePrivateInputs, type PrivateInput } from "../shared/use-private-inputs";
 import type { GameViewProps } from "../shared/types";
@@ -15,7 +15,7 @@ export function RankDrawSetup({session,command,busy}:Pick<GameViewProps,"session
 export function RankAndDraw({session,players,userId,command,busy,replay}:GameViewProps&{replay:()=>void}){
  const {inputs,error}=usePrivateInputs(session);const [ranking,setRanking]=useState<string[]>([]);const [guess,setGuess]=useState("");const [vote,setVote]=useState("");const [description,setDescription]=useState("");const [marks,setMarks]=useState<Mark[]>([]);const [current,setCurrent]=useState<Point[]>([]);const [color,setColor]=useState(palette[0]);const [erase,setErase]=useState(false);const [remaining,setRemaining]=useState(60);const surface=useRef<SVGSVGElement>(null);const drag=useRef<number|null>(null);
  const set=rankSets.find(x=>x.id===session.question_ids[session.round])||rankSets[session.round%rankSets.length];const phase=String(session.state.phase||"rank");const mine=(kind:string)=>inputs.find(x=>x.round===session.round&&x.kind===kind&&x.user_id===userId);const rows=(kind:string)=>inputs.filter(x=>x.round===session.round&&x.kind===kind);const myRank=mine("ranking");const partner=players.find(p=>p.user_id!==userId);const creator=String(session.state.creator_id||"");const isCreator=creator===userId;const special=session.state.special_round===true;const myDrawing=mine("drawing");const drawings=rows("drawing");const target=mine("target")?.value.item;
- const rounds=inputs.filter(x=>x.kind==="ranking"&&x.revealed);const topMatches=useMemo(()=>{const sum=rounds.filter(x=>{const pair=rounds.filter(y=>y.round===x.round);return pair.length===2&&pair[0].value.rank?.[0]===pair[1].value.rank?.[0]});return new Set(sum.map(x=>x.round)).size},[rounds]);
+ const rounds=inputs.filter(x=>x.kind==="ranking"&&x.revealed);const topMatches=useMemo(()=>{const sum=rounds.filter(x=>{const pair=rounds.filter(y=>y.round===x.round);const first=pair[0]?.value.rank as string[]|undefined;const second=pair[1]?.value.rank as string[]|undefined;return pair.length===2&&first?.[0]===second?.[0]});return new Set(sum.map(x=>x.round)).size},[rounds]);
  useEffect(()=>{setRanking(set.items);setGuess("");setVote("");setDescription("");setMarks([]);setCurrent([])},[set.id]);
  useEffect(()=>{if(!session.state.ends_at)return;const interval=window.setInterval(()=>{const n=Math.max(0,Math.ceil((Date.parse(String(session.state.ends_at))-Date.now())/1000));setRemaining(n);if(n===0&&phase==="create"&&!busy&&(isCreator||special))void command("draw_finish")},500);return()=>clearInterval(interval)},[session.state.ends_at,phase,busy,command,isCreator,special]);
  useEffect(()=>{const stored=myDrawing?.value.marks;if(Array.isArray(stored))setMarks(stored as Mark[]);setDescription(String(myDrawing?.value.text||""))},[myDrawing?.created_at,session.round]);

@@ -23,7 +23,7 @@ export function MoralSyncSetup({ session, command, busy }: Pick<GameViewProps,"s
     <div className="moral-categories"><span>Topics</span><div className="category-pills">{["Mixed",...categories].map(x=><button key={x} className={selected.includes(x)?"selected":""} aria-pressed={selected.includes(x)} onClick={()=>toggle(x)}>{x}</button>)}</div></div>
     <label className="toggle-row"><input type="checkbox" checked={deep} onChange={e=>setDeep(e.target.checked)}/><span><strong>Deep mode</strong><small>Only the longer scenarios</small></span></label>
     <Button disabled={busy} secondary onClick={()=>void command("configure",{count,categories:selected,deep_mode:deep})}>Save game settings <Check size={16}/></Button>
-    {session.state.config_count && <p className="field-note">{String(session.state.config_count)} dilemmas · {selected.join(", ")}</p>}
+    {Boolean(session.state.config_count) && <p className="field-note">{String(session.state.config_count)} dilemmas · {selected.join(", ")}</p>}
   </div>;
 }
 
