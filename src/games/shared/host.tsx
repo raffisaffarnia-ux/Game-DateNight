@@ -50,19 +50,24 @@ export function GameHost({
   const session = game.session;
   if (!session)
     return (
-      <>
+      <GameShell
+        title="Your game"
+        gameId="loading"
+        players={players}
+        userId={userId}
+        online={online}
+        connected={connected}
+        exit={exit}
+      >
         {game.error ? (
           <Card>
             <p role="alert">{game.error}</p>
             <Button onClick={game.retry}>Retry</Button>
-            <button className="back-link" onClick={exit}>
-              Back to Games
-            </button>
           </Card>
         ) : (
           <Loading label="Restoring your game…" />
         )}
-      </>
+      </GameShell>
     );
   const definition = games.find((g) => g.id === session.game_type)!;
   const view = gameViews[session.game_type];

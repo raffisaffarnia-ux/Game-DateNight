@@ -7,6 +7,7 @@ import {
   type ReactNode,
 } from "react";
 import { Flame } from "lucide-react";
+import { createPortal } from "react-dom";
 import { getSupabase } from "@/lib/supabase";
 import { PixelArt, PixelBanner } from "./pixel-art";
 import { useProfile, type Profile } from "./provider";
@@ -59,7 +60,10 @@ export function PlayerLook({
 }
 export function PairFlames() {
   const { flames } = useContext(RoomProfiles);
-  return (
+  const [slot, setSlot] = useState<HTMLElement | null>(null);
+  useEffect(() => setSlot(document.getElementById("pair-status")), []);
+  if (!slot) return null;
+  return createPortal(
     <span
       className="pair-flames"
       key={flames}
@@ -68,6 +72,7 @@ export function PairFlames() {
       <Flame size={22} fill="currentColor" />
       <strong>{flames}</strong>
       <span>together</span>
-    </span>
+    </span>,
+    slot,
   );
 }

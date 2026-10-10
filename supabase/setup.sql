@@ -4225,3 +4225,14 @@ revoke all on function private.ensure_profile(uuid),private.award_coin(uuid,text
 revoke all on function public.my_profile(),public.update_profile(text),public.buy_cosmetic(text),public.equip_cosmetic(text),public.room_profiles(uuid) from public,anon;
 grant execute on function public.my_profile(),public.update_profile(text),public.buy_cosmetic(text),public.equip_cosmetic(text),public.room_profiles(uuid) to authenticated;
 alter publication supabase_realtime add table public.player_profiles,public.player_rewards;
+
+
+-- Additive catalog update; existing purchases and equipped items stay valid.
+insert into public.cosmetics(id,slot,name,price) values
+('bunny','avatar','Blush Bunny',45),('panda','avatar','Cloud Panda',65),
+('penguin','avatar','Snow Sweetheart',75),('owl','avatar','Night Owl',85),
+('mushroom','avatar','Forest Sprite',95),('axolotl','avatar','Pink Axolotl',110),
+('candlelight','banner','Candlelight for Two',60),('picnic','banner','Picnic Promises',70),
+('rooftop','banner','Rooftop Rendezvous',90),('stargazing','banner','Under Our Stars',100),
+('love-letter','banner','Sealed with Love',80),('movie-night','banner','One More Movie',90)
+on conflict(id) do nothing;

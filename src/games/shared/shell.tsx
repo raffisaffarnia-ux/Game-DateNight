@@ -2,7 +2,7 @@
 import type { ReactNode } from "react";
 import {
   Check,
-  ArrowLeft,
+  X,
   RotateCcw,
   Gamepad2,
   Sparkles,
@@ -63,9 +63,6 @@ export function GameShell({
         <i />
         <i />
       </div>
-      <button className="game-back-button" onClick={exit}>
-        <ArrowLeft size={21} /> Back to Games
-      </button>
       <header className="game-shell-header">
         <div className="game-title">
           <span className="game-kicker">
@@ -83,6 +80,14 @@ export function GameShell({
             />
           ))}
         </div>
+        <button
+          className="game-close"
+          onClick={exit}
+          aria-label="Close game and return to games"
+          title="Close game"
+        >
+          <X size={23} />
+        </button>
       </header>
       {!connected && (
         <p className="notice" role="status">
@@ -94,7 +99,7 @@ export function GameShell({
           Your partner is offline. Their place is saved.
         </p>
       )}
-      {children}
+      <div className="game-content">{children}</div>
     </section>
   );
 }

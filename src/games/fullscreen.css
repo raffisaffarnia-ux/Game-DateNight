@@ -1,0 +1,632 @@
+/* The browser viewport is the game canvas; the page itself never scrolls. */
+.app-shell:has(.wide-page),
+.app-shell:has(.play-page) {
+  width: 100%;
+  max-width: none;
+  padding-inline: 3vw;
+}
+.wide-page {
+  width: 100%;
+  max-width: none;
+  margin-inline: auto;
+}
+.game-grid {
+  gap: clamp(16px, 2vw, 32px);
+}
+.app-shell:has(.play-page) {
+  height: 100dvh;
+  min-height: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+body:has(.play-page) {
+  overflow: hidden;
+}
+.app-shell:has(.play-page) > .navigation {
+  flex: 0 0 64px;
+  height: 64px;
+  min-height: 64px;
+  padding: 8px 24px;
+  margin: 0;
+  border-bottom: 1px solid var(--line);
+  background: var(--card);
+  z-index: 5;
+}
+.app-shell:has(.play-page) > footer {
+  display: none;
+}
+.play-page {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+.play-page > .room-toolbar {
+  display: none;
+}
+.play-page > .notice,
+.play-page > .error {
+  margin: 0;
+  padding: 6px 20px;
+  font-size: 12px;
+}
+.play-page .game-shell {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0 2vw 14px;
+  display: flex;
+  flex-direction: column;
+  animation: none;
+}
+.play-page .game-shell-header {
+  flex-direction: row;
+  flex: 0 0 auto;
+  align-items: center;
+  margin: 0;
+  padding: 10px 0;
+  gap: 16px;
+}
+.play-page .game-shell-header h1 {
+  font-size: clamp(20px, 2vw, 28px);
+  margin: 0;
+  line-height: 1.2;
+}
+.play-page .game-kicker {
+  display: none;
+}
+.play-page .game-player-list {
+  margin-left: auto;
+  gap: 10px;
+}
+.play-page .game-player {
+  padding: 4px 9px;
+  gap: 7px;
+  font-size: 12px;
+}
+.play-page .game-player small {
+  display: none;
+}
+.play-page .player-look.compact {
+  height: 36px;
+  width: 52px;
+}
+.play-page .player-look.compact > .pixel-art {
+  height: 34px;
+  width: 34px;
+}
+.play-page .player-look.compact > .player-badge {
+  height: 17px;
+  width: 17px;
+}
+.game-close {
+  display: grid;
+  place-items: center;
+  flex: 0 0 44px;
+  height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  color: var(--ink);
+  background: var(--card);
+  transition:
+    background 0.15s,
+    transform 0.15s;
+}
+.game-close:hover {
+  background: var(--soft);
+  transform: rotate(8deg);
+}
+.game-content {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+}
+.game-content > .game-progress {
+  flex-shrink: 0;
+  margin: 0;
+  gap: 5px;
+  font-size: 12px;
+}
+.game-content > .card {
+  margin: 0;
+  box-shadow: none;
+  min-height: 0;
+}
+.game-content > .question-stage,
+.game-content > .ready-card,
+.game-content > .game-results {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(12px, 2vh, 28px) clamp(16px, 3vw, 48px);
+  gap: 12px;
+}
+.game-content .question-stage h2 {
+  font-size: clamp(21px, 3vh, 36px);
+  margin: 0 auto 12px;
+  max-width: 1000px;
+}
+.game-content .choice-pair {
+  width: 100%;
+  margin: 0;
+  gap: 24px;
+}
+.game-content .duel-stage .choice-pair {
+  flex: 1;
+  min-height: 0;
+  max-height: 52dvh;
+}
+.game-content .duel-stage .choice {
+  min-height: 0;
+  height: 100%;
+  padding: 22px;
+}
+.game-content .duel-stage .choice strong {
+  font-size: clamp(22px, 3vw, 44px);
+}
+.game-content .reveal {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+.game-content .answer-pair {
+  width: 100%;
+  margin: 0;
+  gap: 16px;
+}
+.game-content .answer-pair > div {
+  padding: 16px;
+  max-height: 30dvh;
+  overflow: auto;
+}
+.game-content .round-moment {
+  margin: 0;
+}
+.game-content .moment-medallion {
+  width: 58px;
+  height: 58px;
+  margin: 0 auto 10px;
+}
+.game-content .round-moment h2 {
+  margin: 0;
+}
+.game-content .ready-emblem {
+  display: none;
+}
+.game-content .game-setup {
+  margin: 0;
+}
+.game-content .game-setup h2 {
+  max-width: none;
+  margin: 0 0 12px;
+  font-size: 23px;
+}
+.game-content .ready-players {
+  margin: 8px 0;
+  gap: 50px;
+}
+.game-content .ready-players > div {
+  gap: 5px;
+}
+.game-content .ready-card > .button,
+.game-content .game-results > .button {
+  align-self: center;
+  min-width: 180px;
+}
+.game-content .field-note {
+  margin: 0;
+  font-size: 11px;
+}
+.game-content .deck-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  max-width: 1000px;
+  margin: auto;
+  gap: 8px;
+}
+.game-content .deck-choice {
+  padding: 12px;
+  min-height: 44px;
+}
+.game-content .snake-modes {
+  max-width: 1000px;
+  margin: auto;
+}
+.game-content .snake-modes .deck-choice {
+  gap: 4px;
+  padding: 16px;
+}
+.game-content .snake-modes .deck-choice span {
+  font-size: 12px;
+}
+.game-content .flip-question,
+.game-content .card-back,
+.game-content .card-front {
+  min-height: 0;
+  height: 100%;
+}
+.game-content .flip-question {
+  flex: 1;
+  max-height: 48dvh;
+  width: min(100%, 1100px);
+  align-self: center;
+  margin: 0;
+}
+.game-content .card-back,
+.game-content .card-front {
+  padding: 18px;
+}
+.game-content .game-actions {
+  margin: 0;
+  gap: 10px;
+}
+.game-content .saved-conversations {
+  flex-shrink: 0;
+  margin: 0;
+  font-size: 12px;
+}
+.game-content details[open] {
+  max-height: 24dvh;
+  overflow: auto;
+}
+.game-content .answer-form {
+  width: min(100%, 1000px);
+  margin: 0 auto;
+  gap: 8px;
+}
+.game-content .answer-form textarea {
+  min-height: 60px;
+  max-height: 18dvh;
+  margin: 0;
+}
+.game-content .answer-form .button {
+  align-self: center;
+}
+.game-content .role-chip {
+  align-self: center;
+  margin: 0;
+}
+.game-content .locked-answer {
+  margin: 0;
+}
+.game-content .daily-meta {
+  margin: 0;
+}
+.game-content .daily-sun {
+  display: none;
+}
+.game-content .daily-history {
+  max-height: 15dvh;
+  overflow: auto;
+  margin: 0;
+  font-size: 12px;
+}
+.game-content .daily-history h2 {
+  font-size: 15px;
+  margin: 0;
+}
+.game-content .round-history {
+  max-height: 20dvh;
+  overflow: auto;
+  margin: 0;
+}
+.game-content .result-trophy {
+  width: 58px;
+  height: 58px;
+  margin: 0 auto;
+}
+.game-content .game-results h2 {
+  font-size: clamp(23px, 3vh, 36px);
+  margin: 0;
+}
+.game-content .game-results p {
+  margin: 0;
+}
+/* Preserve board geometry while fitting the available viewport height. */
+.game-content > .snake-card {
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(140px, 1fr) minmax(0, 3fr) minmax(140px, 1fr);
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: 10px 20px;
+  padding: 14px;
+  overflow: hidden;
+}
+.game-content .snake-mode-label {
+  grid-column: 1/-1;
+  margin: 0;
+}
+.game-content .snake-scores {
+  grid-column: 1;
+  grid-row: 2;
+  display: flex;
+  flex-direction: column;
+  align-self: center;
+  margin: 0;
+  gap: 16px;
+}
+.game-content .snake-player {
+  padding: 12px;
+  font-size: 14px;
+}
+.game-content .snake-board {
+  grid-column: 2;
+  grid-row: 2;
+  width: auto;
+  height: 100%;
+  max-width: 100%;
+  aspect-ratio: 1;
+  justify-self: center;
+  margin: 0;
+  min-height: 0;
+  max-height: 100%;
+  border-radius: 18px;
+}
+.game-content .snake-board svg {
+  height: 100%;
+  width: 100%;
+  display: block;
+}
+.game-content .direction-pad {
+  grid-column: 3;
+  grid-row: 2;
+  align-self: center;
+  justify-self: center;
+  margin: 0;
+}
+.game-content .snake-card > .field-note {
+  grid-column: 1/-1;
+  grid-row: 3;
+}
+.game-content .team-goal {
+  grid-column: 1;
+  grid-row: 3;
+  margin: 0;
+  width: 100%;
+  gap: 8px;
+  font-size: 11px;
+  z-index: 1;
+}
+.game-content .snake-card:has(.team-goal) > .field-note {
+  grid-column: 2/-1;
+}
+.game-content .drawing-heading {
+  margin: 0;
+  flex-shrink: 0;
+}
+.game-content .drawing-heading h2 {
+  font-size: 20px;
+  margin: 0;
+}
+.game-content .drawing-canvas {
+  width: auto;
+  max-width: 100%;
+  height: min(48dvh, 100%);
+  min-height: 80px;
+  aspect-ratio: 2;
+  align-self: center;
+  flex: 1;
+  object-fit: contain;
+  touch-action: none;
+}
+.game-content .drawing-toolbar {
+  margin: 0;
+  padding: 8px;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.game-content .guess-form {
+  margin: 0;
+}
+.game-content .round-transition {
+  padding: 8px;
+  margin: 0;
+}
+.navigation #pair-status:empty {
+  display: none;
+}
+.navigation .pair-flames {
+  animation: none;
+  background: transparent;
+  border: 0;
+  padding: 4px;
+  gap: 6px;
+}
+.navigation .pair-flames span {
+  display: none;
+}
+.navigation .pair-flames svg {
+  color: #ee873d;
+}
+.navigation-actions {
+  gap: 16px;
+}
+@media (max-width: 700px) {
+  .app-shell:has(.wide-page) {
+    padding-inline: 4vw;
+  }
+  .app-shell:has(.play-page) > .navigation {
+    padding: 8px 12px;
+    flex-basis: 58px;
+    height: 58px;
+    min-height: 58px;
+  }
+  .play-page .game-shell {
+    padding: 0 10px 10px;
+  }
+  .play-page .game-shell-header {
+    gap: 8px;
+    flex-wrap: wrap;
+    padding: 8px 0;
+  }
+  .play-page .game-title {
+    flex: 1;
+  }
+  .play-page .game-player-list {
+    order: 3;
+    width: 100%;
+    margin: 0;
+  }
+  .play-page .game-player {
+    flex: 1;
+    min-width: 0;
+  }
+  .play-page .game-shell-header h1 {
+    font-size: 20px;
+  }
+  .game-content {
+    gap: 7px;
+  }
+  .game-content > .question-stage,
+  .game-content > .ready-card,
+  .game-content > .game-results {
+    padding: 12px;
+    gap: 8px;
+  }
+  .game-content .choice-pair {
+    gap: 12px;
+  }
+  .game-content .duel-stage .choice strong {
+    font-size: 20px;
+  }
+  .game-content .duel-stage .choice {
+    padding: 12px;
+  }
+  .game-content .deck-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .game-content .deck-choice {
+    font-size: 12px;
+    padding: 8px;
+  }
+  .game-content .snake-modes .deck-choice span {
+    display: none;
+  }
+  .game-content .ready-players {
+    gap: 35px;
+    margin: 4px 0;
+  }
+  .game-content .game-setup h2 {
+    font-size: 18px;
+  }
+  .game-content > .snake-card {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto minmax(0, 1fr) auto;
+    gap: 8px;
+    padding: 10px;
+  }
+  .game-content .snake-mode-label {
+    grid-row: 1;
+    grid-column: 1;
+    font-size: 10px;
+  }
+  .game-content .snake-scores {
+    grid-row: 2;
+    grid-column: 1;
+    flex-direction: row;
+    justify-content: center;
+    gap: 10px;
+  }
+  .game-content .snake-player {
+    padding: 5px 10px;
+    font-size: 11px;
+  }
+  .game-content .snake-board {
+    grid-column: 1;
+    grid-row: 3;
+    max-width: 100%;
+  }
+  .game-content .direction-pad {
+    grid-column: 1;
+    grid-row: 4;
+    display: flex;
+    gap: 8px;
+  }
+  .game-content .direction-pad button {
+    width: 44px;
+    height: 44px;
+  }
+  .game-content .snake-card > .field-note {
+    display: none;
+  }
+  .game-content .team-goal {
+    grid-row: 2;
+    grid-column: 1;
+    align-self: end;
+  }
+  .game-content .snake-card:has(.team-goal) .snake-scores {
+    padding-bottom: 24px;
+  }
+  .game-content .drawing-toolbar {
+    flex-wrap: wrap;
+  }
+  .game-content .paint-swatches {
+    width: auto;
+    flex: 1;
+  }
+  .game-content .drawing-heading h2 {
+    font-size: 16px;
+  }
+  .game-content .drawing-canvas {
+    height: auto;
+    flex: 0 1 auto;
+    width: 100%;
+    max-height: 42dvh;
+  }
+  .game-content .answer-pair > div {
+    padding: 10px;
+  }
+  .navigation .brand {
+    font-size: 18px;
+  }
+  .navigation-actions {
+    gap: 9px;
+  }
+  .profile-trigger {
+    min-height: 40px;
+  }
+  .game-content .daily-history {
+    max-height: 12dvh;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .game-close {
+    transition: none;
+  }
+  .game-close:hover {
+    transform: none;
+  }
+}
+.play-page .game-player {
+  grid-template-columns: 52px auto 6px;
+}
+.play-page .game-player > .player-look {
+  grid-row: 1;
+  grid-column: 1;
+}
+.play-page .game-player > span:not(.presence-dot) {
+  grid-row: 1;
+  grid-column: 2;
+}
+.game-content .drawing-canvas {
+  aspect-ratio: 4/3;
+}
+@media(max-width:700px){
+ .game-content .snake-board{width:min(100%,calc(100dvh - 320px));height:auto;align-self:center}
+ .game-content .snake-overlay strong{font-size:clamp(28px,8vw,48px)}
+}

@@ -786,6 +786,9 @@
 body:has(.profile-dialog[open]) {
   overflow: hidden;
 }
+.collection-count {font-size:11px;opacity:.75;margin-left:4px}
+.profile-dialog:has(.pixel-shop) {width:min(860px,calc(100% - 24px))}
+@media(min-width:701px){.cosmetic-grid.category-avatar{grid-template-columns:repeat(4,minmax(0,1fr))}.cosmetic-preview.slot-banner{height:130px}}
 .profile-dialog {
   margin: auto;
 }

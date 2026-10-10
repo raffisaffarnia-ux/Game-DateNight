@@ -370,7 +370,7 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
                         aria-pressed={category === x}
                         onClick={() => setCategory(x)}
                       >
-                        {x}s
+                        {x}s <span className="collection-count">{items.filter(item=>item.slot===x).length}</span>
                       </button>
                     ))}
                   </div>

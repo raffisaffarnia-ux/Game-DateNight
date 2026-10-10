@@ -7,9 +7,6 @@ export function Navigation() {
   const inRoom = usePathname().startsWith("/room/");
   const brand = (
     <>
-      <span className="brand-mark" aria-hidden="true">
-        dn
-      </span>
       DateNight<span className="brand-period">.io</span>
     </>
   );
@@ -23,6 +20,7 @@ export function Navigation() {
         </Link>
       )}
       <div className="navigation-actions">
+        <div id="pair-status" />
         {!inRoom && (
           <nav aria-label="Main navigation">
             <Link href="/games">

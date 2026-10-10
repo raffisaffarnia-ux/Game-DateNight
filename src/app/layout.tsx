@@ -4,6 +4,7 @@ import "./globals.css";
 import "@/games/games.css";
 import "@/games/experience.css";
 import "@/components/profile/profile.css";
+import "@/games/fullscreen.css";
 import { ProfileProvider } from "@/components/profile/provider";
 export const metadata: Metadata = {
   title: "DateNight.io — Private games for two",
