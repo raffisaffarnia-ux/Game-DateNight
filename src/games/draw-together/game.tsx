@@ -15,7 +15,7 @@ export function DrawingSetup({
 }: Pick<GameViewProps, "session" | "command" | "busy">) {
   return (
     <div className="game-setup">
-      <h2>Make your mark</h2>
+      <h2>Legt los</h2>
       <div className="choice-pair">
         {(["free", "guess"] as const).map((mode) => (
           <button
@@ -25,7 +25,7 @@ export function DrawingSetup({
             disabled={busy || session.ready.length > 0}
             onClick={() => void command("mode", { mode })}
           >
-            {mode === "free" ? "Free Draw" : "Guess My Drawing"}
+            {mode === "free" ? "Freies Zeichnen" : "Errate meine Zeichnung"}
           </button>
         ))}
       </div>
@@ -64,11 +64,11 @@ export function DrawTogether(props: GameViewProps & { replay: () => void }) {
   if (session.status === "finished")
     return (
       <GameResults
-        title="A picture of teamwork."
+        title="Ein Bild voller Teamwork."
         description={
           guessing
-            ? `${Object.values(session.state.scores || {}).reduce((sum, n) => sum + n, 0) / 2} drawings guessed together.`
-            : "Your shared canvas is saved."
+            ? `${Object.values(session.state.scores || {}).reduce((sum, n) => sum + n, 0) / 2} Zeichnungen gemeinsam erraten.`
+            : "Eure gemeinsame Leinwand ist gespeichert."
         }
         replay={replay}
         busy={busy}
@@ -98,9 +98,9 @@ export function DrawTogether(props: GameViewProps & { replay: () => void }) {
         <h2>
           {guessing
             ? canDraw
-              ? `Draw: ${word || "Loading…"}`
-              : `Guess ${artist?.name}’s drawing`
-            : "One canvas. Two imaginations."}
+              ? `Zeichne: ${word || "Lädt …"}`
+              : `Errate die Zeichnung von ${artist?.name}s Zeichnung`
+            : "Eine Leinwand. Zwei Ideen."}
         </h2>
         {!guessing && session.status === "playing" && (
           <Button
@@ -108,7 +108,7 @@ export function DrawTogether(props: GameViewProps & { replay: () => void }) {
             disabled={busy}
             onClick={() => void command("finish")}
           >
-            Finish
+            Beenden
           </Button>
         )}
         {guessing && canDraw && session.status === "playing" && (
@@ -117,7 +117,7 @@ export function DrawTogether(props: GameViewProps & { replay: () => void }) {
             disabled={busy}
             onClick={() => void command("skip")}
           >
-            Skip Word
+            Wort überspringen
           </Button>
         )}
       </div>
@@ -128,8 +128,8 @@ export function DrawTogether(props: GameViewProps & { replay: () => void }) {
       )}
       {wordError && canDraw && (
         <p className="error" role="alert">
-          The word could not be loaded.{" "}
-          <button onClick={() => setWordAttempt((n) => n + 1)}>Retry</button>
+          Das Wort konnte nicht geladen werden.{" "}
+          <button onClick={() => setWordAttempt((n) => n + 1)}>Erneut versuchen</button>
         </p>
       )}
       <DrawingCanvas
@@ -148,19 +148,19 @@ export function DrawTogether(props: GameViewProps & { replay: () => void }) {
       />
       {canDraw && session.status === "playing" && (
         <div className="drawing-toolbar">
-          <div className="paint-swatches" aria-label="Quick pen colors">
+          <div className="paint-swatches" aria-label="Schnellfarben">
             {[
-              { color: "#69516b", name: "Plum" },
-              { color: "#db5373", name: "Rose" },
-              { color: "#ed963d", name: "Amber" },
-              { color: "#308b78", name: "Teal" },
-              { color: "#4083d7", name: "Blue" },
-              { color: "#303631", name: "Ink" },
+              { color: "#69516b", name: "Pflaume" },
+              { color: "#db5373", name: "Rosa" },
+              { color: "#ed963d", name: "Bernstein" },
+              { color: "#308b78", name: "Türkis" },
+              { color: "#4083d7", name: "Blau" },
+              { color: "#303631", name: "Tinte" },
             ].map((paint) => (
               <button
                 key={paint.color}
                 type="button"
-                aria-label={`${paint.name} pen`}
+                aria-label={`${paint.name} wählen`}
                 aria-pressed={color === paint.color && tool === "pen"}
                 style={{ backgroundColor: paint.color }}
                 onClick={() => {
@@ -171,32 +171,32 @@ export function DrawTogether(props: GameViewProps & { replay: () => void }) {
             ))}
           </div>
           <button
-            aria-label="Pen"
+            aria-label="Stift"
             aria-pressed={tool === "pen"}
             onClick={() => setTool("pen")}
           >
             <PenLine size={19} />
           </button>
           <button
-            aria-label="Eraser"
+            aria-label="Radierer"
             aria-pressed={tool === "eraser"}
             onClick={() => setTool("eraser")}
           >
             <Eraser size={19} />
           </button>
           <label>
-            Color
+            Farbe
             <input
-              aria-label="Pen color"
+              aria-label="Stiftfarbe"
               type="color"
               value={color}
               onChange={(e) => setColor(e.target.value)}
             />
           </label>
           <label>
-            Size
+            Größe
             <input
-              aria-label="Brush size"
+              aria-label="Pinselgröße"
               type="range"
               min="0.002"
               max="0.04"
@@ -206,7 +206,7 @@ export function DrawTogether(props: GameViewProps & { replay: () => void }) {
             />
           </label>
           <button
-            aria-label="Undo your last stroke"
+            aria-label="Letzten Strich rückgängig machen"
             onClick={() => void drawing.undo()}
           >
             <Undo2 size={19} />
@@ -216,23 +216,23 @@ export function DrawTogether(props: GameViewProps & { replay: () => void }) {
             disabled={busy}
             onClick={() => void command("clear_request")}
           >
-            Request Clear
+            Leeren anfragen
           </Button>
         </div>
       )}
       {session.state.clear_requested_by && (
         <div className="notice" role="status">
           {session.state.clear_requested_by === userId ? (
-            "Waiting for your partner to confirm clearing the canvas."
+            "Warte darauf, dass dein Lieblingsmensch das Leeren bestätigt."
           ) : (
             <>
-              Your partner wants to clear the canvas.{" "}
+              Dein Lieblingsmensch möchte die Leinwand leeren.{" "}
               <Button
                 secondary
                 disabled={busy}
                 onClick={() => void command("clear_confirm")}
               >
-                Clear Canvas
+                Leinwand leeren
               </Button>
             </>
           )}
@@ -249,35 +249,35 @@ export function DrawTogether(props: GameViewProps & { replay: () => void }) {
           }}
         >
           <label className="sr-only" htmlFor="drawing-guess">
-            Your guess
+            Deine Vermutung
           </label>
           <input
             id="drawing-guess"
             name="guess"
-            placeholder="Your guess…"
+            placeholder="Deine Vermutung…"
             maxLength={80}
             required
             autoComplete="off"
           />
-          <Button disabled={busy}>Guess</Button>
+          <Button disabled={busy}>Raten</Button>
         </form>
       )}
       {session.state.last_guess && session.status === "playing" && (
         <p className="field-note" role="status">
-          “{session.state.last_guess}” — keep guessing.
+          “{session.state.last_guess}” — Rate weiter.
         </p>
       )}
       {session.status === "round_end" && (
         <div className="round-transition" role="status">
           <RoundMoment
             success={!!session.state.accepted}
-            title={session.state.accepted ? "You got it!" : "Next inspiration."}
+            title={session.state.accepted ? "Richtig geraten!" : "Nächste Inspiration."}
           />
-          <p>The word was {word || session.state.revealed_word}.</p>
+          <p>Das Wort war {word || session.state.revealed_word}.</p>
           <Button disabled={busy} onClick={() => void command("next")}>
             {session.round + 1 === session.total_rounds
-              ? "See Results"
-              : "Next Drawing"}
+              ? "Ergebnisse ansehen"
+              : "Nächste Zeichnung"}
           </Button>
         </div>
       )}

@@ -14,7 +14,7 @@ export function DeepTalkSetup({
 }: Pick<GameViewProps, "session" | "command" | "busy">) {
   return (
     <div className="game-setup">
-      <h2>Choose tonight’s vibe</h2>
+      <h2>Wählt eure Stimmung für heute</h2>
       <div className="deck-grid">
         {[...new Set(deepTalkQuestions.map((q) => q.category))].map((deck) => (
           <button
@@ -66,8 +66,8 @@ export function DeepTalk({
     <>
       {session.status === "finished" ? (
         <GameResults
-          title="A conversation to keep."
-          description={`${session.total_rounds} cards, just the two of you.`}
+          title="Ein Gespräch, das bleibt."
+          description={`${session.total_rounds} Karten – nur ihr zwei.`}
           replay={replay}
           busy={busy}
         />
@@ -95,37 +95,37 @@ export function DeepTalk({
                     saved.includes(question?.id || "") ? "currentColor" : "none"
                   }
                 />
-                {saved.includes(question?.id || "") ? "Saved" : "Save"}
+                {saved.includes(question?.id || "") ? "Gespeichert" : "Speichern"}
               </Button>
               <Button
                 disabled={busy || chooser?.user_id !== userId}
                 onClick={() => void command("next")}
               >
                 {session.round + 1 === session.total_rounds
-                  ? "Finish Deck"
-                  : "Next Question"}
+                  ? "Stapel beenden"
+                  : "Nächste Frage"}
               </Button>
             </div>
             <p className="field-note">
               {chooser?.user_id === userId
-                ? "Your turn"
-                : `${chooser?.name}’s turn`}{" "}
-              to choose the next card.
+                ? "Du bist dran"
+                : `${chooser?.name} ist dran`}{" "}
+              und wählt die nächste Karte.
             </p>
           </Card>
         </>
       )}
       {loadError && (
-        <p className="notice">Saved conversations could not be loaded.</p>
+        <p className="notice">Gespeicherte Gespräche konnten nicht geladen werden.</p>
       )}
       <details className="saved-conversations">
-        <summary>Saved conversations · {saved.length}</summary>
+        <summary>Gespeicherte Gespräche · {saved.length}</summary>
         {saved.length ? (
           saved.map((id) => (
             <p key={id}>{deepTalkQuestions.find((q) => q.id === id)?.prompt}</p>
           ))
         ) : (
-          <p>Save a card to come back to it.</p>
+          <p>Speichere eine Frage, um später darauf zurückzukommen.</p>
         )}
       </details>
     </>

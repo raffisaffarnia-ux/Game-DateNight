@@ -67,11 +67,11 @@ export function PairFlames() {
     <span
       className="pair-flames"
       key={flames}
-      title="Games completed with this partner. Your flames never expire."
+      title="Gemeinsame Spielrunden. Eure Flammen bleiben für immer."
     >
       <Flame size={22} fill="currentColor" />
       <strong>{flames}</strong>
-      <span>together</span>
+      <span>gemeinsam</span>
     </span>,
     slot,
   );

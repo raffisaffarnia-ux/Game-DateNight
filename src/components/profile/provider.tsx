@@ -199,7 +199,7 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
           </div>
           <Coin />
           <div>
-            <strong>+{reward.coins} coins</strong>
+            <strong>+{reward.coins} Münzen</strong>
             <span>{reward.label}</span>
           </div>
           <Sparkles size={22} />
@@ -208,27 +208,27 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
       <dialog
         ref={dialog}
         className="profile-dialog"
-        aria-label="Your player profile"
+        aria-label="Dein Spielerprofil"
         onClick={(e) => {
           if (e.target === e.currentTarget) dialog.current?.close();
         }}
       >
         <div className="profile-panel">
           <header className="profile-panel-top">
-            <span className="eyebrow">YOUR LITTLE WORLD</span>
+            <span className="eyebrow">EURE KLEINE WELT</span>
             <button
               className="profile-close"
-              aria-label="Close profile"
+              aria-label="Profil schließen"
               onClick={() => dialog.current?.close()}
             >
               <X size={21} />
             </button>
           </header>
-          <div className="profile-tabs" role="group" aria-label="Player menu">
+          <div className="profile-tabs" role="group" aria-label="Profilmenü">
             {[
-              ["profile", "Profile", UserRound],
-              ["shop", "Pixel shop", ShoppingBag],
-              ["account", "Account", LockKeyhole],
+              ["profile", "Profil", UserRound],
+              ["shop", "Pixel-Shop", ShoppingBag],
+              ["account", "Konto", LockKeyhole],
             ].map(([id, label, Icon]) => {
               const I = Icon as typeof UserRound;
               return (
@@ -258,7 +258,7 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
             </p>
           )}
           {!profile ? (
-            <p role="status">Connecting your profile…</p>
+            <p role="status">Profil wird verbunden …</p>
           ) : (
             <>
               {tab === "profile" && (
@@ -274,7 +274,7 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
                     <div>
                       <h2>{profile.name}</h2>
                       <span>
-                        {guest ? "Guest player" : "Your player account"}
+                        {guest ? "Gast" : "Dein Konto"}
                       </span>
                     </div>
                     <div className="profile-balance">
@@ -290,11 +290,11 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
                         .toString();
                       void run(async () => {
                         await rpc("update_profile", { display_name: name });
-                        setMessage("Looking good. Profile saved.");
+                        setMessage("Sieht gut aus. Profil gespeichert.");
                       });
                     }}
                   >
-                    <label htmlFor="profile-name">Player name</label>
+                    <label htmlFor="profile-name">Spielername</label>
                     <div className="profile-name-row">
                       <input
                         id="profile-name"
@@ -305,7 +305,7 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
                         key={profile.user_id}
                       />
                       <Button disabled={busy} type="submit">
-                        Save
+                        Speichern
                       </Button>
                     </div>
                   </form>
@@ -314,39 +314,38 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
                     onClick={() => setTab("shop")}
                   >
                     <div>
-                      <span>MAKE IT YOURS</span>
-                      <strong>A little pixel magic.</strong>
-                      <small>Avatars, worlds & tiny trophies</small>
+                      <span>MACH ES ZU DEINEM</span>
+                      <strong>Ein bisschen Pixelmagie.</strong>
+                      <small>Avatare, Welten und kleine Trophäen</small>
                     </div>
                     <PixelArt id="fox" />
                     <span aria-hidden="true">↗</span>
                   </button>
                   <div className="reward-rules">
                     <h3>
-                      <Sparkles size={17} /> Play. Connect. Collect
+                      <Sparkles size={17} /> Spielen. Verbinden. Sammeln
                     </h3>
                     <p>
-                      <Coin /> Matching or correct answer <strong>+5</strong>
+                      <Coin /> Gleiche oder richtige Antwort <strong>+5</strong>
                     </p>
                     <p>
-                      <Coin /> Completed game / daily answer{" "}
+                      <Coin /> Abgeschlossenes Spiel / Tagesantwort{" "}
                       <strong>+10</strong>
                     </p>
                     <p>
-                      <Coin /> Snake victory bonus <strong>+20</strong>
+                      <Coin /> Snake-Sieg <strong>+20</strong>
                     </p>
                     <p>
-                      <Flame size={19} /> Finished together{" "}
+                      <Flame size={19} /> Gemeinsam gespielt{" "}
                       <strong>+1 flame</strong>
                     </p>
                     <small>
-                      50 welcome coins. Cosmetics only. No real money.
+                      50 Startmünzen. Nur kosmetische Extras. Kein echtes Geld.
                     </small>
                   </div>
                   {guest && (
                     <p className="guest-note">
-                      Your guest profile stays in this browser. Clearing browser
-                      data can lose access. Account sign-in is being prepared.
+                      Dein Gastprofil bleibt in diesem Browser. Beim Löschen der Browserdaten kann der Zugriff verloren gehen.
                     </p>
                   )}
                 </section>
@@ -355,15 +354,15 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
                 <section className="pixel-shop">
                   <div className="shop-heading">
                     <div>
-                      <span className="eyebrow">THE PIXEL COLLECTION</span>
-                      <h2>Small things. Big personality</h2>
+                      <span className="eyebrow">DIE PIXEL-SAMMLUNG</span>
+                      <h2>Kleine Details. Große Persönlichkeit</h2>
                     </div>
                     <span className="wallet-pill">
                       <Coin />
                       {profile.coins}
                     </span>
                   </div>
-                  <div className="shop-categories" aria-label="Shop categories">
+                  <div className="shop-categories" aria-label="Shop-Kategorien">
                     {["avatar", "banner", "badge"].map((x) => (
                       <button
                         key={x}
@@ -432,7 +431,7 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
                       })}
                   </div>
                   <p className="field-note">
-                    Earned in your games. Yours to keep.
+                    Verdiene Münzen beim Spielen und behalte sie.
                   </p>
                 </section>
               )}
@@ -441,12 +440,11 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
                   <span className="round-icon">
                     <LockKeyhole />
                   </span>
-                  <h2>{guest ? "Keep your little world" : "Welcome back"}</h2>
+                  <h2>{guest ? "Bewahre deine kleine Welt" : "Willkommen zurück"}</h2>
                   {guest ? (
                     <>
                       <p>
-                        Your guest profile works now. New account registration
-                        will open once email delivery is connected.
+                        Dein Gastprofil ist einsatzbereit. Eine Registrierung wird später möglich.
                       </p>
                       <form
                         onSubmit={(e) => {
@@ -460,13 +458,13 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
                               });
                             if (r.error) throw r.error;
                             setMessage(
-                              "Signed in. Your account profile is restored.",
+                              "Angemeldet. Dein Profil wurde wiederhergestellt.",
                             );
                           });
                         }}
                       >
-                        <h3>Already have an account?</h3>
-                        <label htmlFor="login-email">Email</label>
+                        <h3>Hast du schon ein Konto?</h3>
+                        <label htmlFor="login-email">E-Mail</label>
                         <input
                           id="login-email"
                           name="email"
@@ -474,7 +472,7 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
                           required
                           autoComplete="email"
                         />
-                        <label htmlFor="login-password">Password</label>
+                        <label htmlFor="login-password">Passwort</label>
                         <input
                           id="login-password"
                           name="password"
@@ -490,7 +488,7 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
                           }
                           type="submit"
                         >
-                          Sign in
+                          Anmelden
                         </Button>
                         <small>
                           Switch accounts outside a room. Guest progress is
@@ -502,7 +500,7 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
                     <>
                       <p>{email}</p>
                       <p>
-                        Your profile, coins and collection follow this account.
+                        Dein Profil, deine Münzen und deine Sammlung gehören zu diesem Konto.
                       </p>
                       <Button
                         secondary
@@ -518,7 +516,7 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
                           })
                         }
                       >
-                        Sign out
+                        Abmelden
                       </Button>
                     </>
                   )}
@@ -537,7 +535,7 @@ export function ProfileButton() {
     <button
       className="profile-trigger"
       onClick={open}
-      aria-label="Open your profile and pixel shop"
+      aria-label="Profil und Pixel-Shop öffnen"
     >
       <span className="wallet-pill">
         <Coin />
@@ -548,8 +546,8 @@ export function ProfileButton() {
       <PixelArt id={profile?.avatar} />
       <span className="profile-trigger-name">
         {profile?.name === "Player"
-          ? "Your profile"
-          : profile?.name || "Your profile"}
+          ? "Dein Profil"
+          : profile?.name || "Dein Profil"}
       </span>
     </button>
   );

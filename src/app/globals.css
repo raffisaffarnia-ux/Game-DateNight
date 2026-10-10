@@ -465,7 +465,7 @@ form > .button {
 }
 .game-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 23px;
 }
 .game-card {
@@ -558,10 +558,13 @@ form > .button {
 }
 .game-details {
   padding: 23px;
+  min-height: 230px;
+  display: flex;
+  flex-direction: column;
 }
 .game-meta {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 8px;
   align-items: center;
   font-size: 10px;
@@ -578,7 +581,7 @@ form > .button {
 }
 .game-details h2 {
   font-size: 22px;
-  margin: 18px 0 12px;
+  margin: 12px 0 10px;
 }
 .game-details p {
   font-size: 13px;
@@ -589,7 +592,8 @@ form > .button {
   justify-content: space-between;
   align-items: center;
   gap: 10px;
-  margin-top: 27px;
+  margin-top: auto;
+  padding-top: 20px;
 }
 .game-card-bottom > span {
   display: flex;
@@ -891,7 +895,7 @@ i.online {
   }
   .game-grid {
     grid-template-columns: 1fr;
-    gap: 25px;
+    gap: 20px;
   }
   .game-card {
     padding: 0;
@@ -958,4 +962,14 @@ i.online {
   .button {
     border: 2px solid currentColor;
   }
+}
+
+/* A calm, consistent cover system across the full library. */
+.game-art.bomb { background:#f3ded7; color:#a85b4a; }
+.game-art.moral { background:#e8e1f0; color:#766185; }
+.game-art.rank { background:#f4e7cf; color:#9b7440; }
+.game-art.bomb .art-icon,.game-art.moral .art-icon,.game-art.rank .art-icon { width:82px; height:82px; stroke-width:1; }
+.game-details .game-meta { min-height:14px; }
+@media (min-width:701px) and (max-width:1050px) {
+  .game-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
 }

@@ -9,7 +9,7 @@ import { RoundMoment } from "../shared/effects";
 export function DailyUs({ session, players, userId }: GameViewProps) {
   const daily = useDaily(session.room_id);
   const dateLabel = (day: string) =>
-    new Intl.DateTimeFormat("en", {
+    new Intl.DateTimeFormat("de", {
       dateStyle: "long",
       timeZone: "UTC",
     }).format(new Date(`${day}T12:00:00Z`));
@@ -21,7 +21,7 @@ export function DailyUs({ session, players, userId }: GameViewProps) {
           <strong>
             {daily.answers.find(
               (a) => a.entry_id === entry.id && a.user_id === p.user_id,
-            )?.value || "Not answered"}
+            )?.value || "Noch offen"}
           </strong>
         </div>
       ))}
@@ -37,11 +37,11 @@ export function DailyUs({ session, players, userId }: GameViewProps) {
         <p className="error" role="alert">
           {daily.error}
         </p>
-        <Button onClick={daily.retry}>Retry</Button>
+        <Button onClick={daily.retry}>Erneut versuchen</Button>
       </Card>
     );
   if (!current || !daily.context)
-    return <Loading label="Loading today’s question…" />;
+    return <Loading label="Die heutige Frage wird geladen …" />;
   return (
     <>
       <div className="daily-meta">
@@ -50,44 +50,43 @@ export function DailyUs({ session, players, userId }: GameViewProps) {
         </span>
         <span>
           <Flame size={18} />
-          {daily.context.streak} day{daily.context.streak === 1 ? "" : "s"}{" "}
-          together
+          {daily.context.streak} {daily.context.streak === 1 ? "Tag" : "Tage"} zusammen
         </span>
       </div>
       <Card className="question-stage">
         <div className="daily-sun" aria-hidden="true">
           <Sun size={48} />
         </div>
-        <span className="eyebrow">ONE QUESTION. EVERY DAY.</span>
+        <span className="eyebrow">EINE FRAGE. JEDEN TAG.</span>
         <h2>
           {dailyQuestions.find((q) => q.id === current.question_id)?.prompt}
         </h2>
         {current.revealed ? (
           <>
-            <RoundMoment title="Another day, a little closer." />
+            <RoundMoment title="Ein Tag näher." />
             {renderAnswers(current)}
           </>
         ) : mine ? (
           <div role="status">
-            <p>Answer saved. Waiting for your partner…</p>
+            <p>Antwort gespeichert. Warte auf deinen Lieblingsmenschen …</p>
             <blockquote>{mine.value}</blockquote>
           </div>
         ) : (
           <AnswerForm
             key={current.id}
-            label="Your answer"
+            label="Deine Antwort"
             onSubmit={daily.submit}
             disabled={daily.busy}
           />
         )}
         <p className="field-note">
-          {daily.context.timezone} · Answers reveal when you’ve both replied.
+          {daily.context.timezone} · Eure Antworten erscheinen, sobald ihr beide geantwortet habt.
         </p>
       </Card>
       <section className="daily-history">
-        <h2>Our Daily Us</h2>
+        <h2>Unser Alltag</h2>
         {daily.entries.length === 1 && (
-          <p>Your shared days will appear here.</p>
+          <p>Eure gemeinsamen Tage erscheinen hier.</p>
         )}
         {daily.entries
           .filter((e) => e.id !== current.id)
@@ -96,7 +95,7 @@ export function DailyUs({ session, players, userId }: GameViewProps) {
               <summary>
                 <span>{dateLabel(entry.day)}</span>
                 <span>
-                  {entry.revealed ? "● Completed" : "○ Not completed"}
+                  {entry.revealed ? "● Abgeschlossen" : "○ Offen"}
                 </span>
               </summary>
               <h3>
@@ -108,14 +107,14 @@ export function DailyUs({ session, players, userId }: GameViewProps) {
                 <p>
                   {daily.answers.find(
                     (a) => a.entry_id === entry.id && a.user_id === userId,
-                  )?.value || "No answer saved."}
+                  )?.value || "Noch keine Antwort gespeichert."}
                 </p>
               )}
             </details>
           ))}
         {daily.canLoadMore && (
           <Button secondary onClick={daily.more}>
-            Load Earlier Days
+            Frühere Tage laden
           </Button>
         )}
       </section>

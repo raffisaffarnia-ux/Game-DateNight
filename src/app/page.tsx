@@ -6,20 +6,20 @@ export default function Home() {
       <section className="hero">
         <div className="hero-copy">
           <h1>
-            Date night,
-            <br /> wherever you are
+            Date Night,
+            <br /> egal, wo ihr seid
           </h1>
-          <p>Private games for two, in one shared room.</p>
+          <p>Private Spiele für euch zwei.</p>
           <div className="hero-actions">
             <Link className="button primary" href="/create">
-              Create a Room <ArrowRight size={17} />
+              Raum erstellen <ArrowRight size={17} />
             </Link>
             <Link className="button secondary" href="/join">
-              Join a Room
+              Raum beitreten
             </Link>
           </div>
           <div className="hero-note">
-            <LockKeyhole size={13} /> Private. Two players only.
+            <LockKeyhole size={13} /> Privat. Nur für euch zwei.
           </div>
         </div>
         <div
@@ -35,7 +35,7 @@ export default function Home() {
               <i />
               <i />
             </span>
-            <span>Two places. One date.</span>
+            <span>Zwei Orte. Ein Date.</span>
           </div>
         </div>
       </section>

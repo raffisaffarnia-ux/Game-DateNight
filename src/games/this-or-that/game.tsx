@@ -33,8 +33,8 @@ export function ThisOrThat({
   if (session.status === "finished")
     return (
       <GameResults
-        title={`${session.state.matches || 0} / ${session.total_rounds} matches`}
-        description={`${Math.round(((session.state.matches || 0) / session.total_rounds) * 100)}% Same Brain`}
+        title={`${session.state.matches || 0} / ${session.total_rounds} Übereinstimmungen`}
+        description={`${Math.round(((session.state.matches || 0) / session.total_rounds) * 100)}% gleicher Gedanke`}
         replay={replay}
         busy={busy}
       >
@@ -45,7 +45,7 @@ export function ThisOrThat({
             const match = a.length === 2 && a[0].value === a[1].value;
             return (
               <li key={id}>
-                <span>{match ? "✓ Match" : "↔ Different"}</span>
+                <span>{match ? "✓ Gleich entschieden" : "↔ Anders entschieden"}</span>
                 <span>
                   {a
                     .map((v) => (v.value === "A" ? q.optionA : q.optionB))
@@ -61,7 +61,7 @@ export function ThisOrThat({
   if (!question)
     return (
       <p className="error">
-        This question is unavailable. Return to Games and start a new session.
+        Diese Frage ist nicht verfügbar. Geh zurück zur Spieleauswahl und starte eine neue Runde.
       </p>
     );
   return (
@@ -69,7 +69,7 @@ export function ThisOrThat({
       <GameProgress round={session.round} total={session.total_rounds}>
         <span>
           {session.state.matches || 0}{" "}
-          {session.state.matches === 1 ? "match" : "matches"}
+          {session.state.matches === 1 ? "Übereinstimmung" : "Übereinstimmungen"}
         </span>
       </GameProgress>
       <Card
@@ -85,8 +85,8 @@ export function ThisOrThat({
               }
               title={
                 current.length === 2 && current[0].value === current[1].value
-                  ? "Same wavelength!"
-                  : "A little different. Still you two."
+                  ? "Auf einer Wellenlänge!"
+                  : "Ein bisschen anders – und doch ganz ihr."
               }
             />
             <div className="answer-pair">
@@ -103,13 +103,13 @@ export function ThisOrThat({
             </div>
             <Button disabled={busy} onClick={() => void command("next")}>
               {session.round + 1 === session.total_rounds
-                ? "See Results"
-                : "Next Round"}
+                ? "Ergebnisse ansehen"
+                : "Nächste Runde"}
             </Button>
           </div>
         ) : (
           <>
-            <h2>What would you choose?</h2>
+            <h2>Wofür würdest du dich entscheiden?</h2>
             <div className="choice-pair">
               {(["A", "B"] as const).map((option) => (
                 <button
@@ -124,7 +124,7 @@ export function ThisOrThat({
                     {option === "A" ? question.optionA : question.optionB}
                   </strong>
                   {selected === option && (
-                    <span>{mine ? "✓ Locked" : "Saving…"}</span>
+                    <span>{mine ? "✓ Festgelegt" : "Wird gespeichert …"}</span>
                   )}
                 </button>
               ))}
@@ -133,7 +133,7 @@ export function ThisOrThat({
               </span>
             </div>
             {mine && (
-              <p role="status">Answer locked. Waiting for your partner…</p>
+              <p role="status">Antwort gespeichert. Warte auf deinen Lieblingsmenschen …</p>
             )}
           </>
         )}

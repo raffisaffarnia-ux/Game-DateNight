@@ -31,7 +31,7 @@ export function PlayerIndicator({
       />
       <span>
         {player.name}
-        {you ? " (you)" : ""}
+        {you ? " (du)" : ""}
       </span>
       <small>{online ? "Online" : "Offline"}</small>
     </div>
@@ -66,7 +66,7 @@ export function GameShell({
       <header className="game-shell-header">
         <div className="game-title">
           <span className="game-kicker">
-            <Gamepad2 size={14} /> TONIGHT, WE PLAY
+            <Gamepad2 size={14} /> HEUTE SPIELEN WIR
           </span>
           <h1>{title}</h1>
         </div>
@@ -83,20 +83,20 @@ export function GameShell({
         <button
           className="game-close"
           onClick={exit}
-          aria-label="Close game and return to games"
-          title="Close game"
+          aria-label="Spiel schließen und zurück zur Spieleauswahl"
+          title="Spiel schließen"
         >
           <X size={23} />
         </button>
       </header>
       {!connected && (
         <p className="notice" role="status">
-          Reconnecting… Your progress is saved.
+          Verbindung wird hergestellt … Dein Fortschritt ist gespeichert.
         </p>
       )}
       {connected && online.length < 2 && (
         <p className="notice" role="status">
-          Your partner is offline. Their place is saved.
+          Dein Lieblingsmensch ist offline. Der Platz bleibt reserviert.
         </p>
       )}
       <div className="game-content">{children}</div>
@@ -137,10 +137,10 @@ export function ReadyState({
             <span>
               {session.ready.includes(p.user_id) ? (
                 <>
-                  <Check size={15} /> Ready
+                  <Check size={15} /> Bereit
                 </>
               ) : (
-                "Not ready yet"
+                "Noch nicht bereit"
               )}
             </span>
           </div>
@@ -149,15 +149,15 @@ export function ReadyState({
       <Button disabled={disabled || locked} onClick={ready}>
         {locked ? (
           <>
-            <Check size={18} /> You’re ready
+            <Check size={18} /> Du bist bereit
           </>
         ) : (
           <>
-            <Sparkles size={18} /> Let’s Play
+            <Sparkles size={18} /> Play
           </>
         )}
       </Button>
-      <p className="field-note">The game begins when you’re both ready.</p>
+      <p className="field-note">Das Spiel beginnt, sobald ihr beide bereit seid.</p>
     </Card>
   );
 }
@@ -173,10 +173,10 @@ export function GameProgress({
   return (
     <div className="game-progress">
       <span>
-        Round {Math.min(round + 1, total)} of {total}
+        Runde {Math.min(round + 1, total)} von {total}
       </span>
       {children}
-      <progress value={round + 1} max={total} aria-label="Round progress" />
+      <progress value={round + 1} max={total} aria-label="Runde progress" />
     </div>
   );
 }
@@ -197,12 +197,12 @@ export function GameResults({
     <Card className="game-results">
       <Celebration />
       <ResultTrophy />
-      <span className="eyebrow">THE TWO OF YOU</span>
+      <span className="eyebrow">IHR ZWEI</span>
       <h2>{title}</h2>
       {description && <p>{description}</p>}
       {children}
       <Button disabled={busy} onClick={replay}>
-        <RotateCcw size={16} /> Play Again
+        <RotateCcw size={16} /> Nochmal spielen
       </Button>
     </Card>
   );
@@ -238,7 +238,7 @@ export function AnswerForm({
         disabled={disabled}
       />
       <Button type="submit" disabled={disabled}>
-        <LockKeyhole size={16} /> Lock Answer
+        <LockKeyhole size={16} /> Antwort festlegen
       </Button>
     </form>
   );

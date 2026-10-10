@@ -1,5 +1,5 @@
-.game-art.bomb,.game-art.moral,.game-art.rank { background: radial-gradient(circle at 75% 22%, color-mix(in srgb,var(--accent) 20%,var(--card)), var(--soft)); }
-.game-art.bomb .art-icon,.game-art.moral .art-icon,.game-art.rank .art-icon { width:52px;height:52px;stroke-width:1.35;color:var(--accent); }
+.game-art.bomb { background:#f3ded7; color:#a85b4a; } .game-art.moral { background:#e8e1f0; color:#766185; } .game-art.rank { background:#f4e7cf; color:#9b7440; }
+.game-art.bomb .art-icon,.game-art.moral .art-icon,.game-art.rank .art-icon { width:82px;height:82px;stroke-width:1;color:var(--accent); }
 .room-toolbar-actions,.room-toolbar-end { display:flex;align-items:center;gap:10px; }
 .room-toolbar-end { margin-left:auto; }
 .room-toolbar-button { min-height:44px;padding:0 16px;display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--line);border-radius:14px;background:var(--card);color:var(--ink);font:inherit;font-size:13px;font-weight:550;text-decoration:none;cursor:pointer;transition:background .16s ease,border-color .16s ease,transform .16s ease; }

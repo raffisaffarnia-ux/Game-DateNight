@@ -40,11 +40,11 @@ export function PlayerPresence({
         </div>
       )}
       <h2>
-        {member?.name || "Partner"} {you && <small>(you)</small>}
+        {member?.name || "Partner"} {you && <small>(du)</small>}
       </h2>
       <span className="player-status">
         <i className={online ? "online" : ""} />
-        {!member ? "Waiting" : online ? "Online" : "Offline · seat saved"}
+        {!member ? "Wartet" : online ? "Online" : "Offline · Platz bleibt reserviert"}
       </span>
     </div>
   );
@@ -92,7 +92,7 @@ function LobbyContent({ id }: { id: string }) {
       setCopied(kind);
     } catch {
       setActionError(
-        "Copy was unavailable. Select and copy the room code below.",
+        "Kopieren nicht möglich. Markiere und kopiere den Raumcode.",
       );
     }
   }
@@ -100,13 +100,13 @@ function LobbyContent({ id }: { id: string }) {
     return (
       <main id="main" className="narrow-page">
         <Card>
-          <h1>Room unavailable</h1>
+          <h1>Raum nicht verfügbar</h1>
           <p className="error" role="alert">
             {error}
           </p>
-          <Button onClick={retry}>Try Again</Button>
+          <Button onClick={retry}>Erneut versuchen</Button>
           <Link className="back-link" href="/join">
-            Open an invitation
+            Einladung öffnen
           </Link>
         </Card>
       </main>
@@ -137,26 +137,26 @@ function LobbyContent({ id }: { id: string }) {
               className="room-toolbar-button room-back-button"
               onClick={() => setView("lobby")}
             >
-              <ArrowLeft size={16} /> Your room
+              <ArrowLeft size={16} /> Euer Raum
             </button>
           )}
         </div>
         <div className="room-toolbar-end">
           {!room.active_session_id && (
             <Link href="/" className="room-toolbar-button">
-              <House size={16} /> Home
+              <House size={16} /> Startseite
             </Link>
           )}
           <span className="connection" role="status">
             <i className={status === "Connected" ? "online" : ""} />
-            {status}
+            {status === "Connected" ? "Verbunden" : status === "Connecting" ? "Verbindung wird hergestellt …" : status === "Disconnected" ? "Getrennt" : status}
           </span>
         </div>
       </div>
       {status !== "Connected" && (
         <p className="notice">
-          Your connection was interrupted. Your seats are saved.{" "}
-          <button onClick={retry}>Reconnect</button>
+          Verbindung unterbrochen. Eure Plätze bleiben reserviert.{" "}
+          <button onClick={retry}>Erneut verbinden</button>
         </p>
       )}
       {actionError && (
@@ -182,7 +182,7 @@ function LobbyContent({ id }: { id: string }) {
         <>
           {!ready && (
             <p className="notice">
-              Both players need to be online to start a game.
+              Zum Spielen müssen beide online sein.
             </p>
           )}
           <GamesLibrary
@@ -193,9 +193,9 @@ function LobbyContent({ id }: { id: string }) {
       ) : (
         <>
           <div className="room-heading">
-            <h1>Private room</h1>
+            <h1>Privater Raum</h1>
             <p>
-              {ready ? "Both players are online." : "Waiting for your partner."}
+              {ready ? "Ihr seid beide online." : "Warte auf deinen Lieblingsmenschen."}
             </p>
           </div>
           <Card className="lobby-card">
@@ -215,18 +215,18 @@ function LobbyContent({ id }: { id: string }) {
               />
             </div>
             <div className="invite">
-              <span className="eyebrow">YOUR INVITATION CODE</span>
+              <span className="eyebrow">DEIN EINLADUNGSCODE</span>
               <button
                 className="room-code"
                 onClick={() => void copy("code")}
-                aria-label={`Copy room code ${room.code}`}
+                aria-label={`Raumcode kopieren ${room.code}`}
               >
                 {room.code}
                 {copied === "code" ? <Check size={19} /> : <Copy size={19} />}
               </button>
-              <p>Share the code or invite link.</p>
+              <p>Teile den Code oder Einladungslink.</p>
               <label className="sr-only" htmlFor="invite-link">
-                Invite link
+                Einladungslink
               </label>
               <input
                 id="invite-link"
@@ -236,24 +236,24 @@ function LobbyContent({ id }: { id: string }) {
                 onFocus={(event) => event.target.select()}
               />
               <Button secondary onClick={() => void copy("link")}>
-                {copied === "link" ? <Check size={16} /> : <Link2 size={16} />}{" "}
-                {copied === "link" ? "Link Copied" : "Copy Invite Link"}
+                {kopiert === "link" ? <Check size={16} /> : <Link2 size={16} />}{" "}
+                {kopiert === "link" ? "Link kopiert" : "Einladungslink kopieren"}
               </Button>
               <span className="sr-only" role="status">
-                {copied ? `${copied} copied` : ""}
+                {copied ? `${copied} kopiert` : ""}
               </span>
             </div>
             <Button disabled={!ready} onClick={() => setView("library")}>
-              Explore the Games <ArrowRight size={17} />
+              Spiele entdecken <ArrowRight size={17} />
             </Button>
             {!ready && (
               <p className="field-note center">
-                Available when both players are online.
+                Verfügbar, sobald ihr beide online seid.
               </p>
             )}
           </Card>
           <p className="room-footnote">
-            <LockKeyhole size={13} /> Two players · Your seats stay saved
+            <LockKeyhole size={13} /> Zwei Personen · eure Plätze bleiben reserviert
           </p>
         </>
       )}

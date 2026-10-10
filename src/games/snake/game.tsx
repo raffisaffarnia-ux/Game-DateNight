@@ -14,8 +14,8 @@ export function SnakeSetup({
 }: Pick<GameViewProps, "session" | "command" | "busy">) {
   return (
     <div className="game-setup">
-      <h2>Two snakes. Your rules</h2>
-      <div className="choice-pair snake-modes" aria-label="Snake mode">
+      <h2>Zwei Schlangen. Eure Regeln</h2>
+      <div className="choice-pair snake-modes" aria-label="Snake-Modus">
         {(["versus", "together"] as const).map((mode) => (
           <button
             key={mode}
@@ -25,12 +25,12 @@ export function SnakeSetup({
             onClick={() => void command("mode", { mode })}
           >
             <strong>
-              {mode === "versus" ? "Head to head" : "Better together"}
+              {mode === "versus" ? "Gegeneinander" : "Miteinander"}
             </strong>
             <span>
               {mode === "versus"
-                ? "Outlast your partner."
-                : `Collect ${TEAM_GOAL} apples as a team.`}
+                ? "Halte länger durch als dein Lieblingsmensch."
+                : `Collect ${TEAM_GOAL} Äpfel gemeinsam.`}
             </span>
           </button>
         ))}
@@ -38,8 +38,8 @@ export function SnakeSetup({
       <p className="field-note">
         Cross an edge to appear on the other side.
         {session.state.snake_mode === "together"
-          ? " Pass through your partner; avoid your own body."
-          : " Avoid both snakes’ bodies."}
+          ? " Gehe durch die andere Schlange und weiche deiner eigenen aus."
+          : " Weicht euren Schlangenkörpern aus."}
       </p>
     </div>
   );
@@ -93,17 +93,17 @@ export function SnakeGame(props: GameViewProps & { replay: () => void }) {
         title={
           together
             ? teamScore >= TEAM_GOAL
-              ? "Together, you did it!"
-              : "One team. One more try?"
+              ? "Gemeinsam geschafft!"
+              : "Ein Team. Noch ein Versuch?"
             : shown.winner
-              ? `${props.players.find((p) => p.user_id === shown.winner)?.name} wins!`
-              : "A perfect tie."
+              ? `${props.players.find((p) => p.user_id === shown.winner)?.name} gewinnt!`
+              : "Unentschieden!"
         }
         replay={props.replay}
         busy={props.busy}
         description={
           together
-            ? `${teamScore} / ${TEAM_GOAL} apples collected together.`
+            ? `${teamScore} / ${TEAM_GOAL} Äpfel gemeinsam gesammelt.`
             : undefined
         }
       >
@@ -122,8 +122,8 @@ export function SnakeGame(props: GameViewProps & { replay: () => void }) {
   return (
     <Card className="snake-card">
       <div className="snake-mode-label">
-        <span>{together ? "BETTER TOGETHER" : "HEAD TO HEAD"}</span>
-        <span>↔ Wraparound arena</span>
+        <span>{together ? "MITEINANDER" : "GEGENEINANDER"}</span>
+        <span>↔ Spielfeld ohne Rand</span>
       </div>
       {together && (
         <div className="team-goal">
@@ -133,7 +133,7 @@ export function SnakeGame(props: GameViewProps & { replay: () => void }) {
           <progress
             value={teamScore}
             max={TEAM_GOAL}
-            aria-label="Shared apple goal"
+            aria-label="Gemeinsames Apfelziel"
           />
         </div>
       )}
@@ -156,7 +156,7 @@ export function SnakeGame(props: GameViewProps & { replay: () => void }) {
       <div
         className="snake-board"
         tabIndex={0}
-        aria-label="Snake arena. Use arrow keys, W A S D, swipe, or the direction buttons."
+        aria-label="Snake-Arena. Nutzt Pfeiltasten, W A S D, Wischen oder die Richtungstasten."
         onPointerDown={(e) => {
           e.currentTarget.setPointerCapture(e.pointerId);
           swipe.current = { x: e.clientX, y: e.clientY };
@@ -185,7 +185,7 @@ export function SnakeGame(props: GameViewProps & { replay: () => void }) {
         <svg
           viewBox={`0 0 ${GRID} ${GRID}`}
           role="img"
-          aria-label="Shared Snake board"
+          aria-label="Gemeinsames Snake-Spielfeld"
         >
           <defs>
             <pattern
@@ -249,36 +249,36 @@ export function SnakeGame(props: GameViewProps & { replay: () => void }) {
               data-countdown={countdown > 0 && !paused}
             >
               {paused
-                ? "Paused"
+                ? "Pausiert"
                 : countdown > 0
                   ? Math.min(countdown, 3)
                   : "Connecting…"}
             </strong>
             <span>
               {paused
-                ? "We’ll resume when you’re both here."
+                ? "Es geht weiter, sobald ihr beide wieder da seid."
                 : countdown > 0
-                  ? "Get ready."
+                  ? "Macht euch bereit."
                   : ""}
             </span>
           </div>
         )}
       </div>
-      <div className="direction-pad" aria-label="Snake controls">
-        <Button secondary aria-label="Move up" onClick={() => turn("up")}>
+      <div className="direction-pad" aria-label="Snake-Steuerung">
+        <Button secondary aria-label="Nach oben" onClick={() => turn("up")}>
           <ArrowUp />
         </Button>
-        <Button secondary aria-label="Move left" onClick={() => turn("left")}>
+        <Button secondary aria-label="Nach links" onClick={() => turn("left")}>
           <ArrowLeft />
         </Button>
-        <Button secondary aria-label="Move down" onClick={() => turn("down")}>
+        <Button secondary aria-label="Nach unten" onClick={() => turn("down")}>
           <ArrowDown />
         </Button>
-        <Button secondary aria-label="Move right" onClick={() => turn("right")}>
+        <Button secondary aria-label="Nach rechts" onClick={() => turn("right")}>
           <ArrowRight />
         </Button>
       </div>
-      <p className="field-note center">Arrow keys · WASD · Swipe</p>
+      <p className="field-note center">Pfeiltasten · WASD · Wischen</p>
     </Card>
   );
 }

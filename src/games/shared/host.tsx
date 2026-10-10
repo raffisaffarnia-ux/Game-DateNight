@@ -18,9 +18,9 @@ class GameBoundary extends Component<
   render() {
     return this.state.failed ? (
       <Card>
-        <h2>Let’s reconnect</h2>
-        <p>Your saved progress is still there.</p>
-        <Button onClick={() => window.location.reload()}>Reload Game</Button>
+        <h2>Verbinden wir euch erneut</h2>
+        <p>Dein gespeicherter Fortschritt ist noch da.</p>
+        <Button onClick={() => window.location.reload()}>Spiel neu laden</Button>
       </Card>
     ) : (
       this.props.children
@@ -51,7 +51,7 @@ export function GameHost({
   if (!session)
     return (
       <GameShell
-        title="Your game"
+        title="Euer Spiel"
         gameId="loading"
         players={players}
         userId={userId}
@@ -62,10 +62,10 @@ export function GameHost({
         {game.error ? (
           <Card>
             <p role="alert">{game.error}</p>
-            <Button onClick={game.retry}>Retry</Button>
+            <Button onClick={game.retry}>Erneut versuchen</Button>
           </Card>
         ) : (
-          <Loading label="Restoring your game…" />
+          <Loading label="Dein Spiel wird wiederhergestellt …" />
         )}
       </GameShell>
     );
@@ -90,7 +90,7 @@ export function GameHost({
       });
       if (error) throw error;
     } catch {
-      setError("Could not start a new game. Please try again.");
+      setError("Ein neues Spiel konnte nicht gestartet werden. Bitte versuche es erneut.");
     } finally {
       setReplaying(false);
     }
@@ -110,7 +110,7 @@ export function GameHost({
       {(game.error || error) && (
         <p className="error" role="alert">
           {game.error || error}{" "}
-          <button onClick={() => void game.refresh()}>Refresh</button>
+          <button onClick={() => void game.refresh()}>Aktualisieren</button>
         </p>
       )}
       <GameBoundary key={sessionId}>

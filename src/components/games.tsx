@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Users, CalendarDays, Pencil, Bomb, Scale, Sparkles } from "lucide-react";
+import { ArrowRight, CalendarDays, Pencil, Bomb, Scale, Sparkles } from "lucide-react";
 import { games, type GameDefinition } from "@/lib/games";
 import { Card, Button, EmptyState } from "./ui";
 export function GameArt({ kind }: { kind: GameDefinition["art"] }) {
@@ -54,14 +54,10 @@ export function GameCard({
       <div className="game-details">
         <div className="game-meta">
           {game.category && <span>{game.category}</span>}
-          <span className="status-pill">Available</span>
         </div>
         <h2>{game.title}</h2>
         <p>{game.description}</p>
         <div className="game-card-bottom">
-          <span>
-            <Users size={14} /> Two players
-          </span>
           {onSelect ? (
             <Button
               secondary
@@ -90,7 +86,7 @@ export function GamesLibrary({
   return (
     <>
       <div className="library-heading">
-        <h1>Games for two</h1>
+        <h1>Spiele für zwei</h1>
       </div>
       <div className="game-grid">
         {games.map((game) => (
@@ -117,7 +113,7 @@ export function GameLayout({
       <GameArt kind={game.art} />
       <EmptyState title={game.title}>
         <p>{game.description}</p>
-        <p className="field-note">Play together in your private room.</p>
+        <p className="field-note">Spielt gemeinsam in eurem privaten Raum.</p>
         {children}
       </EmptyState>
     </Card>

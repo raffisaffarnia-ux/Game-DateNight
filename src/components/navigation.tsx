@@ -24,7 +24,7 @@ export function Navigation() {
         {!inRoom && (
           <nav aria-label="Main navigation">
             <Link href="/games">
-              Games <ArrowUpRight size={14} />
+              Spiele <ArrowUpRight size={14} />
             </Link>
           </nav>
         )}
@@ -36,7 +36,7 @@ export function Navigation() {
 export function Footer() {
   return (
     <footer>
-      <span>Private rooms for two.</span>
+      <span>Private Spielräume für zwei.</span>
       <span>© DateNight.io</span>
     </footer>
   );

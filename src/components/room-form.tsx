@@ -52,24 +52,24 @@ export function RoomForm({
   return (
     <main id="main" className="narrow-page">
       <Link className="back-link" href="/">
-        <ArrowLeft size={16} /> Back to home
+        <ArrowLeft size={16} /> Zurück
       </Link>
       <Card>
         <span className="round-icon">
           <LockKeyhole size={22} />
         </span>
-        <h1>{mode === "create" ? "Create a room" : "Join a room"}</h1>
+        <h1>{mode === "create" ? "Raum erstellen" : "Raum beitreten"}</h1>
         <p>
           {mode === "create"
-            ? "Invite your partner with a private link."
-            : "Enter the invitation code."}
+            ? "Lade deinen Lieblingsmenschen mit einem privaten Link ein."
+            : "Gib den Einladungscode ein."}
         </p>
         <form onSubmit={submit}>
-          <label htmlFor="name">Your first name</label>
+          <label htmlFor="name">Dein Vorname</label>
           <input
             id="name"
             autoComplete="given-name"
-            placeholder="What should we call you?"
+            placeholder="Wie dürfen wir dich nennen?"
             required
             maxLength={30}
             value={displayName}
@@ -78,11 +78,11 @@ export function RoomForm({
           />
           {mode === "join" && (
             <>
-              <label htmlFor="code">Room code</label>
+              <label htmlFor="code">Raumcode</label>
               <input
                 id="code"
                 className="code-input"
-                placeholder="8-character code"
+                placeholder="8-stelliger Code"
                 required
                 minLength={8}
                 maxLength={8}
@@ -102,16 +102,16 @@ export function RoomForm({
           )}
           <Button disabled={busy || !displayName.trim()} type="submit">
             {busy
-              ? "Opening your room…"
+              ? "Dein Raum wird geöffnet …"
               : mode === "create"
-                ? "Create a Room"
-                : "Join a Room"}
+                ? "Raum erstellen"
+                : "Raum beitreten"}
             <ArrowRight size={17} />
           </Button>
         </form>
         <p className="form-switch">
           <Link href={mode === "create" ? "/join" : "/create"}>
-            {mode === "create" ? "Join a Room" : "Create a Room"}
+            {mode === "create" ? "Raum beitreten" : "Raum erstellen"}
           </Link>
         </p>
       </Card>

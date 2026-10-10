@@ -24,8 +24,8 @@ export function KnowMe({
   if (session.status === "finished")
     return (
       <GameResults
-        title={`${Object.values(scores).reduce((sum, n) => sum + n, 0)} / ${session.total_rounds} understood`}
-        description="There’s always more to discover."
+        title={`${Object.values(scores).reduce((sum, n) => sum + n, 0)} / ${session.total_rounds} erraten`}
+        description="Es gibt immer noch etwas Neues zu entdecken."
         replay={replay}
         busy={busy}
       >
@@ -33,7 +33,7 @@ export function KnowMe({
           {players.map((p) => (
             <div key={p.user_id}>
               <small>{p.name}</small>
-              <strong>{scores[p.user_id] || 0} correct</strong>
+              <strong>{scores[p.user_id] || 0} richtig</strong>
             </div>
           ))}
         </div>
@@ -54,11 +54,11 @@ export function KnowMe({
       <GameProgress round={session.round} total={session.total_rounds} />
       <Card className="question-stage" key={session.round}>
         <div className="role-chip">
-          {isSubject ? "The real you" : "Mind reader"}
+          {isSubject ? "Das echte Ich" : "Gedankenleser"}
           <span>{subject.name[0]}</span>
         </div>
         <span className="eyebrow">
-          {isSubject ? "ABOUT YOU" : `HOW WOULD ${subject.name} ANSWER?`}
+          {isSubject ? "ÜBER DICH" : `WIE WÜRDE ${subject.name} ANTWORTEN?`}
         </span>
         <h2>{question?.prompt}</h2>
         {session.status === "round_end" ? (
@@ -71,8 +71,8 @@ export function KnowMe({
                 <div key={p.user_id}>
                   <small>
                     {p.user_id === subject.user_id
-                      ? "Real answer"
-                      : `${p.name}’s guess`}
+                      ? "Echte Antwort"
+                      : `${p.name}s Vermutung`}
                   </small>
                   <strong>
                     {current.find((a) => a.user_id === p.user_id)?.value}
@@ -86,14 +86,14 @@ export function KnowMe({
                   success={!!session.state.accepted}
                   title={
                     session.state.accepted
-                      ? "You know them! +1"
-                      : "One more thing to love."
+                      ? "Du kennst deinen Lieblingsmenschen! +1"
+                      : "Noch ein Grund, euch liebzuhaben."
                   }
                 />
                 <Button disabled={busy} onClick={() => void command("next")}>
                   {session.round + 1 === session.total_rounds
-                    ? "See Results"
-                    : "Next Round"}
+                    ? "Ergebnisse ansehen"
+                    : "Nächste Runde"}
                 </Button>
               </>
             ) : isSubject ? (
@@ -102,29 +102,29 @@ export function KnowMe({
                   disabled={busy}
                   onClick={() => void command("judge", { accepted: true })}
                 >
-                  Close Enough ✓
+                  Zählt ✓
                 </Button>
                 <Button
                   secondary
                   disabled={busy}
                   onClick={() => void command("judge", { accepted: false })}
                 >
-                  Not Quite
+                  Noch nicht ganz
                 </Button>
               </div>
             ) : (
-              <p role="status">Waiting for {subject.name} to decide.</p>
+              <p role="status">Warte auf {subject.name} to decide.</p>
             )}
           </div>
         ) : mine ? (
           <p className="locked-answer" role="status">
-            Answer locked. Waiting for your partner…
+            Antwort gespeichert. Warte auf deinen Lieblingsmenschen …
           </p>
         ) : (
           <AnswerForm
             key={session.round}
             label={
-              isSubject ? "Your real answer" : `Your guess for ${subject.name}`
+              isSubject ? "Deine echte Antwort" : `Deine Vermutung für ${subject.name}`
             }
             disabled={busy}
             onSubmit={(value) => command("answer", { value })}
