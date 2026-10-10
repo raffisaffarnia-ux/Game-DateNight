@@ -236,11 +236,11 @@ function LobbyContent({ id }: { id: string }) {
                 onFocus={(event) => event.target.select()}
               />
               <Button secondary onClick={() => void copy("link")}>
-                {kopiert === "link" ? <Check size={16} /> : <Link2 size={16} />}{" "}
-                {kopiert === "link" ? "Link kopiert" : "Einladungslink kopieren"}
+                {copied === "link" ? <Check size={16} /> : <Link2 size={16} />}{" "}
+                {copied === "link" ? "Link copied" : "Einladungslink kopieren"}
               </Button>
               <span className="sr-only" role="status">
-                {copied ? `${copied} kopiert` : ""}
+                {copied ? `${copied} copied` : ""}
               </span>
             </div>
             <Button disabled={!ready} onClick={() => setView("library")}>
