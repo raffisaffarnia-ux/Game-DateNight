@@ -1,10 +1,11 @@
 .game-art.bomb,.game-art.moral,.game-art.rank { background: radial-gradient(circle at 75% 22%, color-mix(in srgb,var(--accent) 20%,var(--card)), var(--soft)); }
 .game-art.bomb .art-icon,.game-art.moral .art-icon,.game-art.rank .art-icon { width:52px;height:52px;stroke-width:1.35;color:var(--accent); }
-.room-toolbar-actions { display:flex;align-items:center;gap:10px; }
-.room-toolbar-button { min-height:42px;padding:0 16px;display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--line);border-radius:999px;background:var(--card);color:var(--ink);font:inherit;font-size:13px;text-decoration:none;cursor:pointer;transition:background .16s ease,border-color .16s ease,transform .16s ease; }
+.room-toolbar-actions,.room-toolbar-end { display:flex;align-items:center;gap:10px; }
+.room-toolbar-end { margin-left:auto; }
+.room-toolbar-button { min-height:44px;padding:0 16px;display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--line);border-radius:14px;background:var(--card);color:var(--ink);font:inherit;font-size:13px;font-weight:550;text-decoration:none;cursor:pointer;transition:background .16s ease,border-color .16s ease,transform .16s ease; }
 .room-toolbar-button:hover { background:var(--soft);border-color:var(--muted); }
 .room-toolbar-button:active { transform:scale(.98); }
-.room-toolbar { min-height:48px;margin-bottom:18px; }
+.room-toolbar { min-height:48px;margin-bottom:24px;gap:14px; }
 .connection { min-height:36px;padding:0 13px;border-radius:999px;background:var(--soft); }
 .new-game-setup,.bomb-setup,.rank-setup { display:grid;gap:18px;max-width:720px;margin:auto;padding:clamp(18px,4vw,44px); }
 .new-game-setup h2,.bomb-setup h2,.rank-setup h2 { margin:0;font-size:clamp(25px,4vw,38px);line-height:1.12;letter-spacing:-.035em; }
@@ -169,9 +170,10 @@
 @keyframes bomb-shake { 0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)} }
 @keyframes timer-pulse { to{transform:scale(1.06);color:#d94e45} }
 @media(max-width:650px){
- .room-toolbar { align-items:center; }
- .room-toolbar-actions { gap:7px; }
- .room-toolbar-button { min-height:40px;padding:0 13px;font-size:12px; }
+ .room-toolbar { align-items:center;gap:8px;margin-bottom:18px; }
+ .room-toolbar-actions,.room-toolbar-end { gap:7px; }
+ .room-toolbar-end { margin-left:auto; }
+ .room-toolbar-button { min-height:42px;padding:0 13px;font-size:12px; }
  .moral-options,.rank-gallery { grid-template-columns:1fr; }
  .moral-reveals,.rank-pairs,.bomb-clues,.bomb-two-fields { grid-template-columns:1fr; }
  .bomb-hud { grid-template-columns:1fr auto;gap:9px;padding:12px; }

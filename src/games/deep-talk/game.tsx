@@ -14,7 +14,7 @@ export function DeepTalkSetup({
 }: Pick<GameViewProps, "session" | "command" | "busy">) {
   return (
     <div className="game-setup">
-      <h2>Choose tonight’s vibe.</h2>
+      <h2>Choose tonight’s vibe</h2>
       <div className="deck-grid">
         {[...new Set(deepTalkQuestions.map((q) => q.category))].map((deck) => (
           <button

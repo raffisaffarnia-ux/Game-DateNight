@@ -15,7 +15,7 @@ export function DrawingSetup({
 }: Pick<GameViewProps, "session" | "command" | "busy">) {
   return (
     <div className="game-setup">
-      <h2>Make your mark.</h2>
+      <h2>Make your mark</h2>
       <div className="choice-pair">
         {(["free", "guess"] as const).map((mode) => (
           <button

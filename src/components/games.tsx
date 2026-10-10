@@ -90,7 +90,7 @@ export function GamesLibrary({
   return (
     <>
       <div className="library-heading">
-        <h1>Games for two.</h1>
+        <h1>Games for two</h1>
       </div>
       <div className="game-grid">
         {games.map((game) => (

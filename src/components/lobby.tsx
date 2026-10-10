@@ -4,6 +4,7 @@ import Link from "next/link";
 import {
   ArrowLeft,
   ArrowRight,
+  House,
   Copy,
   Check,
   Link2,
@@ -131,19 +132,26 @@ function LobbyContent({ id }: { id: string }) {
       <div className="room-toolbar">
         <PairFlames />
         <div className="room-toolbar-actions">
-          {!room.active_session_id && (
-            <Link href="/" className="room-toolbar-button"><ArrowLeft size={16} /> Home</Link>
-          )}
-          {view === "library" && (
-            <button className="room-toolbar-button" onClick={() => setView("lobby")}>
+          {view === "library" && !room.active_session_id && (
+            <button
+              className="room-toolbar-button room-back-button"
+              onClick={() => setView("lobby")}
+            >
               <ArrowLeft size={16} /> Your room
             </button>
           )}
         </div>
-        <span className="connection" role="status">
-          <i className={status === "Connected" ? "online" : ""} />
-          {status}
-        </span>
+        <div className="room-toolbar-end">
+          {!room.active_session_id && (
+            <Link href="/" className="room-toolbar-button">
+              <House size={16} /> Home
+            </Link>
+          )}
+          <span className="connection" role="status">
+            <i className={status === "Connected" ? "online" : ""} />
+            {status}
+          </span>
+        </div>
       </div>
       {status !== "Connected" && (
         <p className="notice">

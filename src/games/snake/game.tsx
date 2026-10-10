@@ -14,7 +14,7 @@ export function SnakeSetup({
 }: Pick<GameViewProps, "session" | "command" | "busy">) {
   return (
     <div className="game-setup">
-      <h2>Two snakes. Your rules.</h2>
+      <h2>Two snakes. Your rules</h2>
       <div className="choice-pair snake-modes" aria-label="Snake mode">
         {(["versus", "together"] as const).map((mode) => (
           <button

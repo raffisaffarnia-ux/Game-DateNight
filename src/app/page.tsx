@@ -7,7 +7,7 @@ export default function Home() {
         <div className="hero-copy">
           <h1>
             Date night,
-            <br /> wherever you are<span>.</span>
+            <br /> wherever you are
           </h1>
           <p>Private games for two, in one shared room.</p>
           <div className="hero-actions">

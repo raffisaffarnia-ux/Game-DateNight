@@ -18,7 +18,7 @@ class GameBoundary extends Component<
   render() {
     return this.state.failed ? (
       <Card>
-        <h2>Let’s reconnect.</h2>
+        <h2>Let’s reconnect</h2>
         <p>Your saved progress is still there.</p>
         <Button onClick={() => window.location.reload()}>Reload Game</Button>
       </Card>
@@ -134,7 +134,7 @@ export function GameHost({
               />
             ) : (
               <div className="game-setup">
-                <h2>{definition.description}</h2>
+                <h2>{definition.description.replace(/\.$/, "")}</h2>
               </div>
             )}
           </ReadyState>

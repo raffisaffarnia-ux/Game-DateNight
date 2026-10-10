@@ -323,7 +323,7 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
                   </button>
                   <div className="reward-rules">
                     <h3>
-                      <Sparkles size={17} /> Play. Connect. Collect.
+                      <Sparkles size={17} /> Play. Connect. Collect
                     </h3>
                     <p>
                       <Coin /> Matching or correct answer <strong>+5</strong>
@@ -356,7 +356,7 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
                   <div className="shop-heading">
                     <div>
                       <span className="eyebrow">THE PIXEL COLLECTION</span>
-                      <h2>Small things. Big personality.</h2>
+                      <h2>Small things. Big personality</h2>
                     </div>
                     <span className="wallet-pill">
                       <Coin />
@@ -441,7 +441,7 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
                   <span className="round-icon">
                     <LockKeyhole />
                   </span>
-                  <h2>{guest ? "Keep your little world." : "Welcome back."}</h2>
+                  <h2>{guest ? "Keep your little world" : "Welcome back"}</h2>
                   {guest ? (
                     <>
                       <p>

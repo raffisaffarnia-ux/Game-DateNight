@@ -58,7 +58,7 @@ export function RoomForm({
         <span className="round-icon">
           <LockKeyhole size={22} />
         </span>
-        <h1>{mode === "create" ? "Create a room." : "Join a room."}</h1>
+        <h1>{mode === "create" ? "Create a room" : "Join a room"}</h1>
         <p>
           {mode === "create"
             ? "Invite your partner with a private link."
