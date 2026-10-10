@@ -14,6 +14,8 @@
   gap: clamp(16px, 2vw, 32px);
 }
 .app-shell:has(.play-page) {
+  position: fixed;
+  inset: 0;
   height: 100dvh;
   min-height: 0;
   padding: 0;
