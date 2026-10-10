@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
+  ArrowLeft,
   ArrowRight,
   Copy,
   Check,
@@ -98,7 +99,7 @@ function LobbyContent({ id }: { id: string }) {
     return (
       <main id="main" className="narrow-page">
         <Card>
-          <h1>Room unavailable.</h1>
+          <h1>Room unavailable</h1>
           <p className="error" role="alert">
             {error}
           </p>
@@ -129,11 +130,16 @@ function LobbyContent({ id }: { id: string }) {
     >
       <div className="room-toolbar">
         <PairFlames />
-        {!room.active_session_id && (
-          <Link href="/" className="back-link">
-            ← Home
-          </Link>
-        )}
+        <div className="room-toolbar-actions">
+          {!room.active_session_id && (
+            <Link href="/" className="room-toolbar-button"><ArrowLeft size={16} /> Home</Link>
+          )}
+          {view === "library" && (
+            <button className="room-toolbar-button" onClick={() => setView("lobby")}>
+              <ArrowLeft size={16} /> Your room
+            </button>
+          )}
+        </div>
         <span className="connection" role="status">
           <i className={status === "Connected" ? "online" : ""} />
           {status}
@@ -166,9 +172,6 @@ function LobbyContent({ id }: { id: string }) {
         />
       ) : view === "library" ? (
         <>
-          <button className="back-link" onClick={() => setView("lobby")}>
-            ← Your room
-          </button>
           {!ready && (
             <p className="notice">
               Both players need to be online to start a game.
@@ -182,7 +185,7 @@ function LobbyContent({ id }: { id: string }) {
       ) : (
         <>
           <div className="room-heading">
-            <h1>Private room.</h1>
+            <h1>Private room</h1>
             <p>
               {ready ? "Both players are online." : "Waiting for your partner."}
             </p>
@@ -249,3 +252,4 @@ function LobbyContent({ id }: { id: string }) {
     </main>
   );
 }
+

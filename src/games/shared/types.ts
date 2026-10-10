@@ -4,7 +4,10 @@ export type GameId =
   | "do-you-know-me"
   | "deep-talk"
   | "draw-together"
-  | "daily-us";
+  | "daily-us"
+  | "relationship-bomb"
+  | "moral-sync"
+  | "rank-and-draw";
 export type GameStatus =
   | "lobby"
   | "starting"
@@ -36,6 +39,10 @@ export type GameSession = {
     last_guess?: string;
     revealed_word?: string;
     winner?: string | null;
+    phase?: string; category?: string; deep_mode?: boolean; draw_mode?: string; duration?: number;
+    difficulty?: "chill" | "normal" | "chaos"; strikes?: number; modules_done?: number; module_order?: string[];
+    ends_at?: string; results?: Record<string, unknown>[]; scores_by_category?: Record<string, number[]>;
+    correct_guesses?: number; ready_next?: string[]; similarity?: number; [key: string]: unknown;
   };
   starts_at: string | null;
   started_at: string | null;
@@ -74,7 +81,8 @@ export type GameAction =
   | "skip"
   | "finish"
   | "clear_request"
-  | "clear_confirm";
+  | "clear_confirm"
+  | "configure" | "lock" | "discuss" | "change_mind" | "draw_save" | "draw_finish" | "vote" | "continue" | "timeout";
 export type GameCommand = (
   action: GameAction,
   payload?: Record<string, unknown>,
@@ -89,3 +97,4 @@ export type GameViewProps = {
   online: string[];
   connected: boolean;
 };
+

@@ -4,7 +4,7 @@ export type GameDefinition = {
   title: string;
   description: string;
   category: string;
-  art: "cards" | "orbits" | "tiles" | "snake" | "drawing" | "daily";
+  art: "cards" | "orbits" | "tiles" | "snake" | "drawing" | "daily" | "bomb" | "moral" | "rank";
   status: "available";
 };
 export const games: GameDefinition[] = [
@@ -56,4 +56,7 @@ export const games: GameDefinition[] = [
     art: "daily",
     status: "available",
   },
+  { id: "relationship-bomb", title: "Relationship Bomb", description: "Defuse eight tiny challenges with teamwork.", category: "Co-op", art: "bomb", status: "available" },
+  { id: "moral-sync", title: "Moral Sync", description: "Explore the choices that shape how you see the world.", category: "Conversation", art: "moral", status: "available" },
+  { id: "rank-and-draw", title: "Rank & Draw", description: "Rank your favourites, then draw one for your partner.", category: "Creative", art: "rank", status: "available" },
 ];

@@ -1,0 +1,218 @@
+.game-art.bomb,.game-art.moral,.game-art.rank { background: radial-gradient(circle at 75% 22%, color-mix(in srgb,var(--accent) 20%,var(--card)), var(--soft)); }
+.game-art.bomb .art-icon,.game-art.moral .art-icon,.game-art.rank .art-icon { width:52px;height:52px;stroke-width:1.35;color:var(--accent); }
+.room-toolbar-actions { display:flex;align-items:center;gap:10px; }
+.room-toolbar-button { min-height:42px;padding:0 16px;display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--line);border-radius:999px;background:var(--card);color:var(--ink);font:inherit;font-size:13px;text-decoration:none;cursor:pointer;transition:background .16s ease,border-color .16s ease,transform .16s ease; }
+.room-toolbar-button:hover { background:var(--soft);border-color:var(--muted); }
+.room-toolbar-button:active { transform:scale(.98); }
+.room-toolbar { min-height:48px;margin-bottom:18px; }
+.connection { min-height:36px;padding:0 13px;border-radius:999px;background:var(--soft); }
+.new-game-setup,.bomb-setup,.rank-setup { display:grid;gap:18px;max-width:720px;margin:auto;padding:clamp(18px,4vw,44px); }
+.new-game-setup h2,.bomb-setup h2,.rank-setup h2 { margin:0;font-size:clamp(25px,4vw,38px);line-height:1.12;letter-spacing:-.035em; }
+.new-game-setup>p,.bomb-setup>p,.rank-setup>p { margin:0;color:var(--muted); }
+.new-game-setup .eyebrow,.bomb-setup .eyebrow,.rank-setup .eyebrow { color:var(--accent);font-size:11px;letter-spacing:.13em;font-weight:700; }
+.setup-control { display:flex;justify-content:space-between;align-items:center;gap:14px; }
+.segmented-control { display:flex;padding:4px;background:var(--soft);border-radius:999px;gap:3px; }
+.segmented-control button { min-height:40px;padding:0 15px;border:0;border-radius:999px;background:transparent;color:var(--muted);font:inherit;font-size:13px;cursor:pointer; }
+.segmented-control button.selected { background:var(--card);color:var(--ink);box-shadow:0 1px 5px #00000014; }
+.moral-categories { display:grid;gap:10px; }
+.category-pills { display:flex;gap:8px;flex-wrap:wrap; }
+.category-pills button { min-height:37px;padding:0 13px;border:1px solid var(--line);border-radius:99px;background:var(--card);color:var(--muted);font:inherit;font-size:12px;cursor:pointer; }
+.category-pills button.selected { border-color:var(--accent);background:color-mix(in srgb,var(--accent) 11%,var(--card));color:var(--accent); }
+.toggle-row { display:flex;align-items:center;gap:12px;padding:14px;border:1px solid var(--line);border-radius:14px;cursor:pointer; }
+.toggle-row input { width:19px;height:19px;accent-color:var(--accent); }
+.toggle-row span { display:grid;line-height:1.35; }
+.toggle-row small { color:var(--muted);font-size:12px; }
+.moral-game,.rank-game { width:min(100%,1060px);margin-inline:auto;display:grid;gap:16px; }
+.moral-game .game-progress { margin-bottom:0; }
+.moral-round { color:var(--muted);font-size:12px; }
+.moral-scenario,.moral-discussion,.rank-prompt,.rank-reveal,.rank-compare,.guess-card,.vote-card { padding:clamp(20px,4vw,42px);border:1px solid var(--line);border-radius:22px;background:var(--card); }
+.moral-scenario { max-width:900px;margin-inline:auto; }
+.moral-scenario .eyebrow,.moral-discussion .eyebrow,.rank-prompt .eyebrow,.rank-reveal .eyebrow,.rank-compare .eyebrow,.guess-card .eyebrow,.vote-card .eyebrow { color:var(--accent);font-size:11px;font-weight:700;letter-spacing:.13em; }
+.moral-scenario h2,.moral-discussion h2,.rank-reveal h2,.rank-compare h2,.guess-card h2,.vote-card h2 { margin:8px 0 18px;font-size:clamp(25px,4vw,36px);line-height:1.18;letter-spacing:-.03em; }
+.moral-scenario p { max-width:70ch;margin:0;color:var(--ink);font-size:clamp(16px,1.45vw,18px);line-height:1.78; }
+.moral-options { display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px; }
+.moral-option { min-height:88px;display:grid;grid-template-columns:36px 1fr 20px;align-items:center;gap:12px;padding:16px 18px;border:1px solid var(--line);border-radius:16px;background:var(--card);color:var(--ink);text-align:left;cursor:pointer;transition:transform .16s ease,border-color .16s ease,background .16s ease; }
+.moral-option:hover:not(:disabled) { transform:translateY(-2px);border-color:var(--accent); }
+.moral-option.chosen { border-color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--card)); }
+.moral-option>span { width:32px;height:32px;display:grid;place-items:center;border-radius:50%;background:var(--soft);color:var(--accent);font-weight:700; }
+.moral-option p { margin:0;font-size:14px;line-height:1.45; }
+.moral-option:disabled { opacity:.7; }
+.moral-game>.button,.moral-discussion>.button,.rank-game>.button { justify-self:center;min-width:min(100%,330px); }
+.field-note { display:flex;align-items:center;justify-content:center;gap:7px;color:var(--muted);font-size:12px; }
+.moral-discussion { text-align:center; }
+.moral-reveals { display:grid;grid-template-columns:1fr 1fr;gap:14px;text-align:left; }
+.moral-reveals>div { padding:18px;border:1px solid var(--line);border-radius:16px;background:var(--surface); }
+.moral-reveals span,.moral-reveals strong { display:block; }
+.moral-reveals span { color:var(--muted);font-size:10px;font-weight:700;letter-spacing:.12em; }
+.moral-reveals strong { margin:5px 0;font-size:32px;color:var(--accent); }
+.moral-reveals p { margin:0;font-size:13px;line-height:1.5; }
+.moral-discussion h3 { margin:25px 0 10px;text-align:left;font-size:18px; }
+.moral-discussion ul { max-width:700px;margin:0 auto 22px;padding-left:22px;text-align:left;color:var(--muted); }
+.moral-discussion li { padding:5px 0; }
+.moral-result-categories { display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:22px 0; }
+.moral-result-categories>div { display:flex;justify-content:space-between;padding:12px;border-radius:12px;background:var(--soft);font-size:13px; }
+.moral-result-categories strong { color:var(--accent); }
+.bomb-setup { max-width:670px;text-align:center;justify-items:center; }
+.bomb-device.mini { width:100px;height:100px;display:grid;place-content:center;justify-items:center;gap:5px;border:1px solid color-mix(in srgb,#df9c59 38%,var(--line));border-radius:28px;background:color-mix(in srgb,#f1c87c 22%,var(--card));color:#a55f37; }
+.bomb-device.mini span { font-size:11px;font-weight:700; }
+.bomb-difficulty { width:100%;display:grid;grid-template-columns:repeat(3,1fr);gap:9px; }
+.bomb-difficulty button { min-height:83px;display:grid;align-content:center;gap:4px;border:1px solid var(--line);border-radius:15px;background:var(--card);color:var(--ink);cursor:pointer; }
+.bomb-difficulty button.selected { border-color:#c77754;background:color-mix(in srgb,#d9986a 12%,var(--card)); }
+.bomb-difficulty small { color:var(--muted);font-size:11px; }
+.bomb-game { --bomb:#c87754;max-width:1100px;margin:auto;display:grid;gap:19px; }
+.bomb-hud { display:grid;grid-template-columns:1fr 2fr 1fr;align-items:center;gap:12px;padding:14px 18px;border:1px solid var(--line);border-radius:18px;background:var(--card); }
+.bomb-timer { display:flex;align-items:center;gap:8px;color:var(--bomb);font-variant-numeric:tabular-nums; }
+.bomb-timer strong { font-size:clamp(20px,3vw,28px); }
+.bomb-device { display:flex;justify-content:center;align-items:center;gap:12px; }
+.bomb-device>svg { color:var(--bomb); }
+.bomb-device>div { display:grid;line-height:1.25; }
+.bomb-device>div span,.bomb-strikes>span { color:var(--muted);font-size:10px;font-weight:700;letter-spacing:.12em; }
+.bomb-device>div strong { font-size:14px; }
+.bomb-strikes { justify-self:end;display:flex;align-items:center;gap:5px;color:var(--line); }
+.bomb-strikes>span { margin-right:5px; }
+.bomb-strikes svg.lit { color:#d45d4d;fill:color-mix(in srgb,#d45d4d 17%,transparent); }
+.bomb-module { min-height:340px;display:grid;align-content:center;gap:18px;padding:clamp(22px,5vw,55px);border:1px solid var(--line);border-radius:24px;background:radial-gradient(ellipse at top right,color-mix(in srgb,#d99065 12%,var(--card)),var(--card) 60%);text-align:center;transition:box-shadow .2s ease,transform .2s ease; }
+.bomb-module.success { box-shadow:inset 0 0 0 2px color-mix(in srgb,#52a57f 45%,transparent); }
+.bomb-module.strike { animation:bomb-shake .28s ease;box-shadow:inset 0 0 0 2px #d45d4d; }
+.bomb-module>.eyebrow,.bomb-reveal>.eyebrow { color:var(--bomb);font-size:11px;font-weight:700;letter-spacing:.14em; }
+.bomb-module h2 { max-width:720px;margin:0 auto;font-size:clamp(24px,4vw,38px);line-height:1.2;letter-spacing:-.03em; }
+.bomb-module>.button,.bomb-reveal>.button { justify-self:center;min-width:250px; }
+.bomb-options { display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;max-width:700px;width:100%;margin:0 auto; }
+.bomb-options button,.bomb-fast button,.guess-options button { min-height:51px;padding:10px 16px;border:1px solid var(--line);border-radius:14px;background:var(--card);color:var(--ink);cursor:pointer;transition:.15s ease; }
+.bomb-options button:hover,.bomb-options button.chosen,.bomb-fast button.chosen,.guess-options button:hover,.guess-options button.selected { border-color:var(--bomb);background:color-mix(in srgb,var(--bomb) 11%,var(--card)); }
+.bomb-clues,.bomb-two-fields { width:100%;max-width:760px;margin:auto;display:grid;grid-template-columns:1fr 1fr;gap:12px; }
+.bomb-clues .card { text-align:left;padding:18px; }
+.bomb-clues small { font-size:10px;letter-spacing:.1em;color:var(--accent);font-weight:700; }
+.bomb-clues p { margin:7px 0 0;font-size:14px; }
+.bomb-two-fields label,.bomb-word { display:grid;gap:8px;text-align:left;color:var(--muted);font-size:12px; }
+.bomb-two-fields select,.bomb-two-fields input,.bomb-word input { width:100%;min-height:48px;padding:0 13px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink); }
+.bomb-order { max-width:650px;width:100%;margin:auto;display:grid;gap:6px; }
+.bomb-order>div { display:grid;grid-template-columns:32px 1fr auto;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--line);border-radius:12px;background:var(--card);text-align:left; }
+.bomb-order>div>span,.bomb-fast>div>span { color:var(--bomb);font-weight:700; }
+.bomb-order>div>div { display:flex;gap:4px; }
+.bomb-order button { width:36px;height:36px;border:0;border-radius:9px;background:var(--soft);color:var(--ink);font-size:16px;cursor:pointer; }
+.bomb-fast { max-width:800px;width:100%;margin:auto;display:grid;grid-template-columns:1fr 1fr;gap:8px; }
+.bomb-fast>div { display:grid;grid-template-columns:26px 1fr 1fr;gap:5px;align-items:center; }
+.bomb-fast button { min-height:45px;padding:7px;font-size:12px; }
+.bomb-module-track { display:flex;gap:6px;justify-content:center; }
+.bomb-module-track span { width:23px;height:5px;border-radius:9px;background:var(--line); }
+.bomb-module-track span.current { background:var(--bomb); }
+.bomb-module-track span.complete { background:var(--signal); }
+.bomb-players { display:flex;justify-content:center;gap:25px;color:var(--muted);font-size:12px; }
+.bomb-players span { display:flex;align-items:center;gap:7px; }
+.bomb-players i { width:7px;height:7px;border-radius:50%;background:var(--line); }
+.bomb-players i.is-online { background:var(--signal); }
+.bomb-reveal { display:grid;gap:15px;justify-items:center; }
+.bomb-reveals { display:flex;gap:15px; }
+.bomb-reveals>div { min-width:140px;display:grid;gap:4px;padding:15px;border-radius:14px;background:var(--card); }
+.bomb-reveals small { color:var(--muted);font-size:10px; }
+.last-seconds .bomb-timer { animation:timer-pulse .8s ease-in-out infinite alternate; }
+.bomb-result { display:grid;justify-items:center;gap:18px;max-width:650px;margin:auto;padding:clamp(24px,5vw,50px);text-align:center; }
+.bomb-result .eyebrow { color:var(--bomb);font-weight:700;letter-spacing:.13em; }
+.bomb-result h2 { margin:0;font-size:clamp(27px,4vw,40px); }
+.bomb-stats { width:100%;display:grid;grid-template-columns:repeat(3,1fr);gap:8px; }
+.bomb-stats span { display:grid;gap:5px;padding:12px;border-radius:12px;background:var(--soft);color:var(--muted);font-size:11px; }
+.bomb-stats strong { color:var(--ink);font-size:16px; }
+.rank-game { max-width:1060px; }
+.rank-game-top { display:flex;justify-content:space-between;align-items:center;gap:18px; }
+.rank-game-top h2 { margin:4px 0 0;font-size:clamp(25px,4vw,38px);letter-spacing:-.03em; }
+.rank-game-top .eyebrow { color:var(--accent);font-weight:700;font-size:10px;letter-spacing:.13em; }
+.rank-progress { display:grid;gap:6px;color:var(--muted);font-size:10px;letter-spacing:.1em; }
+.rank-progress progress { accent-color:var(--accent);width:130px;height:5px; }
+.rank-prompt { padding:20px 24px; }
+.rank-prompt h3 { margin:5px 0;font-size:21px; }
+.rank-prompt p { margin:0;color:var(--muted);font-size:13px; }
+.ranking-list { display:grid;gap:7px;margin:0;padding:0;list-style:none; }
+.ranking-list li { min-height:60px;display:grid;grid-template-columns:38px 1fr auto;align-items:center;gap:12px;padding:7px 10px;border:1px solid var(--line);border-radius:14px;background:var(--card);touch-action:pan-y; }
+.ranking-list li[draggable=true] { cursor:grab; }
+.rank-index { width:32px;height:32px;display:grid;place-items:center;border-radius:50%;background:var(--soft);color:var(--accent);font-weight:700; }
+.ranking-list li>div { display:flex;gap:4px; }
+.ranking-list li button { width:36px;height:36px;border:0;border-radius:9px;background:var(--soft);color:var(--ink);cursor:pointer; }
+.ranking-list li button:disabled { opacity:.4; }
+.rank-pairs { display:grid;grid-template-columns:1fr 1fr;gap:14px;text-align:left; }
+.rank-pairs>div { padding:16px;border:1px solid var(--line);border-radius:15px;background:var(--surface); }
+.rank-pairs h3 { margin:0 0 10px;color:var(--muted);font-size:10px;letter-spacing:.12em; }
+.rank-pairs p { display:flex;align-items:center;gap:10px;margin:6px 0;font-size:13px; }
+.rank-pairs p span { width:23px;height:23px;display:grid;place-items:center;border-radius:50%;background:var(--soft);color:var(--accent);font-size:11px; }
+.rank-diff { color:var(--muted);font-size:13px; }
+.rank-reveal,.rank-compare,.guess-card,.vote-card { text-align:center; }
+.create-instruction { text-align:center; }
+.create-instruction .eyebrow { color:var(--accent);font-size:10px;font-weight:700;letter-spacing:.12em; }
+.create-instruction h2 { margin:4px 0;font-size:clamp(22px,3.5vw,32px); }
+.create-instruction p { margin:0;color:var(--muted);font-size:13px; }
+.canvas-toolbar { display:flex;justify-content:center;align-items:center;gap:9px;flex-wrap:wrap; }
+.color-palette { display:flex;gap:7px;padding:5px;border:1px solid var(--line);border-radius:99px;background:var(--card); }
+.color-palette button { width:24px;height:24px;border:2px solid var(--card);border-radius:50%;cursor:pointer; }
+.color-palette button.active { outline:2px solid var(--accent);outline-offset:2px; }
+.tool-button { min-width:42px;height:42px;display:grid;place-items:center;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);font-size:22px;cursor:pointer; }
+.tool-button.active { border-color:var(--accent);color:var(--accent); }
+.canvas-timer { display:flex;align-items:center;gap:5px;color:var(--accent);font-size:12px;font-variant-numeric:tabular-nums; }
+.rank-canvas,.guess-canvas { width:100%;max-height:45vh;min-height:220px;touch-action:none;border:1px solid var(--line);border-radius:20px;background:var(--card); }
+.rank-game .button { justify-self:center;min-width:min(100%,300px); }
+.describe-card { max-width:700px;margin:0 auto;padding:20px;display:grid;gap:13px;border:1px solid var(--line);border-radius:18px;background:var(--card); }
+.describe-card p { margin:0; }
+.describe-card textarea { min-height:130px;padding:13px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);resize:vertical; }
+.guess-options { display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:16px 0; }
+.rank-compare blockquote,.guess-card blockquote { margin:14px auto;max-width:700px;padding:16px;border-left:3px solid var(--accent);border-radius:6px;background:var(--surface);text-align:left; }
+.rank-results { max-width:900px;margin:auto;padding:clamp(22px,4vw,42px);text-align:center; }
+.rank-results h2 { margin:6px;font-size:clamp(27px,4vw,39px); }
+.rank-results>p { color:var(--muted); }
+.rank-result-stats { display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:23px 0; }
+.rank-result-stats>div { display:grid;gap:4px;padding:14px;border-radius:14px;background:var(--soft); }
+.rank-result-stats strong { color:var(--accent);font-size:25px; }
+.rank-result-stats span { color:var(--muted);font-size:11px; }
+.rank-gallery { display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:15px 0 24px;text-align:left; }
+.rank-gallery .card { padding:12px; }
+.gallery-drawings { display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:8px; }
+.gallery-drawings svg { width:100%;border:1px solid var(--line);border-radius:8px;background:var(--card); }
+.gallery-drawings p { font-size:11px; }
+@keyframes bomb-shake { 0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)} }
+@keyframes timer-pulse { to{transform:scale(1.06);color:#d94e45} }
+@media(max-width:650px){
+ .room-toolbar { align-items:center; }
+ .room-toolbar-actions { gap:7px; }
+ .room-toolbar-button { min-height:40px;padding:0 13px;font-size:12px; }
+ .moral-options,.rank-gallery { grid-template-columns:1fr; }
+ .moral-reveals,.rank-pairs,.bomb-clues,.bomb-two-fields { grid-template-columns:1fr; }
+ .bomb-hud { grid-template-columns:1fr auto;gap:9px;padding:12px; }
+ .bomb-device { grid-column:1 / -1;grid-row:1;justify-content:flex-start; }
+ .bomb-timer { grid-column:1;grid-row:2; }
+ .bomb-strikes { grid-column:2;grid-row:2; }
+ .bomb-options,.bomb-fast { grid-template-columns:1fr; }
+ .bomb-fast>div { grid-template-columns:25px 1fr 1fr; }
+ .bomb-players { gap:14px;font-size:11px; }
+ .setup-control { align-items:flex-start;flex-direction:column; }
+ .segmented-control { width:100%; }
+ .segmented-control button { flex:1;padding:0 9px; }
+ .rank-game-top { align-items:flex-start; }
+ .rank-progress progress { width:85px; }
+ .rank-prompt,.moral-scenario,.moral-discussion,.rank-reveal,.rank-compare,.guess-card,.vote-card { padding:19px; }
+ .rank-canvas,.guess-canvas { min-height:190px;max-height:40vh;border-radius:14px; }
+ .bomb-module { min-height:320px;padding:22px 15px; }
+ .bomb-reveals { width:100%;gap:8px; }
+ .bomb-reveals>div { min-width:0;flex:1; }
+ .bomb-stats { gap:5px; }
+ .bomb-stats span { padding:9px 5px;font-size:10px; }
+}
+@media(prefers-reduced-motion:reduce){.room-toolbar-button,.moral-option,.bomb-options button,.bomb-fast button{transition:none}.bomb-module.strike,.last-seconds .bomb-timer{animation:none}}
+/* The game exit stays visible without competing with the play controls. */
+.game-exit-button {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  z-index: 4;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: var(--card);
+  color: var(--ink);
+  cursor: pointer;
+  transition: transform 160ms ease, background 160ms ease;
+}
+.game-exit-button:hover { background: var(--soft); transform: scale(1.04); }
+.game-exit-button:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+@media (max-width: 600px) { .game-exit-button { top: 12px; right: 12px; } }
+

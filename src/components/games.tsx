@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Users, CalendarDays, Pencil } from "lucide-react";
+import { ArrowRight, Users, CalendarDays, Pencil, Bomb, Scale, Sparkles } from "lucide-react";
 import { games, type GameDefinition } from "@/lib/games";
 import { Card, Button, EmptyState } from "./ui";
 export function GameArt({ kind }: { kind: GameDefinition["art"] }) {
@@ -22,6 +22,12 @@ export function GameArt({ kind }: { kind: GameDefinition["art"] }) {
           <circle cx="103" cy="63" r="2.5" fill="#354c3b" />
           <circle cx="98" cy="79" r="2.5" fill="#524357" />
         </svg>
+      ) : kind === "bomb" ? (
+        <Bomb className="art-icon" />
+      ) : kind === "moral" ? (
+        <Scale className="art-icon" />
+      ) : kind === "rank" ? (
+        <Sparkles className="art-icon" />
       ) : (
         <>
           <i />
@@ -117,3 +123,4 @@ export function GameLayout({
     </Card>
   );
 }
+

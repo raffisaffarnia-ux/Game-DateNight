@@ -17,7 +17,7 @@ In PowerShell use `Copy-Item .env.example .env.local`. Open http://localhost:300
 ## Configure Supabase
 
 1. Create a Supabase project. Enable **Anonymous Sign-Ins** under Authentication → Sign In / Providers.
-2. Apply every SQL file in `supabase/migrations/` in numerical order, **001 through 010**, using the SQL editor or the Supabase CLI. If the original foundation is already installed, apply **002–010 only**. Do not rerun 001 over existing tables.
+2. Apply pending SQL files in `supabase/migrations/` in numerical order, **001 through 012**, using the SQL editor or the Supabase CLI. This DateNight.io project is at migration 011; migration 012 adds rewards for the new games. Never rerun migrations already applied.
 3. In Realtime settings, disable **Allow public access**. All channels are private. The migrations configure the publication and authorization policies.
 4. Put the project's public URL and **publishable** key in `.env.local`:
 
@@ -30,7 +30,7 @@ A legacy public anon key also works. Never put a service-role or secret key in a
 
 The migrations add game sessions, private answers, question content, saved conversation cards, persistent pairs, daily entries/answers, drawing strokes and private drawing words. They also add validated transactional RPCs and RLS policies. Existing rooms, members and foundation state are preserved.
 
-## The six games
+## The nine games
 
 | Game | Shared behavior |
 | --- | --- |
@@ -40,6 +40,9 @@ The migrations add game sessions, private answers, question content, saved conve
 | Deep Talk | Eight deck choices, shuffled cards without repeats, alternating Next and private saved conversations; Random mixes the full bank |
 | Draw Together | Shared canvas, pen/eraser, color/size, own-stroke undo and partner-confirmed clear; six-round Guess My Drawing mode |
 | Daily Us | One stable question per pair/day, private submissions, joint reveal, streak and shared history |
+| Relationship Bomb | Timed cooperative challenges, strikes and a final shared defuse |
+| Moral Sync | Private dilemma choices, joint reveals, reflection prompts and optional Change My Mind rounds |
+| Rank & Draw | Simultaneous private rankings, alternating describe/draw rounds and a shared sketch round |
 
 Question banks contain 60 This or That choices, 50 Know Me prompts, 80 Deep Talk cards, 100 drawing words and 100 daily questions.
 
@@ -79,7 +82,7 @@ Drawing broadcasts in-progress normalized strokes, then persists each completed 
 
 To add a game: add metadata and its component/setup registration, implement its isolated module, and extend the server game allowlist/rules in a migration. The lobby and shared shell do not need game-specific branches. Keep secret state out of public session JSON and broadcast payloads.
 
-The original read-only `game_states` table remains for compatibility; the six implemented games use `game_sessions` and specialized tables.
+The original read-only `game_states` table remains for compatibility; the nine implemented games use `game_sessions` and specialized tables.
 
 To update the content seed before first installation:
 
@@ -168,3 +171,4 @@ Games fill the browser viewport below a compact navigation bar. Shared flames si
 `src/games/fullscreen.css` contains the viewport layout, including compact game states, height-aware boards, mobile controls and contained scrolling for expanded histories or unusually long content. Snake keeps square cells and drawing keeps its 4:3 normalized canvas; neither needs a distorted board to occupy a full-screen game surface.
 
 Apply `20261008185238_date_cosmetic_collection.sql` for the additional avatars and date-themed pixel banners: candlelight, picnic, rooftop, stargazing, love letter and movie night. Existing cosmetics and purchases are preserved. The scene illustrations are local SVG pixel art in `src/components/profile/date-scenes.tsx`; no image service is needed.
+

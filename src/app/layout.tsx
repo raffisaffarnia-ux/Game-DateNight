@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Navigation, Footer } from "@/components/navigation";
 import "./globals.css";
 import "@/games/games.css";
+import "@/games/new-games.css";
 import "@/games/experience.css";
 import "@/components/profile/profile.css";
 import "@/games/fullscreen.css";
@@ -31,3 +32,4 @@ export default function RootLayout({
     </html>
   );
 }
+
