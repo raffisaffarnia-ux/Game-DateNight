@@ -18,7 +18,7 @@ const make = (
   deep = false,
 ): MoralCard => ({ id, category, title, story, options, discuss, deep });
 
-const scenarios: [string, string, string, [string,string,string,string], [string,string,string], boolean?][] = [
+const scenarios: [string, string, string, [string,string,string,string], [string,string,string]?, boolean?][] = [
  ["Loyalty","Das vertrauliche Geständnis","Eine enge Freundin erzählt dir von einem Seitensprung. Ihr Partner, der dir ebenfalls vertraut, plant gerade den nächsten großen Schritt. Sie bittet dich zu schweigen.",["Sag dem Partner, was du weißt.","Gib deiner Freundin Zeit, selbst zu erzählen.","Bitte sie, gemeinsam Verantwortung zu übernehmen.","Halte dich heraus und trage das Geheimnis weiter."],["Wann wird Schweigen zur Entscheidung?","Wie sicher müsstest du dir sein?","Was bedeutet Loyalität hier?"],true],
  ["Career","Das Angebot im Ausland","Ein Traumjob bedeutet für drei Jahre ins Ausland zu ziehen. Dein Partner fühlt sich im neuen Beruf und in der gemeinsamen Stadt endlich angekommen.",["Lehne das Angebot ab.","Versucht gemeinsam eine Fernbeziehung.","Plant den Umzug zusammen und sprecht über Verluste.","Entscheide dich für den Job und trennt euch."],["Was wäre ein fairer gemeinsamer Kompromiss?","Wie viel Zeit sollte eine Entscheidung haben?","Wann wird ein Opfer zu groß?"],true],
  ["Money","Die ungleiche Anzahlung","Ihr spart für ein Zuhause. Eine Person verdient mehr, die andere übernimmt dafür mehr unbezahlte Arbeit. Ein Familiengeschenk könnte die Lücke schließen, verlangt aber Mitspracherecht.",["Teilt Eigentum nach Geldbeitrag.","Besitzt es gemeinsam, denn alle Arbeit zählt.","Wartet, bis ihr ohne Bedingungen entscheiden könnt.","Nehmt das Geschenk an und setzt klare Grenzen."],["Wie zählt unsichtbare Arbeit?","Wann wird Hilfe zu Kontrolle?","Was bedeutet Fairness für euch?"],true],
@@ -61,7 +61,7 @@ const scenarios: [string, string, string, [string,string,string,string], [string
  ["Money","Das teure Hobby","Dein Partner möchte viel Geld in ein neues Hobby investieren. Das Budget reicht, aber ihr spart gerade für ein gemeinsames Ziel.",["Unterstütze die Ausgabe vollständig.","Legt ein persönliches Hobbybudget fest.","Wartet, bis das Sparziel erreicht ist.","Kauft zunächst eine günstigere Grundausstattung."],["Wann wird ein Wunsch zur gemeinsamen Ausgabe?","Wie viel Freiheit braucht eigenes Geld?","Was wäre ein fairer Betrag?"]],
 ];
 export const moralCards: MoralCard[] = scenarios.map(([category,title,story,options,discuss,deep],index) =>
- make(`ms${String(index+1).padStart(2,"0")}`,category,title,story,options,discuss,!!deep)
+ make(`ms${String(index+1).padStart(2,"0")}`,category,title,story,options,discuss || [`Was ist dir an „${title}“ besonders wichtig?`,`Welches Bedürfnis steckt hinter deiner Antwort auf „${title}“?`,`Welche faire Lösung passt zu euch bei „${title}“?`],!!deep)
 );
 
 export type RankSet = { id: string; category: string; title: string; items: [string,string,string,string,string] };
