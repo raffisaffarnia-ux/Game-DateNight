@@ -61,7 +61,7 @@ const scenarios: [string, string, string, [string,string,string,string], [string
  ["Money","Das teure Hobby","Dein Partner möchte viel Geld in ein neues Hobby investieren. Das Budget reicht, aber ihr spart gerade für ein gemeinsames Ziel.",["Unterstütze die Ausgabe vollständig.","Legt ein persönliches Hobbybudget fest.","Wartet, bis das Sparziel erreicht ist.","Kauft zunächst eine günstigere Grundausstattung."],["Wann wird ein Wunsch zur gemeinsamen Ausgabe?","Wie viel Freiheit braucht eigenes Geld?","Was wäre ein fairer Betrag?"]],
 ];
 export const moralCards: MoralCard[] = scenarios.map(([category,title,story,options,discuss,deep],index) =>
- make(`ms${String(index+1).padStart(2,"0")}`,category,title,story,options,discuss || [`Was ist dir an „${title}“ besonders wichtig?`,`Welches Bedürfnis steckt hinter deiner Antwort auf „${title}“?`,`Welche faire Lösung passt zu euch bei „${title}“?`],!!deep)
+ make(`ms${String(index+1).padStart(2,"0")}`,category,title,story,options,discuss || ([`Was ist dir an „${title}“ besonders wichtig?`,`Welches Bedürfnis steckt hinter deiner Antwort auf „${title}“?`,`Welche faire Lösung passt zu euch bei „${title}“?`] as MoralCard["discuss"]),!!deep)
 );
 
 export type RankSet = { id: string; category: string; title: string; items: [string,string,string,string,string] };
