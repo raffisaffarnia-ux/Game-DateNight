@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowRight, CalendarDays, Pencil, Bomb, Scale, Sparkles } from "lucide-react";
 import { games, type GameDefinition } from "@/lib/games";
 import { Card, Button, EmptyState } from "./ui";
+import { GameWheel } from "./game-wheel";
 export function GameArt({ kind }: { kind: GameDefinition["art"] }) {
   return (
     <div className={`game-art ${kind}`} aria-hidden="true">
@@ -79,15 +80,18 @@ export function GameCard({
 export function GamesLibrary({
   onSelect,
   disabled,
+  lastGameId,
 }: {
-  onSelect?: (id: string) => void;
+  onSelect?: (id: string) => void | Promise<void>;
   disabled?: boolean;
+  lastGameId?: string | null;
 }) {
   return (
     <>
       <div className="library-heading">
         <h1>Spiele für zwei</h1>
       </div>
+      <GameWheel onSelect={onSelect} disabled={disabled} excludeGameId={lastGameId} />
       <div className="game-grid">
         {games.map((game) => (
           <GameCard

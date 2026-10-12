@@ -951,3 +951,362 @@
 .game-shell[data-game="snake-squared"] .game-player:nth-child(2) .player-token {
   color: #24293b;
 }
+
+
+/* The roulette spans the same four-column library row and keeps the same card scale. */
+.game-wheel {
+  isolation: isolate;
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(270px, 0.75fr);
+  align-items: center;
+  gap: clamp(20px, 4vw, 58px);
+  min-height: 380px;
+  margin: 0 0 26px;
+  padding: clamp(22px, 3vw, 40px);
+  overflow: hidden;
+  border: 1px solid #d9c8e4;
+  border-radius: 24px;
+  background:
+    radial-gradient(ellipse at 86% 46%, #f8d8edb0 0, transparent 34%),
+    radial-gradient(ellipse at 12% 100%, #d4f4e680 0, transparent 38%),
+    linear-gradient(120deg, #fffaf1, #f8f0ff 58%, #fff3eb);
+  box-shadow: 0 16px 45px #69516b12, inset 0 1px #ffffffd9;
+}
+.wheel-copy {
+  position: relative;
+  z-index: 2;
+}
+.wheel-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  color: #8e5d8f;
+}
+.wheel-title-row .eyebrow {
+  font-size: 10px;
+  font-weight: 750;
+  letter-spacing: .15em;
+}
+.wheel-icon,
+.wheel-button-icon {
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  color: #fff;
+  background: linear-gradient(145deg, #ce68aa, #8662d0);
+  box-shadow: 0 5px 14px #9c62b245;
+}
+.wheel-icon {
+  width: 34px;
+  height: 34px;
+}
+.wheel-copy h2 {
+  margin: 0;
+  max-width: 540px;
+  color: #48354d;
+  font-size: clamp(1.65rem, 3vw, 2.55rem);
+  line-height: 1.08;
+  letter-spacing: -.055em;
+}
+.wheel-copy > p:not(.wheel-result) {
+  margin: 9px 0 16px;
+  color: #6d6570;
+  font-size: 13px;
+}
+.wheel-game-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  max-width: 710px;
+}
+.wheel-game-chip {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 9px;
+  overflow: hidden;
+  border: 1px solid #8b78921c;
+  border-radius: 11px;
+  background: #ffffffa6;
+  color: #524a55;
+  font-size: 10px;
+  font-weight: 650;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: transform .22s ease, background .22s ease, box-shadow .22s ease, opacity .22s ease;
+}
+.wheel-game-chip i {
+  flex: 0 0 8px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--chip-color);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--chip-color) 18%, transparent);
+}
+.wheel-game-chip.was-last {
+  opacity: .56;
+}
+.wheel-game-chip.is-winner {
+  z-index: 1;
+  border-color: color-mix(in srgb, var(--chip-color) 55%, white);
+  background: color-mix(in srgb, var(--chip-color) 19%, white);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--chip-color) 21%, transparent), 0 6px 18px color-mix(in srgb, var(--chip-color) 23%, transparent);
+  transform: translateY(-2px) scale(1.025);
+  animation: wheel-chip-win .55s cubic-bezier(.2,1.5,.4,1) both;
+}
+.wheel-spin-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 48px;
+  margin-top: 17px;
+  padding: 6px 17px 6px 8px;
+  border: 0;
+  border-radius: 999px;
+  background: linear-gradient(105deg, #b9509b, #765cd3 65%, #4f8fdb);
+  color: white;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 750;
+  box-shadow: 0 8px 20px #815cb949, inset 0 1px #ffffff80;
+  cursor: pointer;
+  transition: transform .2s ease, filter .2s ease, box-shadow .2s ease;
+}
+.wheel-spin-button:hover:not(:disabled) {
+  transform: translateY(-3px) scale(1.025);
+  filter: saturate(1.16) brightness(1.06);
+  box-shadow: 0 12px 25px #815cb95c, inset 0 1px #ffffffa3;
+}
+.wheel-spin-button:active:not(:disabled) {
+  transform: translateY(0) scale(.985);
+}
+.wheel-spin-button:focus-visible,
+.game-card:focus-within {
+  outline: 3px solid #bd7dd5;
+  outline-offset: 4px;
+}
+.wheel-spin-button:disabled {
+  opacity: .65;
+  cursor: wait;
+}
+.wheel-button-icon {
+  width: 34px;
+  height: 34px;
+  background: #ffffff30;
+}
+.wheel-spinning-icon {
+  animation: wheel-icon-spin .8s linear infinite;
+}
+.wheel-footnote {
+  display: block;
+  margin-top: 7px;
+  color: #786e79;
+  font-size: 10px;
+}
+.wheel-result {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 13px 0 -8px !important;
+  color: #87548a !important;
+  font-size: 12px !important;
+  animation: wheel-chip-win .45s cubic-bezier(.2,1.5,.4,1) both;
+}
+.wheel-result strong {
+  color: #59415f;
+}
+.wheel-visual {
+  position: relative;
+  justify-self: center;
+  display: grid;
+  place-items: center;
+  width: min(100%, 318px);
+  aspect-ratio: 1;
+}
+.wheel-halo {
+  position: absolute;
+  inset: 2%;
+  border-radius: 50%;
+  background: conic-gradient(from -20deg, #f2a4d9, #ffcf74, #85ddcc, #9db8fa, #dba0ed, #f2a4d9);
+  filter: blur(18px);
+  opacity: .5;
+  animation: wheel-halo-turn 14s linear infinite;
+}
+.wheel-pointer {
+  position: absolute;
+  z-index: 4;
+  top: -1%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-right: 13px solid transparent;
+  border-bottom: 0;
+  border-left: 13px solid transparent;
+  border-top: 25px solid #49354c;
+  transform: translateX(-50%);
+  filter: drop-shadow(0 3px 2px #39264244);
+}
+.wheel-disc {
+  position: relative;
+  z-index: 2;
+  width: 91%;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border: 8px solid #fff9;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px #b58bbd, 0 9px 25px #56355b37, inset 0 0 0 2px #ffffffb8;
+  transition: transform 5.1s cubic-bezier(.08,.76,.13,1);
+  will-change: transform;
+}
+.wheel-disc::before {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: repeating-conic-gradient(from 0deg, #ffffff50 0 1deg, transparent 1deg 40deg);
+  content: "";
+  pointer-events: none;
+}
+.wheel-disc-gloss {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(ellipse at 32% 17%, #ffffff73, transparent 48%), linear-gradient(145deg, #ffffff14, #2e1b4b1c);
+  pointer-events: none;
+}
+.wheel-disc-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 60px;
+  height: 60px;
+  border: 4px solid #fff;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #9e5bc6, #554eb9);
+  color: #fff;
+  box-shadow: 0 4px 12px #3a214b56, inset 0 1px #ffffff8a;
+  transform: translate(-50%, -50%);
+}
+.wheel-spark {
+  position: absolute;
+  z-index: 3;
+  color: #e3a044;
+  font-size: 23px;
+  filter: drop-shadow(0 2px 4px #d68a5857);
+  animation: wheel-sparkle 2s ease-in-out infinite;
+}
+.wheel-spark-one { top: 10%; right: 10%; }
+.wheel-spark-two { bottom: 15%; left: 0; color: #b169cb; animation-delay: .7s; }
+.wheel-spark-three { top: 39%; left: -3%; font-size: 15px; animation-delay: 1.2s; }
+.wheel-confetti {
+  position: absolute;
+  inset: 50%;
+  z-index: 5;
+  pointer-events: none;
+}
+.wheel-confetti i {
+  position: absolute;
+  width: 8px;
+  height: 12px;
+  border-radius: 2px;
+  background: var(--confetti-color);
+  box-shadow: 0 1px 5px #321b382e;
+  animation: wheel-confetti-pop .95s var(--confetti-delay) cubic-bezier(.12,.72,.18,1) both;
+}
+.game-card {
+  transform: translateY(0);
+  transition: transform .28s cubic-bezier(.2,.8,.2,1), box-shadow .28s ease, border-color .28s ease;
+}
+.game-card:hover {
+  transform: translateY(-6px);
+  border-color: #bd9cc6;
+  box-shadow: 0 16px 32px #49344b20, 0 3px 8px #49344b10;
+}
+.game-card:hover .game-art {
+  transform: scale(1.045);
+  filter: saturate(1.14);
+}
+.game-card .game-details .button,
+.game-card .game-details a.button {
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.game-card:hover .game-details .button {
+  transform: translateX(3px);
+  box-shadow: 0 6px 16px #69516b24;
+}
+@keyframes wheel-icon-spin { to { transform: rotate(360deg); } }
+@keyframes wheel-halo-turn { to { transform: rotate(360deg); } }
+@keyframes wheel-sparkle {
+  0%, 100% { opacity: .55; transform: scale(.78) rotate(0); }
+  50% { opacity: 1; transform: scale(1.22) rotate(23deg); }
+}
+@keyframes wheel-chip-win {
+  0% { opacity: .65; transform: scale(.84); }
+  75% { transform: scale(1.08); }
+  100% { opacity: 1; transform: translateY(-2px) scale(1.025); }
+}
+@keyframes wheel-confetti-pop {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(.2) rotate(0); }
+  15% { opacity: 1; }
+  100% { opacity: 0; transform: translate(var(--confetti-x), var(--confetti-y)) scale(1) rotate(var(--confetti-rotate)); }
+}
+@media (prefers-color-scheme: dark) {
+  .game-wheel {
+    border-color: #64516c;
+    background:
+      radial-gradient(ellipse at 86% 46%, #7245675c 0, transparent 36%),
+      radial-gradient(ellipse at 12% 100%, #28625b45 0, transparent 38%),
+      linear-gradient(120deg, #30272e, #30283b 58%, #362b2a);
+    box-shadow: 0 16px 45px #0004, inset 0 1px #ffffff14;
+  }
+  .wheel-title-row, .wheel-result { color: #edb9e6 !important; }
+  .wheel-copy h2, .wheel-result strong { color: #fff0fc; }
+  .wheel-copy > p:not(.wheel-result), .wheel-footnote { color: #d3c4d4; }
+  .wheel-game-chip {
+    border-color: #ffffff20;
+    background: #ffffff0c;
+    color: #f2eaf2;
+  }
+  .wheel-game-chip.is-winner {
+    background: color-mix(in srgb, var(--chip-color) 34%, #30283b);
+  }
+  .wheel-pointer { border-top-color: #fff0fc; }
+}
+@media (max-width: 950px) {
+  .game-wheel { grid-template-columns: minmax(0, 1fr) minmax(235px, .75fr); gap: 18px; min-height: 335px; }
+  .wheel-game-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .wheel-visual { width: min(100%, 275px); }
+}
+@media (max-width: 700px) {
+  .game-wheel {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    min-height: 0;
+    padding: 22px 18px;
+    border-radius: 20px;
+  }
+  .wheel-game-list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; }
+  .wheel-game-chip { padding: 7px 8px; gap: 7px; font-size: 10px; }
+  .wheel-copy h2 { font-size: 1.8rem; }
+  .wheel-visual { width: min(74vw, 270px); margin-top: 10px; }
+  .wheel-disc { transition-duration: 4.3s; }
+  .wheel-pointer { border-right-width: 11px; border-left-width: 11px; border-top-width: 22px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .game-wheel *,
+  .game-wheel *::before,
+  .game-wheel *::after,
+  .game-card,
+  .game-card * {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}

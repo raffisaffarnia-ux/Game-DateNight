@@ -7,6 +7,7 @@ import { Button, Card } from "./ui";
 import { getSupabase, identity } from "@/lib/supabase";
 import { roomError } from "@/lib/room-error";
 import { useProfile } from "./profile/provider";
+import { games } from "@/lib/games";
 export function RoomForm({
   mode,
   initialCode = "",
@@ -43,7 +44,11 @@ export function RoomForm({
             },
       );
       if (result.error) throw result.error;
-      router.push(`/room/${result.data}`);
+      const requestedGame = new URLSearchParams(window.location.search).get("game");
+      const gameQuery = requestedGame && games.some((game) => game.id === requestedGame)
+        ? `?game=${encodeURIComponent(requestedGame)}`
+        : "";
+      router.push(`/room/${result.data}${gameQuery}`);
     } catch (e) {
       setError(roomError(e));
       setBusy(false);

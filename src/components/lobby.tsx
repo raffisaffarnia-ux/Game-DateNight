@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import {
   ArrowLeft,
@@ -64,14 +64,27 @@ function LobbyContent({ id }: { id: string }) {
   const [actionError, setActionError] = useState("");
   const [busy, setBusy] = useState(false);
   const [origin, setOrigin] = useState("");
+  const [lastGameId, setLastGameId] = useState<string | null>(null);
+  const [requestedGame, setRequestedGame] = useState<string | null>(null);
+  const autoStarted = useRef(false);
   useEffect(() => {
     setOrigin(window.location.origin);
   }, []);
+  useEffect(() => {
+    const requested = new URLSearchParams(window.location.search).get("game");
+    if (requested && games.some((game) => game.id === requested)) {
+      setRequestedGame(requested);
+      setView("library");
+    }
+  }, []);
+  useEffect(() => {
+    if (room?.current_game) setLastGameId(room.current_game);
+  }, [room?.current_game]);
   const ready =
     status === "Connected" &&
     members.length === 2 &&
     members.every((m) => online.includes(m.user_id));
-  async function choose(game: string | null) {
+  const choose = useCallback(async (game: string | null) => {
     setBusy(true);
     setActionError("");
     try {
@@ -81,7 +94,17 @@ function LobbyContent({ id }: { id: string }) {
     } finally {
       setBusy(false);
     }
-  }
+  }, [selectGame]);
+  useEffect(() => {
+    if (!requestedGame || !ready || !room || room.active_session_id || autoStarted.current) return;
+    autoStarted.current = true;
+    setRequestedGame(null);
+    const url = new URL(window.location.href);
+    url.searchParams.delete("game");
+    window.history.replaceState({}, "", url);
+    void choose(requestedGame);
+  }, [requestedGame, ready, room, choose]);
+
   async function copy(kind: "code" | "link") {
     try {
       await navigator.clipboard.writeText(
@@ -187,7 +210,8 @@ function LobbyContent({ id }: { id: string }) {
           )}
           <GamesLibrary
             disabled={!ready || busy}
-            onSelect={(game) => void choose(game)}
+            onSelect={(game) => choose(game)}
+            lastGameId={lastGameId}
           />
         </>
       ) : (
