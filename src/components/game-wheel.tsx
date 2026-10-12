@@ -75,10 +75,6 @@ export function GameWheel({
   return (
     <section className="game-wheel" aria-labelledby="game-wheel-title">
       <div className="wheel-copy">
-        <div className="wheel-title-row">
-          <span className="wheel-icon"><Dices size={19} /></span>
-          <span className="eyebrow">EURE NÄCHSTE RUNDE</span>
-        </div>
         <h2 id="game-wheel-title">Das Glück entscheidet</h2>
         <p>Ein Dreh, ein neues Spiel. Nach jeder Runde wartet das Rad wieder auf euch.</p>
         <div className="wheel-game-list" aria-label="Spiele im Glücksrad">
