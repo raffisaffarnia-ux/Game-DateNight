@@ -132,9 +132,9 @@ body:has(.play-page) {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  overflow: auto;
-  overscroll-behavior: contain;
-  scrollbar-width: thin;
+  overflow: hidden;
+  overscroll-behavior: none;
+  scrollbar-width: none;
 }
 .game-content > .game-progress {
   flex-shrink: 0;
@@ -195,7 +195,7 @@ body:has(.play-page) {
 .game-content .answer-pair > div {
   padding: 16px;
   max-height: 30dvh;
-  overflow: auto;
+  overflow: hidden;
 }
 .game-content .round-moment {
   margin: 0;
@@ -632,3 +632,39 @@ body:has(.play-page) {
  .game-content .snake-board{width:min(100%,calc(100dvh - 320px));height:auto;align-self:center}
  .game-content .snake-overlay strong{font-size:clamp(28px,8vw,48px)}
 }
+
+
+/* Keep every in-game state within the viewport. */
+.play-page .game-content,
+.play-page .game-shell,
+.play-page .ready-card,
+.play-page .moral-game,
+.play-page .rank-game,
+.play-page .bomb-game {
+  min-height: 0;
+  overflow: hidden;
+}
+.play-page .daily-history { display: none; }
+.play-page .game-content .daily-history,
+.play-page .game-content .round-history,
+.play-page .game-content details[open],
+.play-page .game-content .answer-pair > div {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+.play-page .game-content .moral-scenario p {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 5;
+  overflow: hidden;
+  font-size: clamp(12px, 1.5vh, 15px);
+  line-height: 1.35;
+}
+.play-page .game-content .moral-option { min-height: 48px; padding: 8px 12px; }
+.play-page .game-content .moral-option p { margin: 0; font-size: clamp(12px, 1.6vh, 15px); }
+.play-page .game-content .moral-options { gap: 7px; }
+.play-page .game-content .new-game-setup { gap: 10px; padding: clamp(12px, 2vh, 24px); }
+.play-page .game-content .category-pills { gap: 6px; }
+.play-page .game-content .category-pills button { min-height: 32px; padding: 0 10px; }
+.play-page .game-content .ready-card { gap: 8px; padding: clamp(12px, 2vh, 24px); }
+.play-page .game-content .ready-players { margin: 4px 0; }
