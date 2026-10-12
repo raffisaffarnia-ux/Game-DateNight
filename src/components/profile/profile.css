@@ -859,3 +859,16 @@ body:has(.profile-dialog[open]) {
     transition: none !important;
   }
 }
+
+
+/* Coins fly straight from the completed task into the wallet. */
+.coin-flight-layer { position: fixed; inset: 0; z-index: 2000; pointer-events: none; overflow: hidden; }
+.coin-flight { position: absolute; display: grid; place-items: center; width: 28px; height: 28px; opacity: 0; animation: coin-to-wallet 560ms cubic-bezier(.45,0,.15,1) var(--coin-flight-delay) both; }
+.coin-flight .pixel-coin { width: 25px; height: 25px; font-size: 16px; filter: drop-shadow(0 2px 2px #241a1838); }
+@keyframes coin-to-wallet {
+  0% { opacity: 0; transform: translate3d(0,0,0) scale(.65) rotate(-18deg); }
+  14% { opacity: 1; }
+  78% { opacity: 1; transform: translate3d(calc(var(--coin-flight-x) * .82),calc(var(--coin-flight-y) * .82),0) scale(.9) rotate(310deg); }
+  100% { opacity: 0; transform: translate3d(var(--coin-flight-x),var(--coin-flight-y),0) scale(.55) rotate(420deg); }
+}
+@media (prefers-reduced-motion: reduce) { .coin-flight { animation-duration: 1ms; } }
