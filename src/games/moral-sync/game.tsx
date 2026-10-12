@@ -52,7 +52,7 @@ export function MoralSync({ session, players, userId, command, busy, replay }: G
   const matches=useMemo(()=>inputs.filter(x=>x.kind==="moral_answer"&&x.revealed).reduce((n,x,_,all)=>{
     const pair=all.filter(y=>y.round===x.round); return pair.length===2&&pair[0].value.choice===pair[1].value.choice?n+0.5:n;
   },0),[inputs]);
-  if(!card && session.status !== "finished") return <Card className="error" role="alert">Diese Situation ist nicht verfügbar. Zurück zur Spieleauswahl.</Card>;
+  if(!card && session.status !== "finished") return <div className="error" role="alert">Diese Situation ist nicht verfügbar. Zurück zur Spieleauswahl.</div>;
   if(session.status==="finished"){
     const resultRows=inputs.filter(x=>x.kind==="moral_answer"&&x.revealed);
     const pairRounds=new Set(resultRows.map(x=>x.round));
@@ -60,6 +60,7 @@ export function MoralSync({ session, players, userId, command, busy, replay }: G
     for(const round of pairRounds){const pair=resultRows.filter(x=>x.round===round);const c=moralCards.find(x=>x.id===session.question_ids[round])?.category||"Other";const entry=categoriesSeen.get(c)||{same:0,total:0};entry.total++;if(pair.length===2&&pair[0].value.choice===pair[1].value.choice)entry.same++;categoriesSeen.set(c,entry);}
     return <GameResults title="Verschiedene Antworten, ein gutes Gespräch" description={`${matches} von ${session.total_rounds} gemeinsame Sichtweisen stimmen überein. Ähnlichkeit ist nur ein Gesprächsanfang.`} replay={replay} replayLabel={session.state.wheel_mode === true ? "Neues Spiel drehen" : "Nochmal spielen"} busy={busy}><div className="moral-result-categories">{[...categoriesSeen].map(([name,value])=><div key={name}><span>{categoryLabel[name] || name}</span><strong>{Math.round(value.same/value.total*100)}%</strong></div>)}</div></GameResults>;
   }
+  if(!card) return <div className="error" role="alert">Diese Situation ist nicht verfügbar. Zurück zur Spieleauswahl.</div>;
   const submit=(action:"lock"|"change_mind"|"continue",payload:Record<string,unknown>={})=>void command(action,payload);
   return <div className="moral-game">
     <GameProgress round={session.round} total={session.total_rounds} onSkip={() => void command("skip")} skipDisabled={busy || !!ownAnswer || !!ownMind}><span className="moral-round">Dilemma {session.round+1} / {session.total_rounds}</span></GameProgress>

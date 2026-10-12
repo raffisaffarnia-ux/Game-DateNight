@@ -83,7 +83,7 @@ export function GameHost({
     command: game.command,
   };
   async function replay() {
-    if (session.state.wheel_mode === true) { exit(); return; }
+    if (props.replayLabel === "Neues Spiel drehen") { exit(); return; }
     setReplaying(true);
     setError("");
     try {
