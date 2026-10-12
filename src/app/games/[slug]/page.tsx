@@ -11,16 +11,16 @@ export default async function Page({
   const game = games.find((g) => g.id === slug);
   if (!game) notFound();
   return (
-    <main id="main" className="narrow-page">
+    <main id="main" className="game-detail-page">
       <Link className="back-link" href="/games">
-        ← Back to games
+        ← Zurück zu den Spielen
       </Link>
       <GameLayout game={game}>
         <Link className="button primary" href="/create">
-          Create a Room
+          Raum erstellen
         </Link>
         <Link className="back-link" href="/join">
-          Join a Room
+          Raum beitreten
         </Link>
       </GameLayout>
     </main>
