@@ -977,19 +977,6 @@
   position: relative;
   z-index: 2;
 }
-.wheel-title-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 10px;
-  color: #8e5d8f;
-}
-.wheel-title-row .eyebrow {
-  font-size: 10px;
-  font-weight: 750;
-  letter-spacing: .15em;
-}
-.wheel-icon,
 .wheel-button-icon {
   display: grid;
   place-items: center;
@@ -997,10 +984,6 @@
   color: #fff;
   background: linear-gradient(145deg, #ce68aa, #8662d0);
   box-shadow: 0 5px 14px #9c62b245;
-}
-.wheel-icon {
-  width: 34px;
-  height: 34px;
 }
 .wheel-copy h2 {
   margin: 0;
@@ -1266,7 +1249,7 @@
       linear-gradient(120deg, #30272e, #30283b 58%, #362b2a);
     box-shadow: 0 16px 45px #0004, inset 0 1px #ffffff14;
   }
-  .wheel-title-row, .wheel-result { color: #edb9e6 !important; }
+  .wheel-result { color: #edb9e6 !important; }
   .wheel-copy h2, .wheel-result strong { color: #fff0fc; }
   .wheel-copy > p:not(.wheel-result), .wheel-footnote { color: #d3c4d4; }
   .wheel-game-chip {
