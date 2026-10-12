@@ -96,8 +96,8 @@ export function useDaily(roomId: string) {
               typeof error === "object" &&
               "message" in error &&
               String(error.message).startsWith("No unseen questions remain")
-              ? "You’ve seen every available daily question. Fresh cards need to be added."
-              : "Could not load your daily question. Try again.",
+              ? "Für heute sind keine neuen Fragen mehr da."
+              : "Die heutige Frage konnte nicht geladen werden. Bitte versuche es erneut.",
           );
       } finally {
         refreshing = false;
@@ -117,6 +117,21 @@ export function useDaily(roomId: string) {
       if (channel) void db.removeChannel(channel);
     };
   }, [roomId, limit, attempt]);
+  async function skip() {
+    if (!context) return false;
+    setBusy(true);
+    try {
+      const { error } = await getSupabase().rpc("skip_daily_question", { target: roomId });
+      if (error) throw error;
+      await refreshRef.current();
+      return true;
+    } catch (err) {
+      setError(err && typeof err === "object" && "message" in err && String(err.message).startsWith("No unseen questions remain")
+        ? "Für heute sind keine neuen Fragen mehr da."
+        : "Die Frage konnte nicht übersprungen werden.");
+      return false;
+    } finally { setBusy(false); }
+  }
   async function submit(value: string) {
     if (!context) return false;
     setBusy(true);
@@ -130,7 +145,7 @@ export function useDaily(roomId: string) {
       return true;
     } catch {
       setError(
-        "Could not save your answer. The day may have changed; refresh and try again.",
+        "Deine Antwort konnte nicht gespeichert werden. Bitte aktualisiere die Frage.",
       );
       return false;
     } finally {
@@ -144,6 +159,7 @@ export function useDaily(roomId: string) {
     error,
     busy,
     submit,
+    skip,
     retry: () => setAttempt((n) => n + 1),
     more: () => setLimit((n) => n + 60),
     canLoadMore: entries.length === limit,

@@ -12,6 +12,7 @@ export function KnowMe({
   command,
   busy,
   replay,
+  replayLabel,
 }: GameViewProps & { replay: () => void }) {
   const subject = players.find((p) => p.seat === (session.round % 2) + 1)!;
   const isSubject = subject.user_id === userId;
@@ -27,6 +28,7 @@ export function KnowMe({
         title={`${Object.values(scores).reduce((sum, n) => sum + n, 0)} / ${session.total_rounds} erraten`}
         description="Es gibt immer noch etwas Neues zu entdecken."
         replay={replay}
+        replayLabel={replayLabel}
         busy={busy}
       >
         <div className="answer-pair">
@@ -51,7 +53,7 @@ export function KnowMe({
     );
   return (
     <>
-      <GameProgress round={session.round} total={session.total_rounds} />
+      <GameProgress round={session.round} total={session.total_rounds} onSkip={() => void command("skip")} skipDisabled={busy || !!mine || session.status === "round_end"} />
       <Card className="question-stage" key={session.round}>
         <div className="role-chip">
           {isSubject ? "Das echte Ich" : "Gedankenleser"}
@@ -113,7 +115,7 @@ export function KnowMe({
                 </Button>
               </div>
             ) : (
-              <p role="status">Warte auf {subject.name} to decide.</p>
+              <p role="status">Warte, bis {subject.name} entschieden hat.</p>
             )}
           </div>
         ) : mine ? (

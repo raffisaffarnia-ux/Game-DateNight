@@ -7,6 +7,7 @@ import {
   Gamepad2,
   Sparkles,
   LockKeyhole,
+  SkipForward,
 } from "lucide-react";
 import { Celebration, ResultTrophy } from "./effects";
 import { Button, Card } from "@/components/ui";
@@ -146,7 +147,7 @@ export function ReadyState({
           </div>
         ))}
       </div>
-      <Button disabled={disabled || locked} onClick={ready}>
+      <Button className="ready-play-button" disabled={disabled || locked} onClick={ready}>
         {locked ? (
           <>
             <Check size={18} /> Du bist bereit
@@ -165,10 +166,14 @@ export function GameProgress({
   round,
   total,
   children,
+  onSkip,
+  skipDisabled = false,
 }: {
   round: number;
   total: number;
   children?: ReactNode;
+  onSkip?: () => void;
+  skipDisabled?: boolean;
 }) {
   return (
     <div className="game-progress">
@@ -176,7 +181,8 @@ export function GameProgress({
         Runde {Math.min(round + 1, total)} von {total}
       </span>
       {children}
-      <progress value={round + 1} max={total} aria-label="Runde progress" />
+      {onSkip && <Button className="skip-question-button" secondary disabled={skipDisabled} onClick={onSkip}><SkipForward size={15}/> Überspringen</Button>}
+      <progress value={round + 1} max={total} aria-label="Rundenfortschritt" />
     </div>
   );
 }
@@ -186,12 +192,14 @@ export function GameResults({
   replay,
   busy,
   children,
+  replayLabel = "Nochmal spielen",
 }: {
   title: string;
   description?: string;
   replay: () => void;
   busy: boolean;
   children?: ReactNode;
+  replayLabel?: string;
 }) {
   return (
     <Card className="game-results">
@@ -202,7 +210,7 @@ export function GameResults({
       {description && <p>{description}</p>}
       {children}
       <Button disabled={busy} onClick={replay}>
-        <RotateCcw size={16} /> Nochmal spielen
+        <RotateCcw size={16} /> {replayLabel}
       </Button>
     </Card>
   );

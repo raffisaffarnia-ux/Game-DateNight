@@ -84,11 +84,11 @@ function LobbyContent({ id }: { id: string }) {
     status === "Connected" &&
     members.length === 2 &&
     members.every((m) => online.includes(m.user_id));
-  const choose = useCallback(async (game: string | null) => {
+  const choose = useCallback(async (game: string | null, fromWheel = false) => {
     setBusy(true);
     setActionError("");
     try {
-      await selectGame(game);
+      await selectGame(game, fromWheel);
     } catch (e) {
       setActionError((e as Error).message);
     } finally {
@@ -211,6 +211,7 @@ function LobbyContent({ id }: { id: string }) {
           <GamesLibrary
             disabled={!ready || busy}
             onSelect={(game) => choose(game)}
+            onWheelSelect={(game) => choose(game, true)}
             lastGameId={lastGameId}
           />
         </>

@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { Heart } from "lucide-react";
 import { deepTalkQuestions } from "../shared/content";
+import { germanCategory } from "../shared/german-content";
 import type { GameViewProps } from "../shared/types";
 import { Button, Card } from "@/components/ui";
 import { getSupabase } from "@/lib/supabase";
@@ -24,7 +25,7 @@ export function DeepTalkSetup({
             disabled={busy || session.ready.length > 0}
             onClick={() => void command("deck", { deck })}
           >
-            {deck}
+            {germanCategory(deck)}
           </button>
         ))}
       </div>
@@ -38,6 +39,7 @@ export function DeepTalk({
   command,
   busy,
   replay,
+  replayLabel,
 }: GameViewProps & { replay: () => void }) {
   const [saved, setSaved] = useState<string[]>([]);
   const [loadError, setLoadError] = useState(false);
@@ -69,16 +71,17 @@ export function DeepTalk({
           title="Ein Gespräch, das bleibt."
           description={`${session.total_rounds} Karten – nur ihr zwei.`}
           replay={replay}
+          replayLabel={replayLabel}
           busy={busy}
         />
       ) : (
         <>
-          <GameProgress round={session.round} total={session.total_rounds} />
+          <GameProgress round={session.round} total={session.total_rounds} onSkip={() => void command("skip")} skipDisabled={busy} />
           <Card className="question-stage conversation-card">
-            <span className="eyebrow">{session.state.deck}</span>
+            <span className="eyebrow">{germanCategory(String(session.state.deck || ""))}</span>
             <FlipQuestion
               key={question?.id}
-              category={session.state.deck || "Deep Talk"}
+              category={germanCategory(String(session.state.deck || "Us"))}
             >
               <h2>{question?.prompt}</h2>
             </FlipQuestion>

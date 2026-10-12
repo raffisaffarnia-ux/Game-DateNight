@@ -158,7 +158,7 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!reward) return;
     const active = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-    const source = active?.closest("button")?.getBoundingClientRect() ?? document.querySelector(".game-content")?.getBoundingClientRect();
+    const source = document.querySelector(".round-moment")?.getBoundingClientRect() ?? active?.closest("button")?.getBoundingClientRect() ?? document.querySelector(".game-content")?.getBoundingClientRect();
     const wallet = document.querySelector<HTMLElement>("[data-coin-counter]")?.getBoundingClientRect();
     if (source && wallet) {
       setCoinFlight({ id: reward.id, coins: reward.coins,
@@ -544,7 +544,7 @@ export function ProfileButton() {
       onClick={open}
       aria-label="Profil und Pixel-Shop öffnen"
     >
-      <span className="wallet-pill">
+      <span className="wallet-pill" data-coin-counter>
         <Coin />
         <span key={profile?.coins} className="wallet-number">
           {profile?.coins ?? "–"}

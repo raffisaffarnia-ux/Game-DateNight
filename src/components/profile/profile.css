@@ -872,3 +872,6 @@ body:has(.profile-dialog[open]) {
   100% { opacity: 0; transform: translate3d(var(--coin-flight-x),var(--coin-flight-y),0) scale(.55) rotate(420deg); }
 }
 @media (prefers-reduced-motion: reduce) { .coin-flight { animation-duration: 1ms; } }
+.profile-trigger .wallet-pill[data-coin-counter] { position: relative; }
+.skip-question-button { min-height: 38px; padding-inline: 14px; }
+@media (prefers-reduced-motion: reduce) { .coin-flight-layer { display: none; } }

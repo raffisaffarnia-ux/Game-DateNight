@@ -416,7 +416,7 @@
   overflow: hidden;
   pointer-events: none;
   border-radius: inherit;
-  opacity: .34;
+  opacity: .24;
 }
 .round-moment > :not(.celebration),
 .game-results > :not(.celebration) { position: relative; z-index: 1; }
@@ -424,8 +424,8 @@
   position: absolute;
   left: var(--x);
   top: -10px;
-  width: 10px;
-  height: 16px;
+  width: 13px;
+  height: 19px;
   background: var(--game-color);
   border-radius: 2px;
   opacity: 0;

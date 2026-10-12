@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { thisOrThatQuestions } from "../shared/content";
+import { germanCategory } from "../shared/german-content";
 import type { GameViewProps } from "../shared/types";
 import { Button, Card } from "@/components/ui";
 import { GameProgress, GameResults } from "../shared/shell";
@@ -13,6 +14,7 @@ export function ThisOrThat({
   command,
   busy,
   replay,
+  replayLabel,
 }: GameViewProps & { replay: () => void }) {
   const [pendingChoice, setPendingChoice] = useState<{
     round: number;
@@ -36,6 +38,7 @@ export function ThisOrThat({
         title={`${session.state.matches || 0} / ${session.total_rounds} Übereinstimmungen`}
         description={`${Math.round(((session.state.matches || 0) / session.total_rounds) * 100)}% gleicher Gedanke`}
         replay={replay}
+        replayLabel={replayLabel}
         busy={busy}
       >
         <ol className="round-history">
@@ -66,7 +69,7 @@ export function ThisOrThat({
     );
   return (
     <>
-      <GameProgress round={session.round} total={session.total_rounds}>
+      <GameProgress round={session.round} total={session.total_rounds} onSkip={() => void command("skip")} skipDisabled={busy || !!mine || session.status === "round_end"}>
         <span>
           {session.state.matches || 0}{" "}
           {session.state.matches === 1 ? "Übereinstimmung" : "Übereinstimmungen"}
@@ -76,7 +79,7 @@ export function ThisOrThat({
         className="question-stage duel-stage"
         key={`${session.round}-${session.status}`}
       >
-        <span className="eyebrow">{question.category}</span>
+        <span className="eyebrow">{germanCategory(question.category)}</span>
         {session.status === "round_end" ? (
           <div className="reveal" aria-live="polite">
             <RoundMoment
@@ -129,7 +132,7 @@ export function ThisOrThat({
                 </button>
               ))}
               <span className="duel-divider" aria-hidden="true">
-                or
+                oder
               </span>
             </div>
             {mine && (

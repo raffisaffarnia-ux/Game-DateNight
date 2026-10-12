@@ -58,5 +58,5 @@ export const games: GameDefinition[] = [
   },
   { id: "relationship-bomb", title: "Relationship Bomb", description: "Meistert acht kleine Herausforderungen im Team.", category: "Koop", art: "bomb", status: "available" },
   { id: "moral-sync", title: "Moral Sync", description: "Entdeckt, was eure Sicht auf die Welt prägt.", category: "Gespräch", art: "moral", status: "available" },
-  { id: "rank-and-draw", title: "Rank", description: "Ordne deine Favoriten und zeichne etwas für deinen Lieblingsmenschen.", category: "Kreativ", art: "rank", status: "available" },
+  { id: "rank-and-draw", title: "Rank", description: "Ordnet fünf Dinge in eure persönliche Reihenfolge und vergleicht, was euch wichtig ist.", category: "Beziehung", art: "rank", status: "available" },
 ];

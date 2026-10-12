@@ -1,4 +1,5 @@
 import type { Question } from "./types.ts";
+import { germanText } from "./german-content";
 import {
   expandedChoices,
   expandedConversations,
@@ -502,6 +503,11 @@ for (const [bank, extra] of [
   [dailyQuestions, expandedDaily],
   [drawingWords, expandedWords],
 ]) {
+  for (const q of [...bank, ...extra]) {
+    q.prompt = germanText(q.prompt);
+    if (q.optionA) q.optionA = germanText(q.optionA);
+    if (q.optionB) q.optionB = germanText(q.optionB);
+  }
   const fingerprint = (q: Question) =>
     q.optionA
       ? [q.optionA, q.optionB].sort().join("|").toLowerCase()

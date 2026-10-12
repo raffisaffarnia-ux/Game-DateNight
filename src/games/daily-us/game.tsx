@@ -72,12 +72,12 @@ export function DailyUs({ session, players, userId }: GameViewProps) {
             <blockquote>{mine.value}</blockquote>
           </div>
         ) : (
-          <AnswerForm
+          <><AnswerForm
             key={current.id}
             label="Deine Antwort"
             onSubmit={daily.submit}
             disabled={daily.busy}
-          />
+          /><Button secondary disabled={daily.busy} onClick={() => void daily.skip()}>Frage überspringen</Button></>
         )}
         <p className="field-note">
           {daily.context.timezone} · Eure Antworten erscheinen, sobald ihr beide geantwortet habt.

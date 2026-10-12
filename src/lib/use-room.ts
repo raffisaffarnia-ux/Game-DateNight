@@ -148,15 +148,16 @@ export function useRoom(id: string) {
       cleanup();
     };
   }, [id, attempt]);
-  async function selectGame(game: string | null) {
+  async function selectGame(game: string | null, wheelMode = false) {
     const { error } = await getSupabase().rpc("select_game", {
       target: id,
       game,
+      wheel_mode: wheelMode,
     });
     if (error)
       throw new Error(
         error.message.startsWith("No unseen questions remain")
-          ? "You’ve played every available question for this game. Fresh cards need to be added before another round."
+          ? "Ihr habt alle verfügbaren Fragen gespielt. Für weitere Runden braucht es neue Fragen."
           : "Could not open the game. Check your connection and try again.",
       );
     await refreshRoom.current?.();

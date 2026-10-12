@@ -79,10 +79,12 @@ export function GameCard({
 }
 export function GamesLibrary({
   onSelect,
+  onWheelSelect,
   disabled,
   lastGameId,
 }: {
   onSelect?: (id: string) => void | Promise<void>;
+  onWheelSelect?: (id: string) => void | Promise<void>;
   disabled?: boolean;
   lastGameId?: string | null;
 }) {
@@ -91,7 +93,7 @@ export function GamesLibrary({
       <div className="library-heading">
         <h1>Spiele für zwei</h1>
       </div>
-      <GameWheel onSelect={onSelect} disabled={disabled} excludeGameId={lastGameId} />
+      <GameWheel onSelect={onWheelSelect || onSelect} disabled={disabled} excludeGameId={lastGameId} />
       <div className="game-grid">
         {games.map((game) => (
           <GameCard

@@ -1,41 +1,148 @@
 "use client";
-import { useEffect, useMemo, useRef, useState, type PointerEvent } from "react";
-import { ArrowDown, ArrowRight, ArrowUp, Check, Clock3, Eraser, Pencil, Sparkles } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { ArrowDown, ArrowUp, Check, Sparkles } from "lucide-react";
 import { Button, Card } from "@/components/ui";
-import { usePrivateInputs, type PrivateInput } from "../shared/use-private-inputs";
+import { GameProgress, GameResults } from "../shared/shell";
+import { germanCategory } from "../shared/german-content";
+import { usePrivateInputs } from "../shared/use-private-inputs";
 import type { GameViewProps } from "../shared/types";
 import { rankSets } from "../moral-sync/content";
 
-type Point={x:number;y:number};type Mark={color:string;points:Point[]};
-const palette=["#69516b","#c75e76","#e59c4f","#398a78","#3878b8","#252a28"];
-export function RankDrawSetup({session,command,busy}:Pick<GameViewProps,"session"|"command"|"busy">){
- const [count,setCount]=useState(Number(session.state.config_count||6));const [duration,setDuration]=useState(Number(session.state.duration??60));
- return <div className="rank-setup"><span className="eyebrow">Ein bisschen Einblick, viel Fantasie</span><h2>Bringt eure Vorlieben in Reihenfolge</h2><p>Sortiert eure Favoriten und zeichnet etwas, das der andere erraten soll.</p><div className="setup-control"><span>Runden</span><div className="segmented-control">{[3,6,10].map(n=><button key={n} className={count===n?"selected":""} aria-pressed={count===n} onClick={()=>setCount(n)}>{n}</button>)}</div></div><div className="setup-control"><span>Zeichenzeit</span><div className="segmented-control">{[[60,"60 Sek."],[0,"Ohne Zeitlimit"]].map(([n,label])=><button key={String(n)} className={duration===Number(n)?"selected":""} aria-pressed={duration===Number(n)} onClick={()=>setDuration(Number(n))}>{label}</button>)}</div></div><Button secondary disabled={busy} onClick={()=>void command("configure",{count,duration:duration===0?"none":"timed"})}><Check size={16}/> Einstellungen speichern</Button></div>;
-}
-export function RankAndDraw({session,players,userId,command,busy,replay}:GameViewProps&{replay:()=>void}){
- const {inputs,error}=usePrivateInputs(session);const [ranking,setRanking]=useState<string[]>([]);const [guess,setGuess]=useState("");const [vote,setVote]=useState("");const [description,setDescription]=useState("");const [marks,setMarks]=useState<Mark[]>([]);const [current,setCurrent]=useState<Point[]>([]);const [color,setColor]=useState(palette[0]);const [erase,setErase]=useState(false);const [remaining,setRemaining]=useState(60);const surface=useRef<SVGSVGElement>(null);const drag=useRef<number|null>(null);
- const set=rankSets.find(x=>x.id===session.question_ids[session.round])||rankSets[session.round%rankSets.length];const phase=String(session.state.phase||"rank");const mine=(kind:string)=>inputs.find(x=>x.round===session.round&&x.kind===kind&&x.user_id===userId);const rows=(kind:string)=>inputs.filter(x=>x.round===session.round&&x.kind===kind);const myRank=mine("ranking");const partner=players.find(p=>p.user_id!==userId);const creator=String(session.state.creator_id||"");const isCreator=creator===userId;const special=session.state.special_round===true;const myDrawing=mine("drawing");const drawings=rows("drawing");const target=mine("target")?.value.item;
- const rounds=inputs.filter(x=>x.kind==="ranking"&&x.revealed);const topMatches=useMemo(()=>{const sum=rounds.filter(x=>{const pair=rounds.filter(y=>y.round===x.round);const first=pair[0]?.value.rank as string[]|undefined;const second=pair[1]?.value.rank as string[]|undefined;return pair.length===2&&first?.[0]===second?.[0]});return new Set(sum.map(x=>x.round)).size},[rounds]);
- useEffect(()=>{setRanking(set.items);setGuess("");setVote("");setDescription("");setMarks([]);setCurrent([])},[set.id]);
- useEffect(()=>{if(!session.state.ends_at)return;const interval=window.setInterval(()=>{const n=Math.max(0,Math.ceil((Date.parse(String(session.state.ends_at))-Date.now())/1000));setRemaining(n);if(n===0&&phase==="create"&&!busy&&(isCreator||special))void command("draw_finish")},500);return()=>clearInterval(interval)},[session.state.ends_at,phase,busy,command,isCreator,special]);
- useEffect(()=>{const stored=myDrawing?.value.marks;if(Array.isArray(stored))setMarks(stored as Mark[]);setDescription(String(myDrawing?.value.text||""))},[myDrawing?.created_at,session.round]);
- function reordered(from:number,to:number){setRanking(old=>{const a=[...old];if(to<0||to>=a.length)return old;[a[from],a[to]]=[a[to],a[from]];return a})}
- function point(e:PointerEvent<SVGSVGElement>):Point{const b=e.currentTarget.getBoundingClientRect();return{x:Math.max(0,Math.min(1000,(e.clientX-b.left)/b.width*1000)),y:Math.max(0,Math.min(600,(e.clientY-b.top)/b.height*600))}}
- function finishMark(e?:PointerEvent<SVGSVGElement>){if(e&&e.currentTarget.hasPointerCapture(e.pointerId))e.currentTarget.releasePointerCapture(e.pointerId);if(!current.length)return;const next=[...marks,{color:erase?"#fffdf9":color,points:current}];setMarks(next);setCurrent([]);void command("draw_save",{marks:next})}
- function move(e:PointerEvent<SVGSVGElement>){if(!current.length)return;setCurrent(old=>[...old,point(e)])}
- const promptMode=(set.mode||(session.round%2===0?"draw":"describe"));const describeMode=promptMode==="describe"&&!special;const elapsed=Number(session.state.duration??60)>0;
- const sharedByRound=(kind:string,r:number)=>inputs.filter(x=>x.kind===kind&&x.round===r&&x.revealed);
- if(session.status==="finished")return <Card className="rank-results"><span className="eyebrow">RANK</span><h2>Eure Sichtweisen im Vergleich</h2><p>Ein spielerischer Blick darauf, wo ihr ähnlich tickt.</p><div className="rank-result-stats"><div><strong>{Math.round(rounds.length?topMatches/Math.max(1,new Set(rounds.map(x=>x.round)).size)*100:0)}%</strong><span>gleiche erste Wahl</span></div><div><strong>{Number(session.state.correct_guesses||0)}</strong><span>Zeichnungen erraten</span></div><div><strong>{topMatches}</strong><span>gleiche Favoriten</span></div></div><h3>Eure Galerie</h3><div className="rank-gallery">{Array.from({length:session.total_rounds},(_,r)=>{const d=sharedByRound("drawing",r);return <Card key={r}><strong>{rankSets.find(x=>x.id===session.question_ids[r])?.title}</strong><div className="gallery-drawings">{d.map(x=>x.value.text?<p key={x.user_id}>{String(x.value.text)}</p>:<svg key={x.user_id} viewBox="0 0 1000 600">{((x.value.marks||[]) as Mark[]).map((m,i)=><polyline key={i} points={m.points.map(p=>`${p.x},${p.y}`).join(" ")} fill="none" stroke={m.color} strokeWidth="8" strokeLinecap="round" strokeLinejoin="round"/>)}</svg>)}</div></Card>})}</div><Button disabled={busy} onClick={replay}>Play again</Button></Card>;
- return <div className="rank-game"><div className="rank-game-top"><div><span className="eyebrow">RUNDE {session.round+1} VON {session.total_rounds}</span><h2>{phase==="rank"?"Sortiere nach deinem Gefühl":set.title}</h2></div><div className="rank-progress">{({rank:"REIHENFOLGE",reveal:"ERGEBNIS",create:"ZEICHNEN",guess:"RATEN",vote:"ABSTIMMEN",compare:"VERGLEICH"} as Record<string,string>)[phase] || phase}<progress value={session.round+1} max={session.total_rounds}/></div></div>
- {phase==="rank"&&<><Card className="rank-prompt"><span className="eyebrow">{set.category.toUpperCase()}</span><h3>{set.title}</h3><p>Ziehe zum Sortieren oder nutze die Pfeile.</p></Card><ol className="ranking-list">{ranking.map((item,index)=><li key={item} draggable={!myRank&&!busy} onDragStart={()=>{drag.current=index}} onDragOver={e=>e.preventDefault()} onDrop={()=>{if(drag.current!==null)reordered(drag.current,index)}}><span className="rank-index">{index+1}</span><strong>{item}</strong><div><button disabled={!!myRank||busy||index===0} onClick={()=>reordered(index,index-1)} aria-label={`${item} nach oben verschieben`}><ArrowUp size={17}/></button><button disabled={!!myRank||busy||index===ranking.length-1} onClick={()=>reordered(index,index+1)} aria-label={`${item} nach unten verschieben`}><ArrowDown size={17}/></button></div></li>)}</ol><Button disabled={!!myRank||busy||ranking.length!==5} onClick={()=>void command("lock",{rank:ranking})}><Check size={16}/>{myRank?"Reihenfolge gespeichert":"Reihenfolge festlegen"}</Button>{myRank&&<p className="field-note">Deine Reihenfolge ist privat gespeichert. Warte auf {partner?.name}…</p>}</>}
- {phase==="reveal"&&<><Card className="rank-reveal"><span className="eyebrow">GLEICHE AUSWAHL · ZWEI REIHENFOLGEN</span><h2>Ein bisschen gleich, ein bisschen anders</h2><div className="rank-pairs">{players.map(p=>{const row=rows("ranking").find(x=>x.user_id===p.user_id);const list=(row?.value.rank||[]) as string[];return <div key={p.user_id}><h3>{p.user_id===userId?"DU":p.name.toUpperCase()}</h3>{list.map((item,i)=><p key={item}><span>{i+1}</span>{item}</p>)}</div>})}</div><p className="rank-diff">{rankSets.length&&"Verschiedene Reihenfolgen machen den Spaß aus."}</p><Button disabled={busy||!!mine("next")} onClick={()=>void command("continue")}>Macht etwas daraus <Sparkles size={16}/></Button><p className="field-note">Der nächste Teil beginnt, wenn ihr beide bereit seid.</p></Card></>}
- {phase==="create"&&<><div className="create-instruction"><span className="eyebrow">{special?"ZEICHNE DEINE VERSION":"KREATIVRUNDE"}</span><h2>{special?`Zeichnet ${set.title.toLowerCase()} gemeinsam`:describeMode?"Beschreibe es, dein Lieblingsmensch rät":`${isCreator?"Zeichne":"Sieh zu"}, dein Lieblingsmensch rät`}</h2><p>{special?"Ihr zeichnet dieselbe Idee – jede Interpretation ist willkommen.":isCreator?`Geheime Idee: ${String(target||set.items[0])}. ${describeMode?"Beschreibe es, ohne es zu benennen.":"Zeichne es für deinen Lieblingsmenschen."}`:`Versuche zu erraten, was ${partner?.name} dir zeigt.`}</p></div>
-   {special||isCreator&&!describeMode?<><div className="canvas-toolbar"><div className="color-palette">{palette.map(c=><button key={c} className={color===c&&!erase?"active":""} style={{background:c}} aria-label={`Use ${c} pen`} onClick={()=>{setColor(c);setErase(false)}}/>)}</div><button className={`tool-button ${erase?"active":""}`} aria-label="Radierer" onClick={()=>setErase(v=>!v)}><Eraser size={18}/></button><button className="tool-button" aria-label="Letzten Strich rückgängig machen" onClick={()=>{const next=marks.slice(0,-1);setMarks(next);void command("draw_save",{marks:next})}}><span>↶</span></button>{elapsed&&<span className="canvas-timer"><Clock3 size={15}/>{remaining}s</span>}</div><svg ref={surface} className="rank-canvas" viewBox="0 0 1000 600" role="img" aria-label="Zeichne hier mit Maus oder Touch" onPointerDown={e=>{if(!e.isPrimary||myDrawing?.revealed)return;e.preventDefault();e.currentTarget.setPointerCapture(e.pointerId);setCurrent([point(e)])}} onPointerMove={move} onPointerUp={finishMark} onPointerCancel={finishMark}><rect width="1000" height="600" rx="22" fill="#fffdf9"/><g pointerEvents="none">{marks.map((m,i)=><polyline key={i} points={m.points.map(p=>`${p.x},${p.y}`).join(" ")} fill="none" stroke={m.color} strokeWidth="10" strokeLinecap="round" strokeLinejoin="round"/>)}{current.length>0&&<polyline points={current.map(p=>`${p.x},${p.y}`).join(" ")} fill="none" stroke={erase?"#fffdf9":color} strokeWidth="10" strokeLinecap="round" strokeLinejoin="round"/>}</g></svg><Button disabled={busy||!!myDrawing?.revealed} onClick={()=>void command("draw_finish")}>{myDrawing?.revealed?"Deine Zeichnung ist fertig":"Zeichnung abschließen"}</Button></>:isCreator&&describeMode?<div className="describe-card"><p>Beschreibe deine Idee, ohne ihren Namen zu nennen.</p><textarea value={description} onChange={e=>setDescription(e.target.value)} placeholder="Beschreibe es mit wenigen Worten" maxLength={220}/><Button disabled={busy||!!myDrawing?.revealed} onClick={async()=>{if(!await command("draw_save",{text:description}))return;void command("draw_finish")}}>Beschreibung speichern</Button></div>:<Card><span className="field-note">Dein Lieblingsmensch erstellt einen Hinweis. Er erscheint gleich.</span></Card>}
-   </>}
- {phase==="guess"&&<Card className="guess-card"><span className="eyebrow">WAS HATTE DEIN LIEBLINGSMENSCH IM KOPF?</span><h2>Was hat dein Lieblingsmensch gezeichnet?</h2>{drawings.map(d=>d.value.text?<blockquote key={d.user_id}>{String(d.value.text)}</blockquote>:<svg key={d.user_id} viewBox="0 0 1000 600" className="guess-canvas">{((d.value.marks||[]) as Mark[]).map((m,i)=><polyline key={i} points={m.points.map(p=>`${p.x},${p.y}`).join(" ")} fill="none" stroke={m.color} strokeWidth="10" strokeLinecap="round" strokeLinejoin="round"/>)}</svg>)}<div className="guess-options">{set.items.map(x=><button key={x} className={guess===x?"selected":""} disabled={!!mine("guess")} onClick={()=>setGuess(x)}>{x}</button>)}</div><Button disabled={!guess||busy||!!mine("guess")} onClick={()=>void command("guess",{item:guess})}>{mine("guess")?"Vermutung gespeichert":"Vermutung festlegen"}</Button></Card>}
- {phase==="vote"&&<Card className="vote-card"><span className="eyebrow">ZWEI SKIZZEN · EINE GEMEINSAME IDEE</span><h2>Wessen Idee nehmen wir?</h2><div className="rank-pairs">{drawings.map(d=><div key={d.user_id}><h3>{players.find(p=>p.user_id===d.user_id)?.name}</h3><svg viewBox="0 0 1000 600" className="guess-canvas">{((d.value.marks||[]) as Mark[]).map((m,i)=><polyline key={i} points={m.points.map(p=>`${p.x},${p.y}`).join(" ")} fill="none" stroke={m.color} strokeWidth="10" strokeLinecap="round" strokeLinejoin="round"/>)}</svg></div>)}</div><div className="guess-options">{[["mine","Meine"],["yours","Deine"],["mix","Beides"]].map(([id,label])=><button key={id} className={vote===id?"selected":""} onClick={()=>setVote(id)} disabled={!!mine("vote")}>{label}</button>)}</div><Button disabled={!vote||busy||!!mine("vote")} onClick={()=>void command("vote",{vote})}>{mine("vote")?"Stimme privat gespeichert":"Abstimmen"}</Button></Card>}
- {phase==="compare"&&<Card className="rank-compare"><span className="eyebrow">{special?"UNSERE VERSION":"DIE AUFLÖSUNG"}</span><h2>{special?"Ihr habt beide eure eigene Idee":"War das die Idee?"}</h2><p>{special?"Zusammen wird daraus vielleicht die beste Idee.":`Deine Vermutung: ${String(session.state.last_guess||"—")}`}</p>{drawings.map(d=>d.value.text?<blockquote key={d.user_id}>{String(d.value.text)}</blockquote>:<svg key={d.user_id} viewBox="0 0 1000 600" className="guess-canvas">{((d.value.marks||[]) as Mark[]).map((m,i)=><polyline key={i} points={m.points.map(p=>`${p.x},${p.y}`).join(" ")} fill="none" stroke={m.color} strokeWidth="10" strokeLinecap="round" strokeLinejoin="round"/>)}</svg>)}<Button disabled={busy||!!mine("next")} onClick={()=>void command("continue")}>Nächste Runde <ArrowRight size={16}/></Button></Card>}
- {error&&<p className="notice" role="status">{error}</p>}
- </div>;
+export function RankDrawSetup({
+  session,
+  command,
+  busy,
+}: Pick<GameViewProps, "session" | "command" | "busy">) {
+  const [count, setCount] = useState(session.total_rounds || 6);
+  return (
+    <div className="rank-setup">
+      <span className="eyebrow">RANK</span>
+      <h2>Was ist euch am wichtigsten?</h2>
+      <p>Bringt fünf Dinge in eure persönliche Reihenfolge.</p>
+      <div className="setup-control">
+        <span>Runden</span>
+        <div className="segmented-control">
+          {[3, 6, 10].map((value) => (
+            <button
+              key={value}
+              className={count === value ? "selected" : ""}
+              aria-pressed={count === value}
+              disabled={busy}
+              onClick={() => {
+                setCount(value);
+                void command("configure", { count: value });
+              }}
+            >
+              {value}
+            </button>
+          ))}
+        </div>
+      </div>
+      <p className="field-note">Eure Reihenfolgen bleiben bis zum Vergleich geheim.</p>
+    </div>
+  );
 }
 
+export function RankAndDraw({
+  session,
+  players,
+  userId,
+  command,
+  busy,
+  replay,
+  replayLabel,
+}: GameViewProps & { replay: () => void }) {
+  const { inputs, error } = usePrivateInputs(session);
+  const set = rankSets.find((item) => item.id === session.question_ids[session.round]);
+  const phase = String(session.state.phase || "rank");
+  const own = inputs.find((item) => item.round === session.round && item.kind === "ranking" && item.user_id === userId);
+  const rankings = inputs.filter((item) => item.round === session.round && item.kind === "ranking");
+  const partner = players.find((player) => player.user_id !== userId);
+  const [ranking, setRanking] = useState<string[]>([]);
+  useEffect(() => {
+    setRanking(set ? [...set.items] : []);
+  }, [set?.id]);
+  const comparison = useMemo(() => {
+    const completed = inputs.filter((item) => item.kind === "ranking" && item.revealed);
+    const rounds = [...new Set(completed.map((item) => item.round))];
+    const matches = rounds.filter((round) => {
+      const pair = completed.filter((item) => item.round === round);
+      return pair.length === 2 && (pair[0].value.rank as string[] | undefined)?.[0] === (pair[1].value.rank as string[] | undefined)?.[0];
+    }).length;
+    return { matches, total: rounds.length };
+  }, [inputs]);
+  function move(index: number, direction: -1 | 1) {
+    setRanking((current) => {
+      const next = [...current];
+      const target = index + direction;
+      if (target < 0 || target >= next.length) return current;
+      [next[index], next[target]] = [next[target], next[index]];
+      return next;
+    });
+  }
+  if (session.status === "finished") {
+    return (
+      <GameResults
+        title="Eure Reihenfolgen"
+        description={`${comparison.matches} von ${comparison.total} erste Plätze waren gleich.`}
+        replay={replay}
+        replayLabel={replayLabel}
+        busy={busy}
+      >
+        <div className="answer-pair">
+          {players.map((player) => {
+            const ownRound = inputs.filter((item) => item.kind === "ranking" && item.user_id === player.user_id && item.revealed);
+            return <div key={player.user_id}><small>{player.user_id === userId ? "Du" : player.name}</small><strong>{ownRound.length} Runden gespielt</strong></div>;
+          })}
+        </div>
+      </GameResults>
+    );
+  }
+  if (!set) return <p className="error" role="alert">Diese Rangliste ist nicht verfügbar. Zurück zur Spieleauswahl.</p>;
+  return (
+    <div className="rank-game">
+      <GameProgress round={session.round} total={session.total_rounds} onSkip={() => void command("skip")} skipDisabled={busy || !!own} />
+      {phase === "rank" ? (
+        <Card className="question-stage rank-prompt">
+          <span className="eyebrow">{germanCategory(set.category)}</span>
+          <h2>{set.title}</h2>
+          <p>Sortiere nach deinem Gefühl.</p>
+          <ol className="ranking-list">
+            {ranking.map((item, index) => (
+              <li key={item}>
+                <span className="rank-index">{index + 1}</span>
+                <strong>{item}</strong>
+                <div>
+                  <button disabled={!!own || busy || index === 0} onClick={() => move(index, -1)} aria-label={`${item} nach oben`}><ArrowUp size={17} /></button>
+                  <button disabled={!!own || busy || index === ranking.length - 1} onClick={() => move(index, 1)} aria-label={`${item} nach unten`}><ArrowDown size={17} /></button>
+                </div>
+              </li>
+            ))}
+          </ol>
+          <Button disabled={!!own || busy || ranking.length !== 5} onClick={() => void command("lock", { rank: ranking })}>
+            <Check size={16} />{own ? "Reihenfolge gespeichert" : "Reihenfolge festlegen"}
+          </Button>
+          {own && <p className="field-note">Gespeichert. Warte auf {partner?.name} …</p>}
+        </Card>
+      ) : (
+        <Card className="game-results rank-reveal">
+          <span className="eyebrow">EURE REIHENFOLGEN</span>
+          <h2>Ein bisschen gleich, ein bisschen anders</h2>
+          <div className="rank-pairs">
+            {players.map((player) => {
+              const row = rankings.find((item) => item.user_id === player.user_id);
+              const items = (row?.value.rank || []) as string[];
+              return <div key={player.user_id}><h3>{player.user_id === userId ? "DU" : player.name.toUpperCase()}</h3>{items.map((item, index) => <p key={item}><span>{index + 1}</span>{item}</p>)}</div>;
+            })}
+          </div>
+          <p>Unterschiedliche Reihenfolgen sind der Anfang eines guten Gesprächs.</p>
+          <Button disabled={busy || inputs.some((item) => item.round === session.round && item.kind === "next" && item.user_id === userId)} onClick={() => void command("continue")}>
+            <Sparkles size={16} />Nächste Runde
+          </Button>
+          <p className="field-note">Die nächste Runde beginnt, wenn ihr beide bereit seid.</p>
+        </Card>
+      )}
+      {error && <p className="notice" role="status">{error}</p>}
+    </div>
+  );
+}

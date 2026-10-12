@@ -78,10 +78,12 @@ export function GameHost({
     online,
     answers: game.answers,
     connected: connected && game.connected,
+    replayLabel: session.state.wheel_mode === true ? "Neues Spiel drehen" : "Nochmal spielen",
     busy: game.busy || replaying || !connected || !game.connected,
     command: game.command,
   };
   async function replay() {
+    if (session.state.wheel_mode === true) { exit(); return; }
     setReplaying(true);
     setError("");
     try {

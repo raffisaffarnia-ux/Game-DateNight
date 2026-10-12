@@ -23,7 +23,9 @@
   flex-direction: column;
   overflow: hidden;
 }
+html:has(.play-page),
 body:has(.play-page) {
+  height: 100dvh;
   overflow: hidden;
 }
 .app-shell:has(.play-page) > .navigation {
@@ -458,6 +460,16 @@ body:has(.play-page) {
 .navigation-actions {
   gap: 16px;
 }
+@media (max-height: 720px) {
+  .app-shell:has(.play-page) > .navigation { flex-basis: 48px; height: 48px; min-height: 48px; }
+  .play-page .game-shell-header { padding-block: 4px; }
+  .play-page .game-content > .ready-card,
+  .play-page .game-content > .question-stage,
+  .play-page .game-content > .game-results { padding-block: 8px; gap: 6px; }
+  .play-page .game-content .moral-scenario p { -webkit-line-clamp: 3; }
+  .play-page .game-content .moral-options { gap: 4px; }
+  .play-page .game-content .moral-option { min-height: 40px; padding-block: 5px; }
+}
 @media (max-width: 700px) {
   .app-shell:has(.wide-page) {
     padding-inline: 4vw;
@@ -645,13 +657,32 @@ body:has(.play-page) {
   overflow: hidden;
 }
 .play-page .daily-history { display: none; }
-.play-page .game-content .daily-history,
+/* Game content is a fixed canvas: secondary history never creates a nested scroll area. */
+.play-page .game-content * {
+  overscroll-behavior: none;
+  scrollbar-width: none;
+}
+.play-page .game-content .daily-history { display: none !important; }
 .play-page .game-content .round-history,
 .play-page .game-content details[open],
-.play-page .game-content .answer-pair > div {
+.play-page .game-content .answer-pair > div,
+.play-page .game-content .saved-conversations,
+.play-page .game-content .rank-gallery,
+.play-page .game-content .rank-results,
+.play-page .game-content .bomb-module,
+.play-page .game-content .moral-discussion {
   overflow: hidden;
-  overscroll-behavior: none;
 }
+.play-page .game-content .skip-question-button { min-height: 38px; }
+.play-page .game-content .game-results,
+.play-page .game-content .rank-results,
+.play-page .game-content .bomb-result {
+  max-height: 100%;
+  overflow: hidden;
+}
+.play-page .game-content .rank-gallery { max-height: 24dvh; }
+.play-page .game-content .rank-results > .rank-gallery { display: none; }
+.play-page .game-content .round-history { display: none; }
 .play-page .game-content .moral-scenario p {
   display: -webkit-box;
   -webkit-box-orient: vertical;
@@ -668,3 +699,24 @@ body:has(.play-page) {
 .play-page .game-content .category-pills button { min-height: 32px; padding: 0 10px; }
 .play-page .game-content .ready-card { gap: 8px; padding: clamp(12px, 2vh, 24px); }
 .play-page .game-content .ready-players { margin: 4px 0; }
+
+
+/* Moral Sync setup stays compact so its settings and Play action remain visible together. */
+.play-page .ready-card .new-game-setup {
+  flex: 0 1 auto;
+  width: min(100%, 980px);
+  max-height: 46dvh;
+  gap: 8px;
+  overflow: hidden;
+  padding: 0;
+}
+.play-page .ready-card .new-game-setup > p { margin: 0; }
+.play-page .ready-card .new-game-setup .moral-categories { gap: 5px; }
+.play-page .ready-card .new-game-setup .category-pills { gap: 5px; }
+.play-page .ready-card .new-game-setup .category-pills button { min-height: 28px; padding-inline: 9px; }
+.play-page .ready-card .ready-play-button { flex: 0 0 auto; }
+.play-page .ready-card .field-note { flex: 0 0 auto; }
+@media (max-width: 700px) {
+  .play-page .ready-card .new-game-setup { max-height: 42dvh; }
+  .play-page .ready-card .new-game-setup .category-pills button { min-height: 26px; font-size: 10px; }
+}

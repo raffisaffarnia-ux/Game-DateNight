@@ -96,5 +96,6 @@ export type GameViewProps = {
   busy: boolean;
   online: string[];
   connected: boolean;
+  replayLabel?: string;
 };
 

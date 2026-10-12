@@ -122,9 +122,9 @@ export function useSession(roomId: string, sessionId: string) {
             "message" in error &&
             String(error.message).startsWith("No unseen questions remain")
             ? current.game_type === "deep-talk"
-              ? "You’ve played every card in this deck. Choose another deck for fresh questions."
-              : "You’ve played every available prompt. Fresh cards need to be added before another round."
-            : "That action could not be saved. Refresh the game state and try again.",
+              ? "Ihr habt alle Fragen aus diesem Stapel gespielt. Wählt ein anderes Thema für neue Fragen."
+              : "Ihr habt alle verfügbaren Fragen gespielt. Neue Fragen werden ergänzt."
+            : "Die Aktion konnte nicht gespeichert werden. Bitte aktualisiere den Spielstand und versuche es erneut.",
         );
         return false;
       } finally {

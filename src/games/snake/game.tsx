@@ -100,6 +100,7 @@ export function SnakeGame(props: GameViewProps & { replay: () => void }) {
               : "Unentschieden!"
         }
         replay={props.replay}
+        replayLabel={props.replayLabel}
         busy={props.busy}
         description={
           together

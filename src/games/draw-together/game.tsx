@@ -33,7 +33,7 @@ export function DrawingSetup({
   );
 }
 export function DrawTogether(props: GameViewProps & { replay: () => void }) {
-  const { session, players, userId, busy, command, replay } = props;
+  const { session, players, userId, busy, command, replay, replayLabel } = props;
   const drawing = useDrawing(props);
   const [color, setColor] = useState("#69516b");
   const [width, setWidth] = useState(0.008);
@@ -71,6 +71,7 @@ export function DrawTogether(props: GameViewProps & { replay: () => void }) {
             : "Eure gemeinsame Leinwand ist gespeichert."
         }
         replay={replay}
+        replayLabel={replayLabel}
         busy={busy}
       >
         {!guessing && (
