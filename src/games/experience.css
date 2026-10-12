@@ -412,16 +412,20 @@
 .celebration {
   position: absolute;
   inset: 0;
+  z-index: 0;
   overflow: hidden;
   pointer-events: none;
   border-radius: inherit;
+  opacity: .34;
 }
+.round-moment > :not(.celebration),
+.game-results > :not(.celebration) { position: relative; z-index: 1; }
 .celebration i {
   position: absolute;
   left: var(--x);
   top: -10px;
-  width: 7px;
-  height: 13px;
+  width: 10px;
+  height: 16px;
   background: var(--game-color);
   border-radius: 2px;
   opacity: 0;
