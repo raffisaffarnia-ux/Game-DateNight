@@ -56,6 +56,9 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
     [category, setCategory] = useState("avatar");
   const [reward, setReward] = useState<Reward | null>(null),
     [message, setMessage] = useState("");
+  const [coinFlight, setCoinFlight] = useState<{
+    id: number; coins: number; fromX: number; fromY: number; toX: number; toY: number;
+  } | null>(null);
   const [guest, setGuest] = useState(true),
     [email, setEmail] = useState("");
   const dialog = useRef<HTMLDialogElement>(null),
@@ -154,9 +157,22 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
   }, [reward]);
   useEffect(() => {
     if (!reward) return;
-    const timer = setTimeout(() => setReward(null), 3600);
+    const active = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const source = active?.closest("button")?.getBoundingClientRect() ?? document.querySelector(".game-content")?.getBoundingClientRect();
+    const wallet = document.querySelector<HTMLElement>("[data-coin-counter]")?.getBoundingClientRect();
+    if (source && wallet) {
+      setCoinFlight({ id: reward.id, coins: reward.coins,
+        fromX: source.left + source.width / 2, fromY: source.top + source.height / 2,
+        toX: wallet.left + wallet.width / 2, toY: wallet.top + wallet.height / 2 });
+    }
+    const timer = setTimeout(() => setReward(null), 900);
     return () => clearTimeout(timer);
   }, [reward]);
+  useEffect(() => {
+    if (!coinFlight) return;
+    const timer = setTimeout(() => setCoinFlight(null), 760);
+    return () => clearTimeout(timer);
+  }, [coinFlight]);
   async function run(work: () => Promise<void>) {
     setBusy(true);
     setError("");
@@ -182,29 +198,20 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
   return (
     <PlayerContext.Provider value={{ profile, refresh, open }}>
       {children}
-      {reward && (
-        <div className="reward-toast" key={reward.id} role="status">
-          <div className="coin-burst" aria-hidden="true">
-            {Array.from({ length: 9 }, (_, i) => (
-              <Coin
-                key={i}
-                style={
-                  {
-                    "--angle": `${i * 40}deg`,
-                    "--delay": `${i * 35}ms`,
-                  } as CSSProperties
-                }
-              />
-            ))}
-          </div>
-          <Coin />
-          <div>
-            <strong>+{reward.coins} Münzen</strong>
-            <span>{reward.label}</span>
-          </div>
-          <Sparkles size={22} />
+      {coinFlight && (
+        <div className="coin-flight-layer" key={coinFlight.id} aria-hidden="true">
+          {[0, 1, 2].map((index) => (
+            <span className="coin-flight" key={index} style={{
+              left: coinFlight.fromX + (index - 1) * 5,
+              top: coinFlight.fromY + (index - 1) * 4,
+              "--coin-flight-x": `${coinFlight.toX - coinFlight.fromX}px`,
+              "--coin-flight-y": `${coinFlight.toY - coinFlight.fromY}px`,
+              "--coin-flight-delay": `${index * 45}ms`,
+            } as CSSProperties}><Coin /></span>
+          ))}
         </div>
       )}
+      {reward && <span className="sr-only" role="status">+{reward.coins} Münzen: {reward.label}</span>}
       <dialog
         ref={dialog}
         className="profile-dialog"
@@ -357,7 +364,7 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
                       <span className="eyebrow">DIE PIXEL-SAMMLUNG</span>
                       <h2>Kleine Details. Große Persönlichkeit</h2>
                     </div>
-                    <span className="wallet-pill">
+                    <span className="wallet-pill" data-coin-counter>
                       <Coin />
                       {profile.coins}
                     </span>
