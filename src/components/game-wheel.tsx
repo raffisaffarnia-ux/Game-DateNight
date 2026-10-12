@@ -31,8 +31,13 @@ export function GameWheel({
   function spin() {
     if (disabled || spinning || selectableGames.length === 0) return;
     const values = new Uint32Array(1);
-    crypto.getRandomValues(values);
-    const game = selectableGames[values[0] % selectableGames.length];
+    const limit = Math.floor(0x1_0000_0000 / selectableGames.length) * selectableGames.length;
+    let randomValue: number;
+    do {
+      crypto.getRandomValues(values);
+      randomValue = values[0];
+    } while (randomValue >= limit);
+    const game = selectableGames[randomValue % selectableGames.length];
     targetGameId.current = game.id;
     const index = games.findIndex((item) => item.id === game.id);
     const center = (index + 0.5) * segment;
