@@ -275,7 +275,7 @@ export function PixelBanner({
 export function Coin({ style }: { style?: CSSProperties }) {
   return (
     <span className="pixel-coin" style={style} aria-hidden="true">
-      ✦
+      <svg width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 1 10 6 15 8 10 10 8 15 6 10 1 8 6 6Z" fill="currentColor" /></svg>
     </span>
   );
 }
