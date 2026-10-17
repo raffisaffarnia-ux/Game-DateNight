@@ -18,6 +18,7 @@ export default function Home() {
   const picks = moods[mood].ids.map((id) => games.find((game) => game.id === id)!);
   return (
     <main id="main" className={`dn-home ${display.variable} ${body.variable}`}>
+      <style>{`body:has(.dn-home) .navigation { font-family: ${body.style.fontFamily}; }`}</style>
       <section className="dn-intro" aria-labelledby="dn-title">
         <h1 id="dn-title"><span>Heute:</span> <span>wir zwei</span></h1>
         <div className="dn-welcome">
@@ -37,8 +38,8 @@ export default function Home() {
         </div>
         <div className="dn-picks" key={mood}>
           {picks.map((game, index) => (
-            <Link href={`/games/${game.id}`} className={`dn-pick dn-pick-${index}`} key={game.id} aria-label={`${game.title} ansehen`}>
-              <div className="dn-cover" data-ui><GameArt kind={game.art} /></div>
+            <Link href={`/games/${game.id}`} className={`dn-pick dn-pick-${index}`} key={game.id} aria-label={`${game.title} ansehen`} data-ui>
+              <div className="dn-cover"><GameArt kind={game.art} /></div>
               <div className="dn-pick-label"><h3>{game.title}</h3><ArrowUpRight size={22} aria-hidden="true" /></div>
             </Link>
           ))}
