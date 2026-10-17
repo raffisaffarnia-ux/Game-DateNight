@@ -34,11 +34,7 @@ export default function Home() {
           <div className="invitation-ticket" data-ui>
             <div className="invitation-main">
               <p className="invitation-brand">DateNight.io</p>
-              <h2>
-                Euer nächster
-                <br />
-                Abend beginnt hier
-              </h2>
+              <h2>Euer Abend</h2>
 
               <div className="invitation-guests" aria-label="Zwei Gäste">
                 <div className="invitation-guest">
@@ -69,7 +65,6 @@ export default function Home() {
               <span className="stub-spark" aria-hidden="true" />
             </div>
           </div>
-          <p className="invitation-caption">Euer privater Spielraum — bereit, wenn ihr es seid</p>
         </aside>
       </section>
     </main>

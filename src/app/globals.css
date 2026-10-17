@@ -1033,7 +1033,6 @@ i.online {
   .game-layout .game-art { flex-basis: 24dvh; }
 }
 
-
 /* The landing page is composed as a date invitation; game screens keep their own styles. */
 .app-shell:has(.home-page) {
   height: 100dvh;
@@ -1236,11 +1235,6 @@ i.online {
   background: currentColor;
   animation: invite-spark 2.4s ease-in-out infinite;
 }
-.invitation-caption {
-  margin-top: 14px;
-  font-size: 14px;
-  line-height: 1.45;
-}
 @keyframes invite-spark {
   0%, 100% { opacity: 0.55; transform: scale(0.85); }
   50% { opacity: 1; transform: scale(1); }
@@ -1309,7 +1303,6 @@ i.online {
   .invitation-stub strong { font-size: clamp(3.2rem, 13vw, 4.5rem); }
   .invitation-stub > span:first-child,
   .invitation-stub > span:nth-of-type(2) { font-size: 13px; }
-  .invitation-caption { font-size: 13px; }
 }
 @media (max-width: 360px) {
   .home-actions { grid-template-columns: 1fr; }
