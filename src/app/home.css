@@ -1,0 +1,101 @@
+/* DateNight as a games poster: bold type, warm paper, actual game covers. */
+body:has(.dn-home) { --dn-paper:#f7f0e1; --dn-ink:#302236; --dn-accent:#c4472b; --dn-secondary:#e4dac9; --dn-muted:#655969; background:var(--dn-paper); color:var(--dn-ink); }
+.app-shell:has(.dn-home) { max-width:1800px; width:100%; padding-inline:4.5%; min-height:100svh; }
+.app-shell:has(.dn-home) > .navigation { height:84px; flex:0 0 84px; }
+.app-shell:has(.dn-home) > footer { display:none; }
+.app-shell:has(.dn-home) .brand { color:var(--dn-ink); font-weight:800; }
+.app-shell:has(.dn-home) .brand-period { color:inherit; }
+.app-shell:has(.dn-home) .profile-trigger { background:var(--dn-secondary); color:var(--dn-ink); border:0; box-shadow:none; }
+.app-shell:has(.dn-home) .profile-trigger:hover { box-shadow:none; transform:translateY(-2px); }
+.dn-home { display:flex; flex-direction:column; justify-content:center; gap:clamp(24px,4vh,46px); padding-block:12px 26px; }
+.dn-home :is(h1,h2,h3,p) { color:var(--dn-ink); }
+.dn-intro h1 { font-family:"Arial Black","Arial",sans-serif; font-size:clamp(64px,10.3vw,160px); font-weight:900; line-height:.96; letter-spacing:-.075em; margin:0; }
+.dn-intro h1 span:last-child { color:var(--dn-accent); }
+.dn-welcome { display:flex; justify-content:space-between; align-items:center; gap:24px; margin-top:28px; }
+.dn-welcome > p { font-size:clamp(17px,1.65vw,24px); line-height:1.45; letter-spacing:-.025em; }
+.dn-start { display:flex; gap:12px; }
+.dn-action { display:inline-flex; align-items:center; justify-content:center; gap:26px; min-height:58px; padding:16px 24px; font-size:16px; font-weight:700; border-radius:4px; transition:transform 180ms ease; }
+.dn-primary { background:var(--dn-ink); color:var(--dn-paper); }
+.dn-secondary { background:var(--dn-secondary); color:var(--dn-ink); }
+.dn-action:hover { transform:translateY(-4px); }
+.dn-action:active { transform:translateY(0) scale(.97); }
+.dn-home :is(a,button):focus-visible { outline:3px solid var(--dn-ink); outline-offset:5px; }
+.dn-discover-top { display:flex; align-items:center; justify-content:space-between; gap:20px; margin-bottom:22px; }
+.dn-discover h2 { font-size:22px; font-weight:650; letter-spacing:-.035em; }
+.dn-moods { display:flex; gap:6px; }
+.dn-moods button { color:var(--dn-ink); background:transparent; border:0; border-radius:4px; padding:10px 16px; min-height:44px; font-size:15px; transition:transform 160ms ease; }
+.dn-moods button[aria-pressed="true"] { background:var(--dn-ink); color:var(--dn-paper); }
+.dn-moods button:hover { transform:translateY(-2px); }
+.dn-moods button:active { transform:scale(.96); }
+.dn-picks { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:18px; }
+.dn-pick { min-width:0; transition:transform 240ms cubic-bezier(.2,.7,.2,1); }
+.dn-pick:hover { transform:translateY(-8px) rotate(-1deg); }
+.dn-pick:active { transform:scale(.98); }
+.dn-cover { overflow:hidden; }
+.dn-cover .game-art { height:clamp(130px,19vh,230px); filter:none; border-radius:0; }
+.dn-cover .game-art > span { display:none; }
+.dn-pick-0 .game-art { background:#c9d9aa; }
+.dn-pick-1 .game-art { background:#d8c4ec; }
+.dn-pick-2 .game-art { background:#ee9c7d; }
+.dn-pick-3 .game-art { background:#edca70; }
+.dn-cover .game-art .art-icon { color:#49374e; }
+.dn-pick-label { display:flex; align-items:center; justify-content:space-between; gap:8px; padding-top:13px; }
+.dn-pick-label h3 { margin:0; font-size:clamp(16px,1.45vw,22px); font-weight:700; letter-spacing:-.04em; line-height:1.15; }
+.dn-pick-label svg { flex-shrink:0; }
+.dn-bottom { display:flex; justify-content:space-between; gap:18px; margin-top:24px; font-size:14px; }
+.dn-bottom p,.dn-bottom a { display:inline-flex; gap:8px; align-items:center; min-height:28px; }
+.dn-bottom p { color:var(--dn-muted); }
+.dn-bottom a { font-weight:600; }
+.dn-bottom a:hover svg { transform:translateX(4px); }
+.dn-bottom svg { transition:transform 180ms; }
+.dn-intro h1 span,.dn-welcome > p,.dn-action,.dn-discover h2,.dn-moods button,.dn-pick,.dn-pick-label,.dn-bottom > * { animation:dn-enter 600ms cubic-bezier(.2,.75,.25,1) backwards; }
+.dn-intro h1 span { display:inline-block; }
+.dn-intro h1 span:last-child { animation-delay:60ms; }
+.dn-welcome > p { animation-delay:100ms; }
+.dn-action { animation-delay:150ms; }
+.dn-discover h2,.dn-moods button { animation-delay:180ms; }
+.dn-pick-0 { animation-delay:200ms; }
+.dn-pick-1 { animation-delay:260ms; }
+.dn-pick-2 { animation-delay:320ms; }
+.dn-pick-3 { animation-delay:380ms; }
+.dn-pick-label { animation-delay:420ms; }
+.dn-bottom > * { animation-delay:460ms; }
+@keyframes dn-enter { from { opacity:0; transform:translateY(18px); } to { opacity:1; transform:translateY(0); } }
+@media (prefers-color-scheme:dark) { body:has(.dn-home) { --dn-paper:#211b28; --dn-ink:#fbefdc; --dn-accent:#fa9a79; --dn-secondary:#3b3040; --dn-muted:#cbbfcf; } }
+@media (max-width:1000px) {
+  .dn-intro h1 { font-size:10.2vw; }
+  .dn-welcome { align-items:flex-start; }
+  .dn-start { flex-direction:column; gap:8px; }
+  .dn-action { min-height:48px; padding:12px 18px; }
+  .dn-picks { gap:14px; }
+  .dn-pick-label h3 { font-size:17px; }
+}
+@media (max-width:700px) {
+  .app-shell:has(.dn-home) { padding-inline:6%; }
+  .app-shell:has(.dn-home) > .navigation { height:72px; flex-basis:72px; }
+  .dn-home { gap:24px; padding-block:14px 20px; justify-content:flex-start; }
+  .dn-intro h1 { font-size:clamp(52px,15vw,88px); line-height:.93; letter-spacing:-.065em; }
+  .dn-intro h1 span { display:block; }
+  .dn-welcome { display:block; margin-top:18px; }
+  .dn-welcome > p { font-size:17px; }
+  .dn-start { flex-direction:row; margin-top:20px; gap:8px; }
+  .dn-action { flex:1; font-size:13px; gap:8px; padding:13px 10px; min-height:50px; }
+  .dn-action svg { width:16px; }
+  .dn-discover-top { align-items:flex-start; flex-direction:column; gap:10px; margin-bottom:14px; }
+  .dn-discover h2 { font-size:21px; }
+  .dn-moods { width:100%; gap:2px; justify-content:space-between; }
+  .dn-moods button { padding:8px 10px; font-size:13px; }
+  .dn-picks { grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px 12px; }
+  .dn-cover .game-art { height:88px; }
+  .dn-cover .game-art > svg { max-height:72px; }
+  .dn-cover .game-art > i { scale:.65; }
+  .dn-pick-label { padding-top:8px; }
+  .dn-pick-label h3 { font-size:15px; }
+  .dn-pick-label svg { width:17px; height:17px; }
+  .dn-bottom { margin-top:18px; gap:12px; font-size:12px; }
+}
+@media (prefers-reduced-motion:reduce) {
+  .dn-home *,.dn-home *::before,.dn-home *::after { animation:none !important; transition:none !important; }
+  .dn-home :is(a,button):hover { transform:none; }
+}
+

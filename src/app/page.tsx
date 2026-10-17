@@ -1,71 +1,49 @@
+"use client";
 import Link from "next/link";
-import { ArrowRight, LockKeyhole, UserRound } from "lucide-react";
-
+import { useState } from "react";
+import { ArrowRight, ArrowUpRight, LockKeyhole } from "lucide-react";
+import { GameArt } from "@/components/games";
+import { games } from "@/lib/games";
+import "./home.css";
+const moods = [
+  { name: "Bunt gemischt", ids: ["snake-squared", "deep-talk", "relationship-bomb", "draw-together"] },
+  { name: "Zusammen", ids: ["relationship-bomb", "draw-together", "snake-squared", "this-or-that"] },
+  { name: "Zum Reden", ids: ["deep-talk", "moral-sync", "do-you-know-me", "rank-and-draw"] },
+];
 export default function Home() {
+  const [mood, setMood] = useState(0);
+  const picks = moods[mood].ids.map((id) => games.find((game) => game.id === id)!);
   return (
-    <main id="main" className="home-page">
-      <section className="home-stage" aria-labelledby="home-title">
-        <div className="home-copy">
-          <h1 id="home-title">
-            Zwei Orte
-            <br />
-            Ein Date
-          </h1>
-          <p className="home-description">
-            Gemeinsam spielen, reden und lachen — im privaten Raum, wo immer ihr seid.
-          </p>
-          <div className="home-actions">
-            <Link className="button primary" href="/create">
-              Raum erstellen <ArrowRight size={18} aria-hidden="true" />
-            </Link>
-            <Link className="button secondary" href="/join">
-              Raum beitreten
-            </Link>
+    <main id="main" className="dn-home">
+      <section className="dn-intro" aria-labelledby="dn-title">
+        <h1 id="dn-title"><span>Heute:</span> <span>wir zwei</span></h1>
+        <div className="dn-welcome">
+          <p>Ein Bildschirm zwischen euch.<br />Ein ganzer Spieleabend vor euch.</p>
+          <div className="dn-start">
+            <Link href="/create" className="dn-action dn-primary">Raum erstellen <ArrowRight size={21} aria-hidden="true" /></Link>
+            <Link href="/join" className="dn-action dn-secondary">Raum beitreten <ArrowUpRight size={20} aria-hidden="true" /></Link>
           </div>
-          <p className="home-privacy">
-            <LockKeyhole size={15} aria-hidden="true" /> Nur ihr zwei. Ganz privat.
-          </p>
         </div>
-
-        <aside
-          className="home-invitation"
-          aria-label="Einladung zu einem privaten DateNight-Spielraum für zwei"
-        >
-          <div className="invitation-ticket" data-ui>
-            <div className="invitation-main">
-              <p className="invitation-brand">DateNight.io</p>
-              <h2>Euer Abend</h2>
-
-              <div className="invitation-guests" aria-label="Zwei Gäste">
-                <div className="invitation-guest">
-                  <span className="guest-avatar guest-avatar-one">
-                    <UserRound size={25} strokeWidth={1.6} aria-hidden="true" />
-                  </span>
-                  <span>Du</span>
-                </div>
-                <span className="guest-connection" aria-hidden="true">+</span>
-                <div className="invitation-guest">
-                  <span className="guest-avatar guest-avatar-two">
-                    <UserRound size={25} strokeWidth={1.6} aria-hidden="true" />
-                  </span>
-                  <span>Dein Lieblingsmensch</span>
-                </div>
-              </div>
-
-              <div className="invitation-details">
-                <p><span>Ort</span><strong>Wo ihr seid</strong></p>
-                <p><span>Zeit</span><strong>Wann ihr wollt</strong></p>
-              </div>
-            </div>
-
-            <div className="invitation-stub" aria-label="Zwei Plätze">
-              <span>Gäste</span>
-              <strong>2</strong>
-              <span>ihr zwei</span>
-              <span className="stub-spark" aria-hidden="true" />
-            </div>
+      </section>
+      <section className="dn-discover" aria-labelledby="dn-discover-title">
+        <div className="dn-discover-top">
+          <h2 id="dn-discover-title">Worauf habt ihr Lust?</h2>
+          <div className="dn-moods" role="group" aria-label="Spiele nach Stimmung auswählen">
+            {moods.map((item, index) => <button type="button" key={item.name} aria-pressed={mood === index} onClick={() => setMood(index)}>{item.name}</button>)}
           </div>
-        </aside>
+        </div>
+        <div className="dn-picks" key={mood}>
+          {picks.map((game, index) => (
+            <Link href={`/games/${game.id}`} className={`dn-pick dn-pick-${index}`} key={game.id} aria-label={`${game.title} ansehen`}>
+              <div className="dn-cover" data-ui><GameArt kind={game.art} /></div>
+              <div className="dn-pick-label"><h3>{game.title}</h3><ArrowUpRight size={22} aria-hidden="true" /></div>
+            </Link>
+          ))}
+        </div>
+        <div className="dn-bottom">
+          <p><LockKeyhole size={15} aria-hidden="true" /> Euer Raum bleibt privat</p>
+          <Link href="/games">Alle Spiele entdecken <ArrowRight size={17} aria-hidden="true" /></Link>
+        </div>
       </section>
     </main>
   );
