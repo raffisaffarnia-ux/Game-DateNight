@@ -162,6 +162,14 @@ export function useRoom(id: string) {
       );
     await refreshRoom.current?.();
   }
+  async function leaveGame(sessionId: string) {
+    const { error } = await getSupabase().rpc("leave_game", {
+      target: id,
+      expected_session: sessionId,
+    });
+    if (error) throw new Error("Das Spiel konnte nicht beendet werden. Bitte versuche es erneut.");
+    await refreshRoom.current?.();
+  }
   return {
     room,
     members,
@@ -170,6 +178,7 @@ export function useRoom(id: string) {
     error,
     status,
     selectGame,
+    leaveGame,
     retry: () => setAttempt((v) => v + 1),
   };
 }
