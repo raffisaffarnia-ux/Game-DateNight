@@ -6,7 +6,7 @@ import { Button } from "@/components/ui";
 import { GameResults } from "../shared/shell";
 import type { DotsState } from "./engine";
 import { canSelectDotEdge, conversationCards, dotsWinner } from "./engine";
-import type { GameViewProps } from "../shared/types";
+import type { GamePlayer, GameViewProps } from "../shared/types";
 import { getSupabase } from "@/lib/supabase";
 
 const BOARD_START = 46;

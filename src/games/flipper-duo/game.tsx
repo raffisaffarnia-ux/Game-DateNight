@@ -501,7 +501,7 @@ function useFlipper(session: GameSession, players: GamePlayer[], userId: string,
   }, [client, userId]);
 
   return {
-    meta, state, error, ready: connected && inputConnected && online.length >= 2,
+    meta, state, error, inputConnected, ready: connected && inputConnected && online.length >= 2,
     offset, renderState, setFlipper, serve,
     retry: () => { setError(""); void control("acquire"); },
   };
