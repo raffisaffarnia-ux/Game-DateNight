@@ -25,6 +25,36 @@ const topicNames: Record<string, string> = {
   "feeling safe in a relationship": "Sicherheit in einer Beziehung",
   "setting a boundary": "eigene Grenzen setzen",
   "being honest about a worry": "offen über Sorgen sprechen",
+  "a small act of kindness": "eine freundliche Geste",
+  "something you learned": "neue Erkenntnisse",
+  "a conversation you had": "ein gutes Gespräch",
+  "a moment outdoors": "Zeit im Freien",
+  "a moment of calm": "ein Moment der Ruhe",
+  "something you created": "etwas Selbstgemachtes",
+  "a choice you made": "eine wichtige Entscheidung",
+  "something that made you laugh": "ein Moment zum Lachen",
+  "a moment of connection": "Verbundenheit",
+  "a change in your routine": "eine Veränderung im Alltag",
+  "a memory that came back": "eine alte Erinnerung",
+  "a little challenge you faced": "eine Herausforderung",
+  "something you tried": "etwas Neues",
+  "a moment you felt proud": "ein Moment, auf den du stolz bist",
+  "a moment of courage": "ein mutiger Moment",
+  "a quiet pleasure": "ein stiller Genuss",
+  "a surprise": "eine Überraschung",
+  "something you noticed about yourself": "eine neue Erkenntnis über dich",
+  "a moment you felt supported": "erlebter Rückhalt",
+  "something you let go of": "etwas, das du losgelassen hast",
+  "a moment of curiosity": "Neugier",
+  "a small success": "ein kleiner Erfolg",
+  "a kind word": "ein freundliches Wort",
+  "a moment of patience": "Geduld",
+  "an unexpected encounter": "eine unerwartete Begegnung",
+  "a thought that stayed with you": "ein Gedanke, der dir nachgeht",
+  "something that gave you energy": "neue Energie",
+  "a moment of honesty": "ein ehrlicher Moment",
+  "a reason to feel grateful": "Dankbarkeit",
+  "something that made life easier": "etwas, das den Alltag erleichtert hat",
 };
 const topicLabel = (topic: string) =>
   (topicNames[topic] || germanText(topic)).replace(/^./u, (letter) => letter.toLocaleUpperCase("de"));
@@ -295,14 +325,14 @@ const topics: Record<string, string[]> = {
   ],
 };
 const conversationFrames = [
-  (t: string) => `Wenn du an „${topicLabel(t)}“ denkst: Was ist dir dabei besonders wichtig?`,
-  (t: string) => `Was möchtest du, dass ich über „${topicLabel(t)}“ verstehe?`,
-  (t: string) => `Welche Geschichte fällt dir zu „${topicLabel(t)}“ ein?`,
-  (t: string) => `Wie hat sich dein Blick auf „${topicLabel(t)}“ verändert?`,
-  (t: string) => `Was überrascht dich an „${topicLabel(t)}“?`,
-  (t: string) => `Was fühlst du, wenn du an „${topicLabel(t)}“ denkst?`,
-  (t: string) => `Was würdest du mich zu „${topicLabel(t)}“ gern fragen?`,
-  (t: string) => `Was würdest du an dem Thema „${topicLabel(t)}“ gern noch verstehen?`,
+  (t: string) => `Was ist dir beim Thema „${topicLabel(t)}“ besonders wichtig?`,
+  (t: string) => `Was möchtest du mir zum Thema „${topicLabel(t)}“ erzählen?`,
+  (t: string) => `Welche Geschichte verbindest du mit dem Thema „${topicLabel(t)}“?`,
+  (t: string) => `Wie hat sich deine Sicht auf das Thema „${topicLabel(t)}“ verändert?`,
+  (t: string) => `Was überrascht dich an dem Thema „${topicLabel(t)}“?`,
+  (t: string) => `Welche Gefühle löst der Gedanke an das Thema „${topicLabel(t)}“ bei dir aus?`,
+  (t: string) => `Was würdest du mich zum Thema „${topicLabel(t)}“ fragen?`,
+  (t: string) => `Was möchtest du zum Thema „${topicLabel(t)}“ noch herausfinden?`,
 ];
 
 export const expandedConversations: Question[] = Object.entries(topics).flatMap(
@@ -404,14 +434,14 @@ const reflections = [
   "something that made life easier",
 ];
 const dailyFrames = [
-  (t: string) => `Welcher Moment von heute passt zu „${topicLabel(t)}“? Was ist passiert?`,
-  (t: string) => `Was möchtest du mir diese Woche zu „${topicLabel(t)}“ erzählen?`,
-  (t: string) => `Wann hast du zuletzt „${topicLabel(t)}“ erlebt, und wie hat sich das angefühlt?`,
-  (t: string) => `Was hat dir „${topicLabel(t)}“ kürzlich gezeigt?`,
-  (t: string) => `Welche Erinnerung an „${topicLabel(t)}“ möchtest du aus dieser Woche behalten?`,
-  (t: string) => `Wie können wir morgen mehr Raum für „${topicLabel(t)}“ schaffen?`,
-  (t: string) => `Was würde „${topicLabel(t)}“ für dich bedeutsamer machen?`,
-  (t: string) => `Wie wirkt sich „${topicLabel(t)}“ auf deine Stimmung aus?`,
+  (t: string) => `Was möchtest du mir diese Woche zum Thema „${topicLabel(t)}“ erzählen?`,
+  (t: string) => `Welcher Moment von heute passt für dich zum Thema „${topicLabel(t)}“? Was ist passiert?`,
+  (t: string) => `Wann hast du zuletzt etwas erlebt, das zum Thema „${topicLabel(t)}“ passt? Wie ging es dir dabei?`,
+  (t: string) => `Welche Erkenntnis hast du kürzlich zum Thema „${topicLabel(t)}“ gewonnen?`,
+  (t: string) => `Welche Erinnerung aus dieser Woche verbindest du mit dem Thema „${topicLabel(t)}“?`,
+  (t: string) => `Wie können wir dem Thema „${topicLabel(t)}“ morgen mehr Raum in unserem Alltag geben?`,
+  (t: string) => `Was würde das Thema „${topicLabel(t)}“ für dich persönlich bedeutsamer machen?`,
+  (t: string) => `Wie beeinflusst das Thema „${topicLabel(t)}“ deine Stimmung?`,
 ];
 
 export const expandedDaily: Question[] = reflections.flatMap((topic, i) =>

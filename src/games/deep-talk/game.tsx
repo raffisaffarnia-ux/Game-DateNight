@@ -111,9 +111,8 @@ export function DeepTalk({
             </div>
             <p className="field-note">
               {chooser?.user_id === userId
-                ? "Du bist dran"
-                : `${chooser?.name} ist dran`}{" "}
-              und wählt die nächste Karte.
+                ? "Du bist dran und wählst die nächste Karte."
+                : `${chooser?.name} ist dran und wählt die nächste Karte.`}
             </p>
           </Card>
         </>

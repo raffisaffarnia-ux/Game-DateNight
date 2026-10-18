@@ -181,7 +181,7 @@ body:has(.dn-home) {
   .app-shell:has(.dn-home) { padding-inline:5%; }
   .app-shell:has(.dn-home) > .navigation { height:66px; flex-basis:66px; }
   .app-shell:has(.dn-home) .brand { color:var(--dn-ink); }
-  .dn-home { gap:23px; padding-block:8px 20px; justify-content:flex-start; }
+  .dn-home { gap:16px; padding-block:4px 12px; justify-content:flex-start; }
   .dn-home-banner { height:178px; min-height:178px; padding:18px; }
   .dn-banner-copy { padding-top:36px; }
   .dn-banner-kicker { margin-bottom:6px; font-size:9px; }
