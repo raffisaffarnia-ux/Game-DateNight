@@ -97,6 +97,43 @@ export function PixelGameCover({ kind }: { kind: GameDefinition["art"] }) {
         <Heart x={86} y={88} color="#83b5ac" /><g className="px-float"><Heart x={178} y={42} scale={1.5} color="#e2b979" /></g><Heart x={284} y={104} color="#d58d85" />
         <path d="M96 152h12v16H96ZM192 120h12v20h-12ZM292 164h12v12h-12Z" fill="#e7d4ae" />
       </>}
+      {kind === "flipper" && <>
+        <rect x="90" y="28" width="220" height="172" fill="#34453b" />
+        <rect x="98" y="36" width="204" height="156" fill="#14251e" />
+        <path d="M112 58h8v72h20v8h-20v20h-8ZM280 58h8v100h-20v-8h20Z" fill="none" stroke="#9e8554" strokeWidth="6" />
+        <path d="M120 64h8v36h-8ZM272 64h8v36h-8Z" fill="#986b45" />
+        <g fill="#31564b" stroke="#84b99e" strokeWidth="5">
+          <circle cx="160" cy="82" r="16" /><circle cx="240" cy="82" r="16" /><circle cx="200" cy="124" r="18" />
+        </g>
+        <g fill="#e6bf77"><rect x="156" y="78" width="8" height="8" /><rect x="236" y="78" width="8" height="8" /><rect x="196" y="120" width="8" height="8" /></g>
+        <path d="M124 150h48v8h-48ZM228 150h48v8h-48Z" fill="#a8544a" />
+        <path d="M124 168h52v8h-52ZM224 168h52v8h-52Z" fill="#d1a76a" />
+        <path d="M112 184h44v8h-44ZM244 184h44v8h-44Z" fill="#648d79" />
+        <g className="px-float">
+          <path d="M152 178h48v8h-48ZM200 178h48v8h-48Z" fill="#c7a46b" />
+          <path d="M196 168h8v8h-8Z" fill="#f2dfad" />
+        </g>
+        <rect x="186" y="46" width="28" height="4" fill="#bba578" />
+        <Heart x={186} y={101} scale={.5} color="#d28274" />
+      </>}
+      {kind === "dots" && <>
+        <rect x="96" y="26" width="208" height="176" fill="#34443b" />
+        <rect x="104" y="34" width="192" height="160" fill="#15241e" />
+        <g opacity=".72">
+          <rect x="118" y="48" width="34" height="30" fill="#d18470" />
+          <rect x="252" y="148" width="34" height="30" fill="#70aa98" />
+          <rect x="185" y="98" width="34" height="30" fill="#b49865" />
+        </g>
+        <g stroke="#b99c68" strokeWidth="5" shapeRendering="crispEdges">
+          <path d="M120 52h160M120 84h160M120 116h160M120 148h160M120 180h160" />
+          <path d="M120 52v128M160 52v128M200 52v128M240 52v128M280 52v128" />
+        </g>
+        <g fill="#f0dbad">
+          {[120,160,200,240,280].map((x)=><g key={x}>{[52,84,116,148,180].map((y)=><rect key={y} x={x-4} y={y-4} width="8" height="8" />)}</g>)}
+        </g>
+        <Heart x={185} y={38} scale={.55} color="#d88778" />
+        <g className="px-stars" fill="#dab96e"><rect x="72" y="72" width="8" height="8" /><rect x="320" y="124" width="8" height="8" /></g>
+      </>}
     </svg>
   </div>;
 }

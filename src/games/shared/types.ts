@@ -7,7 +7,9 @@ export type GameId =
   | "daily-us"
   | "relationship-bomb"
   | "moral-sync"
-  | "rank-and-draw";
+  | "rank-and-draw"
+  | "flipper-duo"
+  | "dots-and-dates";
 export type GameStatus =
   | "lobby"
   | "starting"

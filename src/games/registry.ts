@@ -10,6 +10,8 @@ import { SnakeGame, SnakeSetup } from "./snake/game";
 import { RelationshipBomb, BombSetup } from "./relationship-bomb/game";
 import { MoralSync, MoralSyncSetup } from "./moral-sync/game";
 import { RankAndDraw, RankDrawSetup } from "./rank-and-draw/game";
+import { FlipperDuo } from "./flipper-duo/game";
+import { DotsDates } from "./dots-and-dates/game";
 export type PlayProps = GameViewProps & { replay: () => void };
 /** All game rendering and optional setup screens are registered here. */
 export const gameViews: Record<
@@ -34,5 +36,7 @@ export const gameViews: Record<
   "relationship-bomb": { Play: RelationshipBomb, Setup: BombSetup },
   "moral-sync": { Play: MoralSync, Setup: MoralSyncSetup },
   "rank-and-draw": { Play: RankAndDraw, Setup: RankDrawSetup },
+  "flipper-duo": { Play: FlipperDuo },
+  "dots-and-dates": { Play: DotsDates },
 };
 

@@ -4,7 +4,7 @@ export type GameDefinition = {
   title: string;
   description: string;
   category: string;
-  art: "cards" | "orbits" | "tiles" | "snake" | "drawing" | "daily" | "bomb" | "moral" | "rank";
+  art: "cards" | "orbits" | "tiles" | "snake" | "drawing" | "daily" | "bomb" | "moral" | "rank" | "flipper" | "dots";
   status: "available";
 };
 export const games: GameDefinition[] = [
@@ -59,4 +59,6 @@ export const games: GameDefinition[] = [
   { id: "relationship-bomb", title: "Relationship Bomb", description: "Meistert acht kleine Herausforderungen im Team.", category: "Koop", art: "bomb", status: "available" },
   { id: "moral-sync", title: "Moral Sync", description: "Entdeckt, was eure Sicht auf die Welt prägt.", category: "Gespräch", art: "moral", status: "available" },
   { id: "rank-and-draw", title: "Rank", description: "Ordnet fünf Dinge in eure persönliche Reihenfolge und vergleicht, was euch wichtig ist.", category: "Beziehung", art: "rank", status: "available" },
+  { id: "flipper-duo", title: "Flipper Duo", description: "Haltet den Ball zu zweit im Spiel und jagt euren Highscore.", category: "Arcade", art: "flipper", status: "available" },
+  { id: "dots-and-dates", title: "Dots & Dates", description: "Verbindet Punkte, schließt Felder und entdeckt kleine Date-Night-Fragen.", category: "Arcade", art: "dots", status: "available" },
 ];

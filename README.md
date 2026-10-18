@@ -17,7 +17,7 @@ In PowerShell use `Copy-Item .env.example .env.local`. Open http://localhost:300
 ## Configure Supabase
 
 1. Create a Supabase project. Enable **Anonymous Sign-Ins** under Authentication → Sign In / Providers.
-2. Apply pending SQL files in `supabase/migrations/` in numerical order, **001 through 012**, using the SQL editor or the Supabase CLI. This DateNight.io project is at migration 011; migration 012 adds rewards for the new games. Never rerun migrations already applied.
+2. Apply pending SQL files in `supabase/migrations/` in filename order using the SQL editor or Supabase CLI. Existing installs should apply `20261018170000_arcade_duo_games.sql` after the earlier migrations; it adds the two game IDs, fresh Dots & Dates cards, atomic turns and the Flipper host lease. If you used the one-file `supabase/setup.sql` bootstrap, apply this migration after it as well. Never rerun migrations already applied.
 3. In Realtime settings, disable **Allow public access**. All channels are private. The migrations configure the publication and authorization policies.
 4. Put the project's public URL and **publishable** key in `.env.local`:
 
@@ -30,7 +30,7 @@ A legacy public anon key also works. Never put a service-role or secret key in a
 
 The migrations add game sessions, private answers, question content, saved conversation cards, persistent pairs, daily entries/answers, drawing strokes and private drawing words. They also add validated transactional RPCs and RLS policies. Existing rooms, members and foundation state are preserved.
 
-## The nine games
+## The eleven games
 
 | Game | Shared behavior |
 | --- | --- |
@@ -43,8 +43,10 @@ The migrations add game sessions, private answers, question content, saved conve
 | Relationship Bomb | Timed cooperative challenges, strikes and a final shared defuse |
 | Moral Sync | Private dilemma choices, joint reveals, reflection prompts and optional Change My Mind rounds |
 | Rank & Draw | Simultaneous private rankings, alternating describe/draw rounds and a shared sketch round |
+| Flipper Duo | Cooperative pinball; each player owns one flipper, with Realtime inputs and host-simulated physics |
+| Dots & Dates | Turn-based 4 × 4 boxes board, extra turns for completed squares and optional fresh conversation cards |
 
-Question banks contain 60 This or That choices, 50 Know Me prompts, 80 Deep Talk cards, 100 drawing words and 100 daily questions.
+Question banks contain 60 This or That choices, 50 Know Me prompts, 80 Deep Talk cards, 100 drawing words, 100 daily questions and 40 fresh Dots & Dates conversation cards.
 
 ## Rooms, identity and privacy
 
@@ -76,13 +78,13 @@ tests/                         PostgreSQL rules, engine tests and optional live 
 
 **Persistent state** is held in Postgres. **Ephemeral input** uses private Realtime Broadcast topics bound to the sender's identity. **Local UI state** holds draft answers, brush settings, animations and selection focus. Channels unsubscribe on unmount; reconnect and periodic reconciliation restore authoritative snapshots.
 
-Snake uses one elected browser host. A database lease lasts eight seconds, renews every two seconds, and includes a monotonic epoch plus a per-tab client ID. Old hosts are fenced out of checkpoint writes, and clients ignore previous host topics. The host broadcasts at 10 Hz and saves a checkpoint approximately every two seconds, not every frame. Player heartbeat loss, hidden tabs and disconnections pause simulation; recovery uses a new three-second countdown. A host crash can roll back up to the last saved checkpoint. This trusted two-player architecture is not a competitive anti-cheat server.
+Snake uses one elected browser host. A database lease lasts eight seconds, renews every two seconds, and includes a monotonic epoch plus a per-tab client ID. Old hosts are fenced out of checkpoint writes, and clients ignore previous host topics. Flipper Duo uses the same lease and identity pattern: held-flipper inputs and lightweight snapshots travel over private Realtime, physics runs at 60 FPS in one browser, 10-Hz table snapshots travel over Realtime, and only the final score is written to the session. Disconnects pause the table; the returning host resumes it with a short countdown. Dots & Dates sends each move through a row-locked RPC that checks turn, edge and revision together. Conversation answers never enter the database, and prompt IDs use the existing per-couple fresh-question history. This trusted two-player architecture is not a competitive anti-cheat server.
 
 Drawing broadcasts in-progress normalized strokes, then persists each completed stroke. Reconnect loads ordered strokes in bounded pages. Undo only removes your latest stroke; clearing needs the other player's confirmation. Session round and canvas-version checks reject late writes. An unfinished stroke can be lost if the browser closes before pointer-up. A session is bounded to 2,000 stored strokes; start another session when full.
 
 To add a game: add metadata and its component/setup registration, implement its isolated module, and extend the server game allowlist/rules in a migration. The lobby and shared shell do not need game-specific branches. Keep secret state out of public session JSON and broadcast payloads.
 
-The original read-only `game_states` table remains for compatibility; the nine implemented games use `game_sessions` and specialized tables.
+The original read-only `game_states` table remains for compatibility; the eleven implemented games use `game_sessions` and specialized tables.
 
 To update the content seed before first installation:
 
@@ -101,7 +103,7 @@ npm test
 npm run build
 ```
 
-The default suite executes the actual migrations in embedded PostgreSQL (PGlite). It checks room limits, RLS, private reveal, scoring, turn permissions, favorites, daily persistence, drawing roles/clear/undo, replay deduplication, broadcast authorization and Snake lease fencing. Pure engine tests cover deterministic food, growth, reversal prevention and collision cases.
+The default suite executes the actual migrations in embedded PostgreSQL (PGlite). It checks room limits, RLS, private reveal, scoring, turn permissions, favorites, daily persistence, drawing roles/clear/undo, replay deduplication, broadcast authorization, Snake lease fencing, Dots & Dates moves and Flipper Duo host control. Pure engine tests cover the new arcade rules as well as Snake movement.
 
 Live tests require a **disposable Supabase project** with all migrations installed:
 
@@ -119,8 +121,10 @@ They create anonymous users/rooms and verify concurrent joins, private presence,
 4. Refresh either player halfway through. Check the same round, locked answer, scores, cards or completed drawing reappear.
 5. Test Deep Talk category lock, alternating Next and saved cards; Know Me's subject-only decision; Draw Together's artist/guesser switch and two-player clear.
 6. In Snake, test arrow/WASD, swipe and buttons. Hide a tab, disconnect a device and close the host. The game should pause, recover its checkpoint and count down before resuming.
-7. Answer Daily Us in both browsers. Reopen the bookmarked room on another day to verify history and streak. The displayed pair timezone determines midnight.
-8. Check narrow screens, keyboard focus, light/dark appearance and reduced motion.
+7. In Flipper Duo, ready both players, start the ball, hold one flipper on each device, lose all three balls and verify the shared and personal scores before rematching.
+8. In Dots & Dates, alternate lines, close a box for an extra turn, open and skip a conversation card, fill the board and rematch with fresh cards.
+9. Answer Daily Us in both browsers. Reopen the bookmarked room on another day to verify history and streak. The displayed pair timezone determines midnight.
+10. Check narrow screens, keyboard focus, light/dark appearance and reduced motion.
 
 Live verification uses the configured DateNight Supabase project; local tests remain independent of hosted credentials.
 
