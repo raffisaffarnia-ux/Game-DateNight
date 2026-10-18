@@ -6,6 +6,7 @@ import { GameArt } from "@/components/games";
 import { PixelArt, PixelBanner } from "@/components/profile/pixel-art";
 import { useProfile } from "@/components/profile/provider";
 import { RoomForm } from "@/components/room-form";
+import { MyRooms } from "@/components/my-rooms";
 import { games } from "@/lib/games";
 import "./home.css";
 const moods = [
@@ -37,6 +38,7 @@ export default function Home() {
           <RoomForm mode="create" variant="home" />
           <Link href="/join" className="dn-join-action">Raum beitreten <ArrowUpRight size={18} aria-hidden="true" /></Link>
         </div>
+        <MyRooms />
       </section>
       <section className="dn-discover" aria-labelledby="dn-discover-title">
         <div className="dn-discover-top">
