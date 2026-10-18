@@ -40,7 +40,7 @@ body:has(.dn-home) {
   min-height:205px;
   display:flex;
   align-items:flex-end;
-  padding:clamp(22px,4vw,44px);
+  padding:clamp(18px,2.3vw,28px);
   color:#fff;
 }
 .dn-home-banner > svg { z-index:-2; }
@@ -85,13 +85,13 @@ body:has(.dn-home) {
   margin:0;
   color:#fff;
   font-family:var(--dn-display),"Arial Narrow",Arial,sans-serif;
-  font-size:clamp(58px,7.4vw,94px);
+  font-size:clamp(52px,5vw,72px);
   font-weight:700;
   line-height:.86;
   letter-spacing:-.025em;
 }
 .dn-banner-copy h1 span { display:block; }
-.dn-banner-copy p { margin:14px 0 0; color:#f4f0e8; font-size:clamp(15px,1.5vw,19px); }
+.dn-banner-copy p { margin:14px 0 0; color:#f4f0e8; font-size:clamp(15px,1.5vw,19px); line-height:1.35; }
 .dn-banner-identity {
   position:absolute;
   max-width:min(52%, 260px);
