@@ -29,8 +29,11 @@ export function MyRooms() {
         const { data, error: queryError } = await getSupabase().rpc("list_my_rooms");
         if (queryError) throw queryError;
         if (current) setRooms((data ?? []) as OwnedRoom[]);
-      } catch {
-        if (current) setError("Deine Räume konnten nicht geladen werden.");
+      } catch (reason) {
+        const message = reason instanceof Error ? reason.message : "";
+        if (current && !message.startsWith("Rooms are not connected yet.")) {
+          setError("Deine Räume konnten nicht geladen werden.");
+        }
       } finally {
         if (current) setLoading(false);
       }
