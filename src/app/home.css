@@ -251,3 +251,64 @@ body:has(.dn-home) {
   .dn-home *,.dn-home *::before,.dn-home *::after { animation:none !important; transition:none !important; }
   .dn-home :is(a,button):hover { transform:none; }
 }
+
+.dn-my-rooms {
+  border-top:1px solid color-mix(in srgb,var(--dn-ink) 12%,transparent);
+  padding:14px 18px 18px;
+}
+.dn-my-rooms-heading {
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:10px;
+}
+.dn-my-rooms-heading h2 { margin:0; font-size:14px; font-weight:700; letter-spacing:-.02em; }
+.dn-my-rooms-heading span,.dn-my-rooms-note { color:var(--dn-muted); font-size:12px; }
+.dn-owned-rooms { display:grid; gap:7px; }
+.dn-owned-room {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  min-width:0;
+  padding:9px 10px;
+  border-radius:6px;
+  background:color-mix(in srgb,var(--dn-secondary) 55%,transparent);
+}
+.dn-owned-room-info { display:grid; gap:1px; min-width:0; }
+.dn-owned-room-info strong { font-size:13px; line-height:1.35; }
+.dn-owned-room-info span { color:var(--dn-muted); font-size:11px; }
+.dn-owned-room-actions { display:flex; align-items:center; justify-content:flex-end; gap:7px; flex-wrap:wrap; }
+.dn-room-open,.dn-room-delete,.dn-room-confirm,.dn-room-cancel {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  min-height:34px;
+  padding:6px 10px;
+  border:1px solid transparent;
+  border-radius:5px;
+  background:transparent;
+  color:var(--dn-ink);
+  font-size:12px;
+  font-weight:650;
+  white-space:nowrap;
+  transition:background .18s,transform .18s,border-color .18s;
+}
+.dn-room-open:hover,.dn-room-delete:hover,.dn-room-cancel:hover { background:var(--card); transform:translateY(-1px); }
+.dn-room-delete { color:var(--error); }
+.dn-room-confirm { background:var(--error); color:#fff; }
+.dn-room-confirm:hover { filter:brightness(1.08); transform:translateY(-1px); }
+.dn-room-cancel { border-color:var(--line); }
+.dn-room-warning { color:var(--error); font-size:11px; }
+.dn-my-rooms .error { margin:8px 0 0; font-size:12px; padding:8px 10px; }
+.dn-my-rooms-note { margin:7px 0 0; }
+@media (max-width:700px) {
+  .dn-my-rooms { padding:12px; }
+  .dn-my-rooms-heading { margin-bottom:8px; }
+  .dn-owned-room { align-items:flex-start; padding:9px; }
+  .dn-owned-room-actions { gap:4px; }
+  .dn-room-open,.dn-room-delete,.dn-room-confirm,.dn-room-cancel { min-height:36px; padding:6px 8px; }
+  .dn-room-warning { flex-basis:100%; text-align:right; }
+}
