@@ -61,7 +61,7 @@ export function FlipQuestion({
     <div className={`flip-question ${open ? "is-open" : ""}`}>
       <button
         className="card-back"
-        aria-label="Reveal conversation card"
+        aria-label="Gesprächskarte aufdecken"
         onClick={() => setOpen(true)}
         disabled={open}
         tabIndex={open ? -1 : 0}
@@ -69,9 +69,9 @@ export function FlipQuestion({
       >
         <Layers size={38} />
         <span>{category}</span>
-        <strong>A little closer.</strong>
+        <strong>Noch ein Stück näher</strong>
         <small>
-          Tap to turn the card <ArrowUpRight size={16} />
+          Karte aufdecken <ArrowUpRight size={16} />
         </small>
       </button>
       <div className="card-front" aria-hidden={!open}>
@@ -93,3 +93,4 @@ export function ChoiceStamp({
     </span>
   );
 }
+

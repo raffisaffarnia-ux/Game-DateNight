@@ -4,10 +4,7 @@ import { useState } from "react";
 import { ArrowRight, ArrowUpRight, LockKeyhole } from "lucide-react";
 import { GameArt } from "@/components/games";
 import { games } from "@/lib/games";
-import { Barlow, Barlow_Condensed } from "next/font/google";
 import "./home.css";
-const display = Barlow_Condensed({ subsets: ["latin"], weight: "700", variable: "--dn-display" });
-const body = Barlow({ subsets: ["latin"], weight: ["400", "500", "700"], variable: "--dn-body" });
 const moods = [
   { name: "Bunt gemischt", ids: ["snake-squared", "deep-talk", "relationship-bomb", "draw-together"] },
   { name: "Zusammen", ids: ["relationship-bomb", "draw-together", "snake-squared", "this-or-that"] },
@@ -17,10 +14,9 @@ export default function Home() {
   const [mood, setMood] = useState(0);
   const picks = moods[mood].ids.map((id) => games.find((game) => game.id === id)!);
   return (
-    <main id="main" className={`dn-home ${display.variable} ${body.variable}`}>
-      <style>{`body:has(.dn-home) .navigation { font-family: ${body.style.fontFamily}; }`}</style>
+    <main id="main" className="dn-home">
       <section className="dn-intro" aria-labelledby="dn-title">
-        <h1 id="dn-title"><span>Heute:</span> <span>wir zwei</span></h1>
+        <h1 id="dn-title"><span>Zwei Orte</span> <span>Ein Date</span></h1>
         <div className="dn-welcome">
           <p>Ein Bildschirm zwischen euch.<br />Ein ganzer Spieleabend vor euch.</p>
           <div className="dn-start">

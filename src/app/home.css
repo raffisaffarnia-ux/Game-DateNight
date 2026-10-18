@@ -102,3 +102,9 @@ body:has(.dn-home) { --dn-paper:#e2dccf; --dn-ink:#2a1110; --dn-accent:#dc1928; 
   .dn-home :is(a,button):hover { transform:none; }
 }
 
+
+/* The original headline returns; its two lines stay deliberate at every width. */
+.dn-intro h1 { font-size:clamp(58px,7.6vw,110px); }
+.dn-intro h1 span { display:block; }
+@media(max-width:700px) { .dn-intro h1 { font-size:clamp(50px,15vw,72px); } }
+

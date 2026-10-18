@@ -1,0 +1,131 @@
+/* One shared poster system, with dark pixel worlds for play. */
+:root { --surface:#e2dccf; --card:#eee9df; --soft:#d7d0c1; --ink:#2a211e; --muted:#665b55; --line:#c0b7a7; --accent:#ae2431; --accent-hover:#8c1925; --signal:#34715c; --action:#bd1c2b; }
+body { font-family:var(--dn-body),Arial,sans-serif; }
+h1,h2,.game-title h1,.library-heading h1 { font-family:var(--dn-display),"Arial Narrow",Arial,sans-serif; font-weight:700; letter-spacing:-.015em; }
+button,input,select,textarea { font-family:inherit; }
+.brand { font-weight:800; color:var(--ink); }
+.brand-period { color:inherit; }
+.button,.room-toolbar-button,.deck-choice,input,textarea,select { border-radius:6px; }
+.button.primary,.game-shell .button.primary { background:var(--action); color:#fff; box-shadow:none; }
+.button.primary:hover:not(:disabled) { background:#9c1825; }
+.card,.cosmetic-card,.profile-dialog,.question-stage,.moral-scenario,.moral-discussion,.rank-prompt,.rank-reveal,.rank-compare,.bomb-module,.bomb-hud,.ranking-list li { border-radius:10px; box-shadow:none; }
+.profile-trigger { border:0; background:var(--soft); box-shadow:none; }
+.profile-trigger:hover { box-shadow:none; }
+.profile-tabs,.profile-tabs button,.shop-categories button,.cosmetic-preview,.shop-invitation { border-radius:6px; }
+.cosmetic-preview,.shop-invitation { background:var(--soft); color:var(--ink); border-color:var(--line); }
+.cosmetic-card.equipped { border-color:var(--accent); box-shadow:inset 0 0 0 1px var(--accent); }
+.cosmetic-card.equipped button { background:var(--soft); color:var(--ink); }
+.profile-dialog::backdrop { background:#101719bb; backdrop-filter:none; }
+.profile-panel-top .eyebrow { text-transform:none; letter-spacing:0; font-size:13px; }
+.library-heading h1 { font-size:clamp(40px,5vw,76px); }
+.game-card { border:0; background:var(--card); }
+.game-details h2 { font-size:28px; }
+.game-details p { font-size:15px; }
+.game-meta { font-size:13px; }
+.game-wheel { background:var(--card); border:0; border-radius:10px; box-shadow:none; }
+.wheel-copy h2 { color:var(--ink); font-size:clamp(32px,3vw,48px); letter-spacing:-.015em; }
+.wheel-copy > p:not(.wheel-result),.wheel-footnote { color:var(--muted); font-size:14px; }
+.wheel-game-chip { background:var(--soft); color:var(--ink); border:0; border-radius:4px; font-size:12px; }
+.wheel-game-chip.is-winner { background:var(--ink); color:var(--surface); box-shadow:none; }
+.wheel-spin-button { background:var(--action); box-shadow:none; border-radius:6px; padding:10px 18px; font-size:16px; }
+.wheel-spin-button:hover:not(:disabled) { box-shadow:none; filter:none; }
+.wheel-button-icon { background:transparent; box-shadow:none; }
+.wheel-halo,.wheel-disc-gloss { display:none; }
+.wheel-pointer { border-top-color:var(--ink); filter:none; }
+.wheel-disc { border-color:var(--soft); box-shadow:none; }
+.wheel-result,.wheel-result strong { color:var(--ink) !important; }
+.game-card,.cosmetic-card { transition:transform 220ms ease; }
+.game-card:hover { transform:translateY(-5px); }
+.game-card:hover .game-art { transform:none; }
+.game-card .button { min-width:90px; }
+.pixel-cover.game-art,.dn-home .dn-cover .pixel-cover.game-art { background:#17232b; height:auto; aspect-ratio:20 / 11; filter:none; }
+.pixel-cover > .pixel-scene,.dn-home .dn-cover .pixel-cover > .pixel-scene { display:block; width:100%; height:100%; max-height:none; image-rendering:pixelated; }
+.pixel-cover .px-stars { animation:px-twinkle 4s steps(2,end) infinite; }
+.pixel-cover .px-flame { animation:px-flicker 1.1s steps(2,end) infinite; transform-box:fill-box; transform-origin:bottom; }
+.pixel-cover .px-steam { animation:px-steam 3s steps(6,end) infinite; }
+.pixel-cover .px-float { animation:px-hover 4s steps(8,end) infinite; }
+.pixel-cover .px-snake { animation:px-slide 3s steps(4,end) infinite; }
+.pixel-cover .px-snake-two { animation:px-slide 3s steps(4,end) infinite reverse; }
+.pixel-cover .px-balance { transform-origin:200px 80px; animation:px-balance 4s steps(8,end) infinite; }
+.game-card:hover .pixel-scene,.dn-pick:hover .pixel-scene { transform:scale(1.04); }
+.pixel-scene { transition:transform 350ms ease; }
+.game-grid .game-card { animation:arcade-arrive 420ms ease backwards; }
+.game-grid .game-card:nth-child(4n+2) { animation-delay:60ms; }
+.game-grid .game-card:nth-child(4n+3) { animation-delay:120ms; }
+.game-grid .game-card:nth-child(4n+4) { animation-delay:180ms; }
+.button,.room-toolbar-button,.choice,.moral-option,.ranking-list button { transition:transform 160ms ease,background 160ms ease; }
+.button:active:not(:disabled),.room-toolbar-button:active,.moral-option:active:not(:disabled) { transform:translateY(2px) scale(.97); }
+.choice.chosen,.moral-option.chosen,.deck-choice.chosen { animation:arcade-selected 330ms ease; }
+.wallet-number { animation:arcade-wallet 420ms ease; }
+.pair-flames { box-shadow:none; border:0; background:#3c2d25; color:#efb577; border-radius:6px; }
+.pair-flames:hover { box-shadow:none; }
+.pair-flames svg { filter:none; animation:px-flicker 1.4s steps(3,end) infinite; }
+.coin-flight { animation-duration:460ms; }
+.celebration { opacity:.3; }
+.celebration i { width:16px; height:16px; border-radius:0; }
+.game-results .result-trophy,.is-success .moment-medallion { animation:arcade-prize 650ms cubic-bezier(.2,1.4,.5,1) both; }
+.result-trophy,.moment-medallion { border-radius:8px; background:#473a27; color:#edc382; border-color:#745b37; box-shadow:none; }
+.game-results .score-pair > div,.moral-reveals > div,.rank-pairs > div { animation:arcade-arrive 450ms ease backwards; }
+.game-results .score-pair > div:nth-child(2),.moral-reveals > div:nth-child(2),.rank-pairs > div:nth-child(2) { animation-delay:100ms; }
+
+/* Preserve the existing full-viewport game geometry; replace only its surfaces. */
+body:has(.play-page),.game-shell[data-game] {
+  --surface:#171f23; --card:#222d32; --soft:#2d3b41; --line:#45555b; --ink:#e7e5df; --muted:#b8c2c3;
+  --accent:#e8b37d; --accent-hover:#f4c99d; --signal:#94cbb4; --action:#b92332;
+  --game-color:var(--accent); --game-tint:#28373d; --game-secondary:#3d3531;
+  color:var(--ink); background:var(--surface);
+}
+.game-shell[data-game="snake-squared"] { --accent:#94cbb4; }
+.game-shell[data-game="deep-talk"] { --accent:#dea4a0; }
+.game-shell[data-game="daily-us"] { --accent:#e4c58a; }
+.game-shell[data-game="draw-together"] { --accent:#9fc8c7; }
+.game-shell[data-game="moral-sync"] { --accent:#a8becd; }
+.game-shell[data-game="rank-and-draw"] { --accent:#e4bd7d; }
+.game-shell[data-game] { box-shadow:none; border-color:var(--line); }
+.game-shell .game-atmosphere { display:none; }
+.game-shell[data-game] .button.primary { color:#fff; box-shadow:none; }
+.game-shell[data-game] .button.primary:active { box-shadow:none; }
+.game-shell .ready-card,.game-shell .question-stage,.game-shell .game-results,.game-shell[data-game="daily-us"] .question-stage,.bomb-module { background:var(--card); box-shadow:none; border-color:var(--line); }
+.ready-emblem { background:var(--soft); box-shadow:none; border-radius:8px; transform:none; }
+.game-shell .duel-stage .choice,.game-shell .duel-stage .choice:nth-child(2) { background:var(--soft); color:var(--ink); border:2px solid transparent; box-shadow:none; transform:none; border-radius:8px; }
+.game-shell .duel-stage .choice:nth-child(2) { background:#3b3432; }
+.game-shell .duel-stage .choice:hover:not(:disabled) { transform:translateY(-4px); border-color:var(--accent); }
+.game-shell .duel-stage .choice.chosen { border-color:var(--accent); }
+.game-shell .duel-stage .choice .choice-stamp { background:var(--card); border-radius:6px; }
+.game-shell .card-back { background:#34434b; border-color:#687e85; box-shadow:none; color:var(--ink); border-radius:8px; }
+.game-shell .card-back small { color:var(--muted); }
+.game-shell .card-front { background:#303d40; color:var(--ink); border-color:var(--line); border-radius:8px; }
+.game-shell[data-game="deep-talk"] .saved-conversations { background:var(--card); }
+.game-shell .role-chip span { background:var(--accent); color:#17232b; }
+.game-shell .snake-card,.game-shell .snake-board { background:#14252c; border-color:#38525a; box-shadow:none; }
+.game-shell .snake-player { background:#24383e; border-color:#3e585c; border-radius:6px; }
+.game-shell .snake-player-1 strong { color:#e4b780; }
+.game-shell .snake-segment-1 { fill:#e4b780; filter:none; }
+.game-shell .snake-segment-0 { fill:#94cbb4; filter:none; }
+.game-shell .snake-player-1 i { background:#e4b780; }
+.game-shell .drawing-toolbar,.game-shell .drawing-canvas { border-radius:6px; box-shadow:none; }
+.game-shell .game-player,.game-shell .moral-option,.game-shell .deck-choice { border-radius:6px !important; }
+.game-shell .eyebrow { letter-spacing:.04em; }
+.game-shell .game-close { border-radius:6px; }
+.game-shell .game-close:hover { background:var(--soft); transform:rotate(90deg); }
+.game-shell .game-progress progress { height:6px; border-radius:0; }
+.game-shell .game-progress progress::-webkit-progress-value { background:var(--accent); }
+
+@keyframes arcade-arrive { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
+@keyframes arcade-selected { 50% { transform:scale(.975); } }
+@keyframes arcade-wallet { 45% { transform:translateY(-4px) scale(1.2); } }
+@keyframes arcade-prize { 0% { opacity:0; transform:translateY(20px) scale(.6) rotate(-12deg); } 65% { opacity:1; transform:translateY(-5px) scale(1.08) rotate(5deg); } 100% { transform:none; } }
+@keyframes px-twinkle { 0%,100% { opacity:.4; } 50% { opacity:1; } }
+@keyframes px-flicker { 0%,100% { transform:scaleY(1); } 50% { transform:scaleY(.82); } }
+@keyframes px-steam { 0% { transform:translateY(4px); opacity:0; } 30% { opacity:.7; } 100% { transform:translateY(-12px); opacity:0; } }
+@keyframes px-hover { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-4px); } }
+@keyframes px-slide { 0%,100% { transform:translateX(0); } 50% { transform:translateX(4px); } }
+@keyframes px-balance { 0%,100% { transform:rotate(-3deg); } 50% { transform:rotate(3deg); } }
+@media (prefers-color-scheme:dark) {
+  :root { --surface:#1c2021; --card:#262d30; --soft:#333d40; --ink:#e7e5df; --muted:#bdc4c5; --line:#465256; --accent:#eea39d; --accent-hover:#ffd0c8; --signal:#94cbb4; }
+}
+@media (prefers-reduced-motion:reduce) {
+  *,*::before,*::after { animation:none !important; transition:none !important; scroll-behavior:auto !important; }
+  .game-card:hover,.game-card:hover .pixel-scene,.dn-pick:hover .pixel-scene,.game-shell .duel-stage .choice:hover:not(:disabled) { transform:none; }
+}
+

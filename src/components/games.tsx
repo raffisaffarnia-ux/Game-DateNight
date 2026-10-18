@@ -1,45 +1,10 @@
 import Link from "next/link";
-import { ArrowRight, CalendarDays, Pencil, Bomb, Scale, Sparkles } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { games, type GameDefinition } from "@/lib/games";
 import { Card, Button, EmptyState } from "./ui";
 import { GameWheel } from "./game-wheel";
-export function GameArt({ kind }: { kind: GameDefinition["art"] }) {
-  return (
-    <div className={`game-art ${kind}`} aria-hidden="true">
-      {kind === "daily" ? (
-        <CalendarDays className="art-icon" />
-      ) : kind === "drawing" ? (
-        <Pencil className="art-icon" />
-      ) : kind === "snake" ? (
-        <svg className="snake-art" viewBox="0 0 200 140">
-          <path
-            d="M32 110V52Q32 32 52 32H87Q105 32 105 50V67"
-            stroke="#78937d"
-          />
-          <path
-            d="M168 30V89Q168 108 148 108H114Q96 108 96 90V75"
-            stroke="#a18ba6"
-          />
-          <circle cx="103" cy="63" r="2.5" fill="#354c3b" />
-          <circle cx="98" cy="79" r="2.5" fill="#524357" />
-        </svg>
-      ) : kind === "bomb" ? (
-        <Bomb className="art-icon" />
-      ) : kind === "moral" ? (
-        <Scale className="art-icon" />
-      ) : kind === "rank" ? (
-        <Sparkles className="art-icon" />
-      ) : (
-        <>
-          <i />
-          <i />
-          <i />
-        </>
-      )}
-      <span>DateNight.io</span>
-    </div>
-  );
-}
+export { PixelGameCover as GameArt } from "./pixel-game-cover";
+import { PixelGameCover as GameArt } from "./pixel-game-cover";
 export function GameCard({
   game,
   onSelect,
