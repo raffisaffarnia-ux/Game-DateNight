@@ -44,6 +44,35 @@ body:has(.dn-home) {
   color:#fff;
 }
 .dn-home-banner > svg { z-index:-2; }
+.dn-home-banner .pixel-banner-sun {
+  transform-box:fill-box;
+  transform-origin:center;
+  animation:px-hover 5s steps(8,end) infinite;
+}
+.dn-home-banner .pixel-banner-hills-far {
+  transform-box:fill-box;
+  transform-origin:center bottom;
+  animation:dn-banner-far 9s ease-in-out infinite alternate;
+}
+.dn-home-banner .pixel-banner-hills-near {
+  transform-box:fill-box;
+  transform-origin:center bottom;
+  animation:px-slide 7s ease-in-out infinite alternate;
+}
+.dn-home-banner .pixel-banner-stars path {
+  animation:px-twinkle 3.8s steps(2,end) infinite;
+}
+.dn-home-banner .pixel-banner-stars path:nth-child(2n) { animation-delay:1.1s; }
+.dn-home-banner .pixel-banner-stars path:nth-child(3n) { animation-delay:2s; }
+.dn-home-banner .pixel-date-heart {
+  animation:dn-banner-heart 3.8s ease-in-out infinite;
+}
+.dn-home-banner .pixel-date-flame {
+  transform-box:fill-box;
+  transform-origin:center bottom;
+  animation:px-flicker 1.1s steps(2,end) infinite;
+}
+.dn-home-banner .pixel-date-flame-core { animation:px-twinkle .8s steps(2,end) infinite; }
 .dn-home-banner::before {
   content:"";
   position:absolute;
@@ -51,15 +80,7 @@ body:has(.dn-home) {
   z-index:-1;
   background:linear-gradient(90deg,#10191fe8 0%,#10191fbd 46%,#10191f30 100%);
 }
-.dn-banner-copy { position:relative; z-index:1; }
-.dn-banner-kicker {
-  display:block;
-  margin-bottom:8px;
-  color:#f1d5ad;
-  font-size:11px;
-  font-weight:700;
-  letter-spacing:.14em;
-}
+.dn-banner-copy { position:relative; z-index:1; min-width:0; max-width:100%; }
 .dn-banner-copy h1 {
   margin:0;
   color:#fff;
@@ -73,6 +94,7 @@ body:has(.dn-home) {
 .dn-banner-copy p { margin:14px 0 0; color:#f4f0e8; font-size:clamp(15px,1.5vw,19px); }
 .dn-banner-identity {
   position:absolute;
+  max-width:min(52%, 260px);
   z-index:1;
   top:18px;
   right:20px;
@@ -87,7 +109,12 @@ body:has(.dn-home) {
   backdrop-filter:blur(8px);
 }
 .dn-banner-identity > .pixel-art { width:42px; height:42px; border-radius:50%; }
-.dn-banner-identity > div { display:grid; gap:1px; }
+.dn-banner-identity > div { display:grid; gap:1px; min-width:0; flex:1; }
+.dn-banner-identity strong,.dn-banner-identity span {
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+}
 .dn-banner-identity strong { font-size:13px; }
 .dn-banner-identity span { color:#d1d8d6; font-size:10px; }
 .dn-profile-start {
@@ -160,6 +187,14 @@ body:has(.dn-home) {
 .dn-pick-2 { animation-delay:200ms; }
 .dn-pick-3 { animation-delay:260ms; }
 @keyframes dn-enter { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+@keyframes dn-banner-far {
+  from { transform:translateY(0) scale(1); }
+  to { transform:translateY(-2px) scale(1.012); }
+}
+@keyframes dn-banner-heart {
+  0%,100% { opacity:.72; }
+  50% { opacity:1; }
+}
 
 @media (prefers-color-scheme:dark) {
   body:has(.dn-home) { --dn-paper:#1c2021; --dn-ink:#e7e5df; --dn-secondary:#33393a; --dn-muted:#bdc4c5; }
@@ -182,11 +217,10 @@ body:has(.dn-home) {
   .app-shell:has(.dn-home) > .navigation { height:66px; flex-basis:66px; }
   .app-shell:has(.dn-home) .brand { color:var(--dn-ink); }
   .dn-home { gap:16px; padding-block:4px 10px; justify-content:flex-start; }
-  .dn-home-banner { height:178px; min-height:178px; padding:18px; }
+  .dn-home-banner { height:auto; min-height:178px; padding:18px; }
   .dn-banner-copy { padding-top:36px; }
-  .dn-banner-kicker { margin-bottom:6px; font-size:9px; }
-  .dn-banner-copy h1 { font-size:clamp(44px,12vw,58px); line-height:.88; }
-  .dn-banner-copy p { margin-top:8px; font-size:13px; }
+  .dn-banner-copy h1 { font-size:clamp(38px,10.8vw,58px); line-height:.9; }
+  .dn-banner-copy p { margin-top:8px; font-size:13px; line-height:1.3; }
   .dn-banner-identity { top:10px; right:10px; gap:6px; padding:4px 9px 4px 4px; }
   .dn-banner-identity > .pixel-art { width:32px; height:32px; }
   .dn-banner-identity strong { font-size:11px; }
@@ -207,6 +241,11 @@ body:has(.dn-home) {
   .dn-pick-label h3 { font-size:14px; }
   .dn-pick-label svg { width:16px; height:16px; }
   .dn-bottom { margin-top:14px; gap:10px; font-size:12px; }
+}
+@media (max-width:380px) {
+  .dn-banner-copy h1 { font-size:clamp(36px,11.5vw,44px); line-height:.9; }
+  .dn-banner-identity { max-width:58%; }
+  .dn-banner-identity span { display:none; }
 }
 @media (prefers-reduced-motion:reduce) {
   .dn-home *,.dn-home *::before,.dn-home *::after { animation:none !important; transition:none !important; }

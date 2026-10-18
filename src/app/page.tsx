@@ -22,7 +22,6 @@ export default function Home() {
       <section className="dn-profile-card" aria-labelledby="dn-title">
         <PixelBanner id={profile?.banner || "dusk"} className="dn-home-banner">
           <div className="dn-banner-copy">
-            <span className="dn-banner-kicker">EURE ZEIT BEGINNT HIER</span>
             <h1 id="dn-title"><span>Zwei Orte</span><span>Ein Date</span></h1>
             <p>Ein privater Spieleabend für zwei.</p>
           </div>

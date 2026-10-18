@@ -14,6 +14,7 @@ function Heart({
     <path
       d={heart}
       transform={`translate(${x} ${y}) scale(${size})`}
+      className="pixel-date-heart"
       fill={color}
     />
   );
@@ -24,8 +25,8 @@ function Candle({ x, y }: { x: number; y: number }) {
       <rect x="-12" y="47" width="36" height="6" fill="#dba674" />
       <rect width="12" height="48" fill="#fff0d2" />
       <rect x="8" width="4" height="48" fill="#ebc8a7" />
-      <path d="M4-22h4v6h4v12H0v-8h4Z" fill="#ffc76e" />
-      <rect x="4" y="-10" width="4" height="8" fill="#fff3ac" />
+      <path className="pixel-date-flame" d="M4-22h4v6h4v12H0v-8h4Z" fill="#ffc76e" />
+      <rect className="pixel-date-flame-core" x="4" y="-10" width="4" height="8" fill="#fff3ac" />
     </g>
   );
 }

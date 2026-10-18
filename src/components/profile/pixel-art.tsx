@@ -245,28 +245,33 @@ export function PixelBanner({
   return (
     <div className={`pixel-banner banner-${id} ${className}`}>
       <svg
+        className="pixel-banner-scene"
         viewBox="0 0 400 140"
         preserveAspectRatio="xMidYMid slice"
         aria-hidden="true"
         shapeRendering="crispEdges"
       >
-        <circle cx="310" cy="42" r="24" fill="var(--pixel-sun)" />
+        <circle className="pixel-banner-sun" cx="310" cy="42" r="24" fill="var(--pixel-sun)" />
         <path
+          className="pixel-banner-hills-far"
           d="M0 110h25V94h25v16h25V82h25V66h25v20h25v24h25V94h25v16h25V80h25v14h25v16h25V74h25V58h25v26h25v26h25v30H0Z"
           fill="var(--pixel-far)"
         />
         <path
+          className="pixel-banner-hills-near"
           d="M0 124h40v-12h28v12h52v-20h24v20h36v-8h28v8h56v-20h32v12h36v8h68v16H0Z"
           fill="var(--pixel-near)"
         />
-        {[20, 65, 115, 160, 210, 265, 360].map((x, i) => (
-          <path
-            key={x}
-            d={`M${x} ${18 + (i % 3) * 17}h4v-4h4v4h4v4h-4v4h-4v-4h-4Z`}
-            fill="var(--pixel-star)"
-          />
-        ))}
-        <DateScene id={id} />
+        <g className="pixel-banner-stars">
+          {[20, 65, 115, 160, 210, 265, 360].map((x, i) => (
+            <path
+              key={x}
+              d={`M${x} ${18 + (i % 3) * 17}h4v-4h4v4h4v4h-4v4h-4v-4h-4Z`}
+              fill="var(--pixel-star)"
+            />
+          ))}
+        </g>
+        <g className="pixel-banner-date-scene"><DateScene id={id} /></g>
       </svg>
       {children}
     </div>
