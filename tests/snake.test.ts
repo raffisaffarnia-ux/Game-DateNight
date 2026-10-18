@@ -7,6 +7,7 @@ import {
   validSnapshot,
 } from "../src/games/snake/engine.ts";
 import type { Direction } from "../src/games/snake/types.ts";
+import { tickIntervalMs } from "../src/games/snake/engine.ts";
 test("Snake is deterministic, grows and rejects reversals and double turns", () => {
   const a = initialSnake(["a", "b"], 123);
   assert.deepEqual(a, initialSnake(["a", "b"], 123));
@@ -113,4 +114,11 @@ test("Food never spawns inside either snake", () => {
       ),
     );
   }
+});
+
+test("Snake starts gently and speeds up gradually as hearts are collected", () => {
+  assert.equal(tickIntervalMs(0), 360);
+  assert.equal(tickIntervalMs(1), 348);
+  assert.equal(tickIntervalMs(20), 120);
+  assert.equal(tickIntervalMs(100), 120);
 });

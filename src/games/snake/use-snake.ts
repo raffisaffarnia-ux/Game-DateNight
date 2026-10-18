@@ -9,9 +9,7 @@ import {
   isDirection,
   queueTurn,
   tick,
-  TICK_MS,
-  MIN_TICK_MS,
-  SPEED_PER_HEART_MS,
+  tickIntervalMs,
   validSnapshot,
 } from "./engine";
 import type { Direction, SnakeState } from "./types";
@@ -271,7 +269,7 @@ export function useSnake({
         (total, snake) => total + snake.score,
         0,
       );
-      const delay = Math.max(MIN_TICK_MS, TICK_MS - hearts * SPEED_PER_HEART_MS);
+      const delay = tickIntervalMs(hearts);
       tickTimer = window.setTimeout(() => {
         frame();
         scheduleFrame();

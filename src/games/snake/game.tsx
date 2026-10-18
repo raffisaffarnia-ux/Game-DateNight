@@ -1,12 +1,96 @@
 "use client";
-import { useEffect, useRef } from "react";
-import { ArrowUp, ArrowDown, ArrowLeft, ArrowRight, Heart } from "lucide-react";
+import { useEffect, useRef, type CSSProperties } from "react";
+import { ArrowUp, ArrowDown, ArrowLeft, ArrowRight } from "lucide-react";
 import { Button, Card } from "@/components/ui";
 import { GameResults } from "../shared/shell";
 import type { GameViewProps } from "../shared/types";
-import type { Direction } from "./types";
-import { GRID, initialSnake, TEAM_GOAL } from "./engine";
+import type { Direction, Position } from "./types";
+import { GRID, initialSnake, TEAM_GOAL, tickIntervalMs } from "./engine";
 import { useSnake } from "./use-snake";
+const HEART_ROWS = [
+  "0011001100",
+  "0111111110",
+  "1111111111",
+  "1111111111",
+  "0111111110",
+  "0011111100",
+  "0001111000",
+  "0000110000",
+  "0000010000",
+];
+const HEART_HIGHLIGHT_ROWS = [
+  "0000000000",
+  "0000000000",
+  "0011000000",
+  "0100000000",
+  "0100000000",
+  "0000000000",
+  "0000000000",
+  "0000000000",
+  "0000000000",
+];
+const HEART_GLINT_ROWS = [
+  "0000000000",
+  "0000000000",
+  "0000000000",
+  "0001000000",
+  "0000000000",
+  "0000000000",
+  "0000000000",
+  "0000000000",
+  "0000000000",
+];
+function pixelPath(rows: string[]) {
+  return rows
+    .flatMap((row, y) => {
+      const segments: string[] = [];
+      let start = -1;
+      for (let x = 0; x <= row.length; x++) {
+        if (row[x] === "1") {
+          if (start < 0) start = x;
+        } else if (start >= 0) {
+          segments.push("M" + start + " " + y + "h" + (x - start) + "v1H" + start + "z");
+          start = -1;
+        }
+      }
+      return segments;
+    })
+    .join("");
+}
+const HEART_PATH = pixelPath(HEART_ROWS);
+const HEART_HIGHLIGHT = pixelPath(HEART_HIGHLIGHT_ROWS);
+const HEART_GLINT = pixelPath(HEART_GLINT_ROWS);
+function PixelHeart({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      className={"snake-heart-mark " + className}
+      viewBox="0 0 10 10"
+      shapeRendering="crispEdges"
+      aria-hidden="true"
+    >
+      <path d={HEART_PATH} transform="translate(0 1)" className="snake-heart-shadow" />
+      <path d={HEART_PATH} className="snake-heart-shape" />
+      <path d={HEART_HIGHLIGHT} className="snake-heart-highlight" />
+      <path d={HEART_GLINT} className="snake-heart-glint" />
+    </svg>
+  );
+}
+function eyesFor(direction: Direction): [Position, Position, Position] {
+  const facing: Record<Direction, Position> = {
+    up: { x: 0, y: -1 },
+    down: { x: 0, y: 1 },
+    left: { x: -1, y: 0 },
+    right: { x: 1, y: 0 },
+  };
+  const vector = facing[direction];
+  const side = { x: -vector.y, y: vector.x };
+  return [
+    { x: 0.5 + vector.x * 0.18 + side.x * 0.18, y: 0.5 + vector.y * 0.18 + side.y * 0.18 },
+    { x: 0.5 + vector.x * 0.18 - side.x * 0.18, y: 0.5 + vector.y * 0.18 - side.y * 0.18 },
+    { x: vector.x * 0.055, y: vector.y * 0.055 },
+  ];
+}
+
 export function SnakeSetup({
   session,
   command,
@@ -47,6 +131,10 @@ export function SnakeSetup({
 
 export function SnakeGame(props: GameViewProps & { replay: () => void }) {
   const { state, meta, error, turn, countdown } = useSnake(props);
+  const previousState = useRef(state);
+  useEffect(() => {
+    previousState.current = state;
+  }, [state]);
   const swipe = useRef<{ x: number; y: number } | null>(null);
   useEffect(() => {
     const keys: Record<string, Direction> = {
@@ -129,7 +217,7 @@ export function SnakeGame(props: GameViewProps & { replay: () => void }) {
       {together && (
         <div className="team-goal">
           <strong>
-            <Heart size={14} fill="currentColor" aria-hidden="true" /> {teamScore} / {TEAM_GOAL} Herzen
+            <PixelHeart /> {teamScore} / {TEAM_GOAL} Herzen
           </strong>
           <progress
             value={teamScore}
@@ -143,7 +231,7 @@ export function SnakeGame(props: GameViewProps & { replay: () => void }) {
           <span key={p.user_id} className={`snake-player snake-player-${i}`}>
             <i />
             {p.name}
-            <strong key={shown.snakes[p.user_id]?.score || 0}><Heart size={14} fill="currentColor" aria-hidden="true" />{shown.snakes[p.user_id]?.score || 0}</strong>
+            <strong key={shown.snakes[p.user_id]?.score || 0}><PixelHeart />{shown.snakes[p.user_id]?.score || 0}</strong>
           </span>
         ))}
       </div>
@@ -183,6 +271,7 @@ export function SnakeGame(props: GameViewProps & { replay: () => void }) {
       >
         <svg
           viewBox={`0 0 ${GRID} ${GRID}`}
+          style={{ "--snake-step-duration": tickIntervalMs(teamScore) + "ms" } as CSSProperties}
           role="img"
           aria-label="Gemeinsames Snake-Spielfeld"
         >
@@ -207,37 +296,52 @@ export function SnakeGame(props: GameViewProps & { replay: () => void }) {
             fill="url(#snake-grid)"
             className="snake-grid"
           />
-          <path
-            key={`${shown.food.x}-${shown.food.y}`}
-            className="snake-heart"
+          <g
+            key={"heart-" + shown.food.x + "-" + shown.food.y}
+            className="snake-heart-pickup"
+            transform={"translate(" + (shown.food.x + 0.05) + " " + (shown.food.y + 0.02) + ") scale(.09)"}
             aria-hidden="true"
-            d={`M${shown.food.x + 0.1} ${shown.food.y + 0.22}h.16v-.1h.2v.1h.08v-.1h.2v.1h.16v.16h-.1v.16h-.1v.12h-.1v.1h-.1v.1h-.1v.1h-.1v-.1h-.1v-.1h-.1v-.1h-.1v-.12h-.1v-.16h-.1v-.16Z`}
-          />
+          >
+            <circle className="snake-heart-aura" cx="5" cy="5" r="6.3" />
+            <path d={HEART_PATH} transform="translate(0 1)" className="snake-heart-shadow" />
+            <path d={HEART_PATH} className="snake-heart-shape" />
+            <path d={HEART_HIGHLIGHT} className="snake-heart-highlight" />
+            <path d={HEART_GLINT} className="snake-heart-glint" />
+          </g>
           {props.players.map((p, i) =>
-            shown.snakes[p.user_id]?.body.map((point, j) => (
-              <g key={`${p.user_id}-${j}`}>
-                <rect
-                  x={point.x + 0.06}
-                  y={point.y + 0.06}
-                  width=".88"
-                  height=".88"
-                  rx={j === 0 ? ".3" : ".2"}
-                  className={`snake-segment snake-segment-${i}`}
-                  opacity={j === 0 ? 1 : 0.78}
-                />
-                {j === 0 && (
-                  <g
-                    transform={`translate(${point.x + 0.5} ${point.y + 0.5}) rotate(${{ right: 0, down: 90, left: 180, up: 270 }[shown.snakes[p.user_id].direction]})`}
-                    aria-hidden="true"
-                  >
-                    <circle cx=".12" cy="-.18" r=".11" fill="#fafffa" />
-                    <circle cx=".12" cy=".18" r=".11" fill="#fafffa" />
-                    <circle cx=".16" cy="-.18" r=".05" fill="#152838" />
-                    <circle cx=".16" cy=".18" r=".05" fill="#152838" />
-                  </g>
-                )}
-              </g>
-            )),
+            shown.snakes[p.user_id]?.body.map((point, j) => {
+              const snake = shown.snakes[p.user_id]!;
+              const oldPoint = previousState.current?.snakes[p.user_id]?.body[j];
+              const wrapped =
+                !!oldPoint &&
+                (Math.abs(oldPoint.x - point.x) > GRID / 2 ||
+                  Math.abs(oldPoint.y - point.y) > GRID / 2);
+              const teleport = wrapped;
+              const eyes = j === 0 ? eyesFor(snake.direction) : null;
+              const eyeClass = "snake-eye" + (teleport ? " snake-eye-teleport" : "");
+              const pupilClass = "snake-pupil" + (teleport ? " snake-eye-teleport" : "");
+              return (
+                <g key={p.user_id + "-" + j}>
+                  <rect
+                    x={point.x + 0.025}
+                    y={point.y + 0.025}
+                    width=".95"
+                    height=".95"
+                    rx={j === 0 ? ".38" : ".28"}
+                    className={"snake-segment snake-segment-" + i + (teleport ? " snake-segment-teleport" : "")}
+                    opacity={j === 0 ? 1 : 0.78}
+                  />
+                  {eyes && (
+                    <g aria-hidden="true">
+                      <circle className={eyeClass} cx={point.x + eyes[0].x} cy={point.y + eyes[0].y} r=".115" />
+                      <circle className={eyeClass} cx={point.x + eyes[1].x} cy={point.y + eyes[1].y} r=".115" />
+                      <circle className={pupilClass} cx={point.x + eyes[0].x + eyes[2].x} cy={point.y + eyes[0].y + eyes[2].y} r=".05" />
+                      <circle className={pupilClass} cx={point.x + eyes[1].x + eyes[2].x} cy={point.y + eyes[1].y + eyes[2].y} r=".05" />
+                    </g>
+                  )}
+                </g>
+              );
+            }),
           )}
         </svg>
         {(paused || countdown > 0 || !state) && (
@@ -250,7 +354,7 @@ export function SnakeGame(props: GameViewProps & { replay: () => void }) {
                 ? "Pausiert"
                 : countdown > 0
                   ? Math.min(countdown, 3)
-                  : "Connecting…"}
+                  : "Verbindung wird hergestellt …"}
             </strong>
             <span>
               {paused

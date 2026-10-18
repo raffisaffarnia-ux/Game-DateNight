@@ -1297,3 +1297,106 @@
     scroll-behavior: auto !important;
   }
 }
+
+
+/* Snake glides one tile per server tick while the shared simulation stays authoritative. */
+.snake-segment {
+  transition:
+    x var(--snake-step-duration, 360ms) linear,
+    y var(--snake-step-duration, 360ms) linear;
+}
+.snake-segment-teleport,
+.snake-eye-teleport {
+  transition: none !important;
+}
+.snake-eye,
+.snake-pupil {
+  transition:
+    cx var(--snake-step-duration, 360ms) linear,
+    cy var(--snake-step-duration, 360ms) linear;
+}
+.snake-eye {
+  fill: #fff8fb;
+  filter: drop-shadow(0 0 0.06px #682443);
+}
+.snake-pupil {
+  fill: #18253c;
+}
+.snake-heart-mark {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  flex: 0 0 auto;
+  vertical-align: -0.16em;
+  filter: drop-shadow(0 1px 2px #f35f7d55);
+}
+.team-goal .snake-heart-mark {
+  width: 16px;
+  height: 16px;
+}
+.snake-heart-shadow {
+  fill: #652642;
+}
+.snake-heart-shape {
+  fill: #ff5f7e;
+}
+.snake-heart-highlight {
+  fill: #ffd9e1;
+}
+.snake-heart-glint {
+  fill: #fff;
+}
+.snake-heart-pickup {
+  filter: drop-shadow(0 0 0.12px #ff7291);
+}
+.snake-heart-aura {
+  fill: #ff6684;
+  opacity: 0.14;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: snake-heart-bloom 1.55s ease-in-out infinite;
+}
+@keyframes snake-heart-bloom {
+  0%,
+  100% {
+    opacity: 0.1;
+    transform: scale(0.84);
+  }
+  50% {
+    opacity: 0.24;
+    transform: scale(1.12);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .snake-segment,
+  .snake-eye,
+  .snake-pupil {
+    transition-duration: 1ms !important;
+  }
+  .snake-heart-aura,
+  .snake-player strong .snake-heart-mark {
+    animation-duration: 1ms !important;
+  }
+}
+
+.game-shell .snake-board {
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.snake-player strong .snake-heart-mark {
+  animation: snake-heart-score 420ms cubic-bezier(0.2, 0.75, 0.2, 1) both;
+}
+@keyframes snake-heart-score {
+  0% {
+    opacity: 0.5;
+    transform: scale(0.55) rotate(-12deg);
+  }
+  72% {
+    opacity: 1;
+    transform: scale(1.2) rotate(5deg);
+  }
+  100% {
+    transform: scale(1) rotate(0);
+  }
+}

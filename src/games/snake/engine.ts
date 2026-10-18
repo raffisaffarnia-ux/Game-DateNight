@@ -4,6 +4,9 @@ export const TICK_MS = 360;
 export const MIN_TICK_MS = 120;
 export const SPEED_PER_HEART_MS = 12;
 export const TEAM_GOAL = 20;
+export function tickIntervalMs(score: number) {
+  return Math.max(MIN_TICK_MS, TICK_MS - Math.max(0, Math.floor(score)) * SPEED_PER_HEART_MS);
+}
 const vectors: Record<Direction, Position> = {
   up: { x: 0, y: -1 },
   down: { x: 0, y: 1 },
