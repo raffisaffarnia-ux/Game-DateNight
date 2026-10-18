@@ -95,6 +95,7 @@ export type GameViewProps = {
   userId: string;
   answers: Answer[];
   command: GameCommand;
+  refresh?: () => Promise<void>;
   busy: boolean;
   online: string[];
   connected: boolean;
