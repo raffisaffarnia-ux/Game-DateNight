@@ -10,7 +10,7 @@ export function roomError(error: unknown) {
   if (message.startsWith("That invitation was not found"))
     return "That invitation was not found or has expired. Check the code with your partner.";
   if (message.startsWith("You already have five active rooms."))
-    return "You already have five active rooms. Use an existing invitation or try again tomorrow.";
+    return "Du hast fünf aktive Räume. Lösche einen unter „Deine Räume“, um wieder Platz zu schaffen.";
   if (message.startsWith("This room could not be restored.")) return message;
   return "Could not connect to your room. Check your connection and try again.";
 }
