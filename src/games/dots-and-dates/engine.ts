@@ -61,6 +61,15 @@ export const conversationCards: Record<string, string> = {
   dd40: "Welche gemeinsame Kleinigkeit macht deinen Alltag schöner?",
 };
 
+export function getConversationCard(id: string): string {
+  return conversationCards[id] ?? "Diese Gesprächskarte ist gerade nicht verfügbar. Überspringt sie und spielt weiter.";
+}
+
+export function dotsProgress(state: Pick<DotsState, "boxes">) {
+  const completed = state.boxes.filter((owner) => owner !== null).length;
+  return { completed, total: DOT_BOX_COUNT, percent: Math.round((completed / DOT_BOX_COUNT) * 100) };
+}
+
 export function createDotsState(players: string[]): DotsState {
   if (players.length !== 2 || players[0] === players[1]) {
     throw new Error("Dots & Dates braucht genau zwei verschiedene Spieler.");
@@ -72,7 +81,7 @@ export function createDotsState(players: string[]): DotsState {
     boxes: Array(DOT_BOX_COUNT).fill(null),
     turn_user_id: players[0],
     scores: { [players[0]]: 0, [players[1]]: 0 },
-    conversation_boxes: { "0": "moment", "3": "saturday", "12": "little_thing", "15": "trip" },
+    conversation_boxes: { "0": "dd01", "3": "dd02", "12": "dd03", "15": "dd04" },
     active_prompt: null,
     active_prompt_box: null,
     last_move: null,

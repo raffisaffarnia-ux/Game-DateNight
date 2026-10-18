@@ -81,6 +81,7 @@ export function GameHost({
     replayLabel: session.state.wheel_mode === true ? "Neues Spiel drehen" : "Nochmal spielen",
     busy: game.busy || replaying || !connected || !game.connected,
     command: game.command,
+    refresh: game.refresh,
   };
   async function replay() {
     if (props.replayLabel === "Neues Spiel drehen") { exit(); return; }

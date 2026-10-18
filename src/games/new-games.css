@@ -288,18 +288,21 @@
 .dots-player-name i { width:7px; height:7px; flex:0 0 auto; border-radius:50%; background:var(--player-color); }
 .dots-player-score > strong { grid-column:2; grid-row:1 / span 2; align-self:center; color:var(--player-color); font:700 30px/1 var(--dn-display),monospace; }
 .dots-player-score > small { color:#9f9479; font-size:9px; letter-spacing:.08em; }
-.dots-progress { display:grid; grid-template-columns:1fr auto; align-content:center; padding:7px 12px; border:1px solid #3b4c41; border-radius:6px; background:#18241e; color:#a99b7d; font-size:10px; }
-.dots-progress strong { color:#eddbb4; font:700 16px var(--dn-display),monospace; }
-.dots-progress strong small { color:#a99b7d; font:10px var(--dn-body),sans-serif; }
-.dots-progress-track { grid-column:1 / -1; height:4px; margin-top:5px; overflow:hidden; border-radius:3px; background:#38463c; }
+.dots-progress { min-width:0; display:grid; grid-template-columns:1fr auto; align-content:center; padding:7px 12px; border:1px solid #52614f; border-radius:6px; background:#18241e; color:#c1b28f; font-size:11px; }
+.dots-progress strong { color:#f4dfb2; font:700 17px var(--dn-display),monospace; white-space:nowrap; }
+.dots-progress strong small { color:#c1b28f; font:11px var(--dn-body),sans-serif; }
+
+.dots-progress-track { grid-column:1 / -1; height:7px; margin-top:7px; overflow:hidden; border-radius:4px; background:#46564a; }
 .dots-progress-track i { display:block; height:100%; background:#d3a863; transition:width .2s ease; }
 .dots-board-wrap { position:relative; min-height:0; display:flex; justify-content:center; align-items:center; }
 .dots-board { display:block; width:min(100%,min(58dvh,500px)); max-height:100%; aspect-ratio:1; overflow:visible; }
 .dots-box-fill { opacity:.42; }
 .dots-box-number { fill:#261f1b; font:700 30px var(--dn-display),monospace; opacity:.9; }
-.dots-question-mark circle { fill:#3a3e32; stroke:#d1b77f; stroke-width:2; }
-.dots-question-mark text { fill:#f5dd9a; font:bold 17px var(--dn-display),sans-serif; }
-.dots-question-mark.is-active circle { fill:#9a4d43; stroke:#f2c77e; }
+.dots-card-marker circle { fill:#28372d; stroke:#d1b77f; stroke-width:1.8; }
+.dots-card-glyph,.dots-card-lines { fill:none; stroke:#f5dd9a; stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round; }
+.dots-card-marker.is-active circle { fill:#9a4d43; stroke:#f2c77e; }
+.dots-card-legend { display:flex; align-items:center; gap:6px; flex:0 0 auto; color:#d8c69f; font-size:10px; }
+.dots-card-legend svg { color:#d2b16d; }
 .dots-line-used { stroke-width:9; stroke-linecap:round; opacity:.96; pointer-events:none; }
 .dots-line-hit { stroke:transparent; stroke-width:22; stroke-linecap:round; pointer-events:none; }
 .dots-line-hit.is-enabled { pointer-events:stroke; cursor:pointer; }
@@ -352,10 +355,11 @@
   .dots-progress strong { margin-left:auto; }
   .dots-progress-track { grid-column:1 / -1; margin-top:2px; }
   .dots-board { width:min(100%,min(55dvh,500px)); }
-  .dots-game-footer { min-height:31px; }
-  .dots-turn-copy { flex-wrap:wrap; gap:5px; font-size:10px; }
+  .dots-game-footer { min-height:31px; gap:6px; flex-wrap:wrap; }
+  .dots-turn-copy { flex:1 0 100%; flex-wrap:wrap; gap:5px; font-size:10px; }
   .dots-turn-copy small { flex:0 0 100%; margin-left:22px; }
-  .dots-connection { font-size:9px; }
+  .dots-card-legend { font-size:8px; gap:3px; }
+  .dots-connection { font-size:8px; }
 }
 @media (max-height:700px) and (min-width:761px) {
   .flipper-game { gap:4px; }

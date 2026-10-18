@@ -1,11 +1,11 @@
 "use client";
 
-import { useMemo, useState, type CSSProperties } from "react";
-import { Check, CircleHelp, Flag, SkipForward } from "lucide-react";
+import { useMemo, useRef, useState, type CSSProperties } from "react";
+import { Check, CircleHelp, Flag, MessageCircle, SkipForward } from "lucide-react";
 import { Button } from "@/components/ui";
 import { GameResults } from "../shared/shell";
 import type { DotsState } from "./engine";
-import { canSelectDotEdge, conversationCards, dotsWinner } from "./engine";
+import { canSelectDotEdge, dotsProgress, dotsWinner, getConversationCard } from "./engine";
 import type { GamePlayer, GameViewProps } from "../shared/types";
 import { getSupabase } from "@/lib/supabase";
 
@@ -13,25 +13,28 @@ const BOARD_START = 46;
 const CELL = 102;
 const DOT_COLORS = ["#de8774", "#79b8a7"];
 
-export function DotsDates({ session, players, userId, online, connected, busy, replay }: GameViewProps & { replay: () => void }) {
+export function DotsDates({ session, players, userId, online, connected, busy, replay, refresh }: GameViewProps & { replay: () => void }) {
   const [saving, setSaving] = useState(false);
+  const actionLock = useRef(false);
   const [error, setError] = useState("");
   const state = session.state as unknown as Partial<DotsState>;
   const validBoard = Array.isArray(state.lines) && state.lines.length === 40 && Array.isArray(state.boxes) && state.boxes.length === 16;
   const gameState = state as DotsState;
   const colors = useMemo(() => Object.fromEntries(players.map((player, index) => [player.user_id, DOT_COLORS[index]])), [players]);
-  const completed = validBoard ? state.boxes!.filter(Boolean).length : 0;
+  const progress = validBoard ? dotsProgress(gameState) : { completed: 0, total: 16, percent: 0 };
+  const completed = progress.completed;
   const scores = validBoard ? state.scores || {} : {};
   const whoseTurn = players.find((player) => player.user_id === state.turn_user_id);
   const lastPlayer = players.find((player) => player.user_id === state.last_player);
-  const prompt = state.active_prompt ? conversationCards[state.active_prompt] : undefined;
+  const prompt = state.active_prompt ? getConversationCard(state.active_prompt) : undefined;
   const ready = connected && online.length >= 2 && !busy && !saving;
   const finished = session.status === "finished" || state.phase === "result";
   const winnerId = validBoard ? dotsWinner(gameState) : null;
   const winner = players.find((player) => player.user_id === winnerId);
 
   async function action(name: "move" | "dismiss_prompt", payload: Record<string, unknown>) {
-    if (!ready) return;
+    if (!ready || actionLock.current) return;
+    actionLock.current = true;
     setSaving(true);
     setError("");
     try {
@@ -42,9 +45,12 @@ export function DotsDates({ session, players, userId, online, connected, busy, r
         payload,
       });
       if (rpcError) throw rpcError;
+      await refresh?.();
     } catch {
-      setError("Der Zug konnte nicht gespeichert werden. Das aktuelle Brett wird neu geladen.");
+      await refresh?.();
+      setError("Der Zug konnte nicht gespeichert werden. Prüft den aktuellen Zugstand und versucht es erneut.");
     } finally {
+      actionLock.current = false;
       setSaving(false);
     }
   }
@@ -86,8 +92,8 @@ export function DotsDates({ session, players, userId, online, connected, busy, r
       ))}
       <div className="dots-progress">
         <span>Fortschritt</span>
-        <strong>{completed}<small> / 16 Felder</small></strong>
-        <div className="dots-progress-track"><i style={{ width: (completed / 16 * 100) + "%" }} /></div>
+        <strong><span aria-live="polite">{progress.completed}</span><small> von {progress.total} Feldern</small></strong>
+        <div className="dots-progress-track" role="progressbar" aria-label="Geschlossene Felder" aria-valuemin={0} aria-valuemax={progress.total} aria-valuenow={progress.completed} aria-valuetext={progress.completed + " von " + progress.total + " Feldern"}><i style={{ width: progress.percent + "%" }} /></div>
       </div>
     </div>
 
@@ -100,7 +106,7 @@ export function DotsDates({ session, players, userId, online, connected, busy, r
           return <g key={"box-" + box}>
             {owner && <rect className="dots-box-fill" x={x} y={y} width={CELL - 16} height={CELL - 16} rx="8" fill={colors[owner] || "#bea98a"} />}
             {owner && <text className="dots-box-number" x={x + (CELL - 16) / 2} y={y + (CELL - 16) / 2 + 6} textAnchor="middle">{players.findIndex((player) => player.user_id === owner) + 1}</text>}
-            {promptHere && <g className={"dots-question-mark " + (state.active_prompt_box === box ? "is-active" : "")} transform={"translate(" + (x + CELL - 28) + " " + (y + 14) + ")"} aria-hidden="true"><circle r="13" /><text textAnchor="middle" y="5">?</text></g>}
+            {promptHere && <g className={"dots-card-marker " + (state.active_prompt_box === box ? "is-active" : "")} transform={"translate(" + (x + CELL - 28) + " " + (y + 14) + ")"} aria-hidden="true"><circle r="13" /><path className="dots-card-glyph" d="M-6-5h12v8H2l-3 3v-3h-5z" /><path className="dots-card-lines" d="M-3-2h6M-3 1h4" /></g>}
           </g>;
         })}
         {state.last_move !== null && state.last_move !== undefined && <line className="dots-last-move" {...lineCoordinates(state.last_move)} />}
@@ -144,8 +150,9 @@ export function DotsDates({ session, players, userId, online, connected, busy, r
       <div className="dots-turn-copy">
         <Flag size={16} />
         <span>{whoseTurn ? (whoseTurn.user_id === userId ? "Du bist am Zug" : whoseTurn.name + " ist am Zug") : "Zug wird geladen"}</span>
-        {lastPlayer && state.last_move !== null && state.last_move !== undefined && <small>{lastPlayer.user_id === userId ? "Du" : lastPlayer.name} hat die letzte Linie gesetzt{state.last_box !== null && state.last_box !== undefined ? " · Feld geschlossen · Extra-Zug" : ""}</small>}
+        <small>{lastPlayer && state.last_move !== null && state.last_move !== undefined ? (lastPlayer.user_id === userId ? "Du" : lastPlayer.name) + " hat die letzte Linie gesetzt" + (state.last_box !== null && state.last_box !== undefined ? " · Feld geschlossen · Extra-Zug" : "") : "Schließt ihr ein Feld, bleibt ihr am Zug."}</small>
       </div>
+      <span className="dots-card-legend"><MessageCircle size={14} aria-hidden="true" /> Gesprächskarte</span>
       <span className={"dots-connection " + (connected && online.length === 2 ? "is-ready" : "")}><i />{connected && online.length === 2 ? "Beide verbunden" : "Warte auf Verbindung"}</span>
     </div>
     {error && <p className="dots-error" role="alert">{error} <button onClick={() => setError("")}>Schließen</button></p>}
