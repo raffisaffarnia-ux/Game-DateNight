@@ -123,8 +123,8 @@ body:has(.dn-home) {
   gap:14px;
   padding:16px 18px;
 }
-.dn-home-form { flex:1; min-width:0; }
-.dn-home-form label { display:block; margin-bottom:6px; font-size:12px; font-weight:650; }
+.dn-home-form { flex:1; min-width:0; margin:0; }
+.dn-home-form label { display:block; margin:0 0 6px; font-size:12px; font-weight:650; }
 .dn-home-form-row { display:flex; gap:10px; }
 .dn-home-form-row input { flex:1; min-width:0; margin:0; }
 .dn-home-form-row .button { width:auto; min-height:48px; padding-inline:20px; }
