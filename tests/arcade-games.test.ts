@@ -174,3 +174,58 @@ test("Flipper Duo starts once, fences the host, pauses and persists only the fin
     await db.close();
   }
 });
+
+
+test("Leaving a game clears only its active session and session-bound progress", async () => {
+  const { db, as, open, room } = await database();
+  try {
+    const id = await open("dots-and-dates");
+    await db.query(
+      "insert into public.game_answers(session_id,round,user_id,value) values($1,0,$2,'unfinished answer')",
+      [id, users[0]],
+    );
+
+    await as(0);
+    await db.query("select public.leave_game($1,$2)", [room, "90000000-0000-4000-8000-000000000001"]);
+    assert.equal((await session(db, id)).game_type, "dots-and-dates");
+
+    await db.query("select public.leave_game($1,$2)", [room, id]);
+    const currentRoom = (await db.query<{ active_session_id: string | null; current_game: string | null }>(
+      "select active_session_id,current_game from public.rooms where id=$1", [room],
+    )).rows[0];
+    assert.equal(currentRoom.active_session_id, null);
+    assert.equal(currentRoom.current_game, null);
+    assert.equal((await db.query("select id from public.game_sessions where id=$1", [id])).rows.length, 0);
+    assert.equal((await db.query("select * from public.game_answers where session_id=$1", [id])).rows.length, 0);
+  } finally {
+    await db.close();
+  }
+});
+
+test("Room owners can list and delete their own rooms to free the active-room limit", async () => {
+  const { db, as, room } = await database();
+  try {
+    await as(0);
+    for (let i = 0; i < 4; i++) {
+      await db.query("select public.create_room($1)", ["Date " + (i + 1)]);
+    }
+    const owned = await db.query<{ id: string }>("select id from public.list_my_rooms()");
+    assert.equal(owned.rows.length, 5);
+    await assert.rejects(db.query("select public.create_room('Too many')"), /five active rooms/);
+
+    await as(1);
+    assert.equal((await db.query("select id from public.list_my_rooms()")).rows.length, 0);
+    await assert.rejects(db.query("select public.delete_room($1)", [room]), /not the room creator/);
+
+    await as(0);
+    const gameId = (await db.query<{ id: string }>(
+      "select public.open_game($1,'dots-and-dates',true) id", [room],
+    )).rows[0].id;
+    await db.query("select public.delete_room($1)", [room]);
+    assert.equal((await db.query("select id from public.game_sessions where id=$1", [gameId])).rows.length, 0);
+    await db.query("select public.create_room('Freier Platz')", []);
+    assert.equal((await db.query("select id from public.list_my_rooms()")).rows.length, 5);
+  } finally {
+    await db.close();
+  }
+});
