@@ -57,7 +57,7 @@ export function Lobby({ id }: { id: string }) {
   );
 }
 function LobbyContent({ id }: { id: string }) {
-  const { room, members, online, userId, error, status, selectGame, retry } =
+  const { room, members, online, userId, error, status, selectGame, leaveGame, retry } =
     useRoom(id);
   const [view, setView] = useState<"lobby" | "library">("lobby");
   const [copied, setCopied] = useState("");
@@ -105,6 +105,19 @@ function LobbyContent({ id }: { id: string }) {
     void choose(requestedGame);
   }, [requestedGame, ready, room, choose]);
 
+  async function leaveCurrentGame(sessionId: string) {
+    if (busy) return;
+    setBusy(true);
+    setActionError("");
+    try {
+      await leaveGame(sessionId);
+      setView("library");
+    } catch (e) {
+      setActionError((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
   async function copy(kind: "code" | "link") {
     try {
       await navigator.clipboard.writeText(
@@ -196,10 +209,7 @@ function LobbyContent({ id }: { id: string }) {
           userId={userId}
           online={online}
           connected={status === "Connected"}
-          exit={() => {
-            setView("library");
-            void choose(null);
-          }}
+          exit={() => void leaveCurrentGame(room.active_session_id!)}
         />
       ) : view === "library" ? (
         <>
