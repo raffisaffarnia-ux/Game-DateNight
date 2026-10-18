@@ -1,4 +1,33 @@
 import type { Question } from "./types.ts";
+import { germanText } from "./german-content";
+
+const topicNames: Record<string, string> = {
+  "how we celebrate small wins": "gemeinsame kleine Erfolge",
+  "our everyday rituals": "Rituale im Alltag",
+  "the way we make decisions": "gemeinsame Entscheidungen",
+  "our sense of humour": "gemeinsamer Humor",
+  "sharing space": "gemeinsames Zusammenleben",
+  "feeling appreciated": "Wertschätzung",
+  "trying something new together": "gemeinsame neue Erlebnisse",
+  "making time for each other": "Zeit füreinander",
+  "how we show affection": "Zuneigung zeigen",
+  "being a team": "Zusammenarbeit als Team",
+  "our different personalities": "unterschiedliche Persönlichkeiten",
+  "time apart": "Zeit, die wir getrennt verbringen",
+  "the home we want to create": "gemeinsames Zuhause",
+  "a future adventure": "gemeinsame Abenteuer",
+  "growing older together": "gemeinsames Älterwerden",
+  "how we want to spend our weekends": "gemeinsame Wochenenden",
+  "asking for support": "Unterstützung erbitten",
+  "feeling truly understood": "wirklich verstanden werden",
+  "saying what you need": "eigene Bedürfnisse aussprechen",
+  "the pressure to have everything figured out": "der Druck, alles im Griff haben zu müssen",
+  "feeling safe in a relationship": "Sicherheit in einer Beziehung",
+  "setting a boundary": "eigene Grenzen setzen",
+  "being honest about a worry": "offen über Sorgen sprechen",
+};
+const topicLabel = (topic: string) =>
+  (topicNames[topic] || germanText(topic)).replace(/^./u, (letter) => letter.toLocaleUpperCase("de"));
 
 // Authored building blocks produce distinct, grammatical cards without an AI service.
 const choices: Record<string, string[]> = {
@@ -266,15 +295,16 @@ const topics: Record<string, string[]> = {
   ],
 };
 const conversationFrames = [
-  (t: string) => `When you think about ${t}, what matters most to you?`,
-  (t: string) => `What would you like me to understand about ${t}?`,
-  (t: string) => `What is a story you could tell me about ${t}?`,
-  (t: string) => `How has your perspective on ${t} changed?`,
-  (t: string) => `What surprises you about ${t}?`,
-  (t: string) => `What feeling comes up when you imagine ${t}?`,
-  (t: string) => `What would you ask me about ${t}?`,
-  (t: string) => `What is one thing you want to explore about ${t}?`,
+  (t: string) => `Wenn du an „${topicLabel(t)}“ denkst: Was ist dir dabei besonders wichtig?`,
+  (t: string) => `Was möchtest du, dass ich über „${topicLabel(t)}“ verstehe?`,
+  (t: string) => `Welche Geschichte fällt dir zu „${topicLabel(t)}“ ein?`,
+  (t: string) => `Wie hat sich dein Blick auf „${topicLabel(t)}“ verändert?`,
+  (t: string) => `Was überrascht dich an „${topicLabel(t)}“?`,
+  (t: string) => `Was fühlst du, wenn du an „${topicLabel(t)}“ denkst?`,
+  (t: string) => `Was würdest du mich zu „${topicLabel(t)}“ gern fragen?`,
+  (t: string) => `Was würdest du an dem Thema „${topicLabel(t)}“ gern noch verstehen?`,
 ];
+
 export const expandedConversations: Question[] = Object.entries(topics).flatMap(
   ([category, items]) =>
     items.flatMap((topic, i) =>
@@ -320,17 +350,18 @@ const situations = [
   "an adventure abroad",
 ];
 const predictionFrames = [
-  (t: string) => `What food would I choose for ${t}?`,
-  (t: string) => `What music would I put on during ${t}?`,
-  (t: string) => `Who would I want to invite to ${t}?`,
-  (t: string) => `What would I pack for ${t}?`,
-  (t: string) => `What would I photograph during ${t}?`,
-  (t: string) => `What small luxury would I want for ${t}?`,
-  (t: string) => `What would I do first during ${t}?`,
-  (t: string) => `What would I most look forward to during ${t}?`,
-  (t: string) => `What would I happily skip during ${t}?`,
-  (t: string) => `How would I make ${t} feel special?`,
+  (t: string) => `Bei „${topicLabel(t)}“: Was würde ich am liebsten essen?`,
+  (t: string) => `Bei „${topicLabel(t)}“: Welche Musik würde ich auflegen?`,
+  (t: string) => `Bei „${topicLabel(t)}“: Wen würde ich einladen?`,
+  (t: string) => `Bei „${topicLabel(t)}“: Was würde ich einpacken?`,
+  (t: string) => `Bei „${topicLabel(t)}“: Was würde ich fotografieren?`,
+  (t: string) => `Bei „${topicLabel(t)}“: Welchen kleinen Luxus würde ich mir gönnen?`,
+  (t: string) => `Bei „${topicLabel(t)}“: Was würde ich zuerst tun?`,
+  (t: string) => `Bei „${topicLabel(t)}“: Worauf würde ich mich am meisten freuen?`,
+  (t: string) => `Bei „${topicLabel(t)}“: Worauf würde ich gern verzichten?`,
+  (t: string) => `Bei „${topicLabel(t)}“: Wie würde ich den Moment besonders machen?`,
 ];
+
 export const expandedPredictions: Question[] = situations.flatMap((topic, i) =>
   predictionFrames.map((frame, j) => ({
     id: `fresh-know-${i}-${j}`,
@@ -373,16 +404,16 @@ const reflections = [
   "something that made life easier",
 ];
 const dailyFrames = [
-  (t: string) => `Think of ${t} from today. What happened?`,
-  (t: string) =>
-    `Think of ${t} from this week. What would you like to tell me about it?`,
-  (t: string) => `When did you last experience ${t}, and how did it feel?`,
-  (t: string) => `What did ${t} teach you recently?`,
-  (t: string) => `What would you like to remember about ${t} this week?`,
-  (t: string) => `How could we make room for ${t} tomorrow?`,
-  (t: string) => `What would make ${t} more meaningful for you?`,
-  (t: string) => `How does ${t} affect your mood?`,
+  (t: string) => `Welcher Moment von heute passt zu „${topicLabel(t)}“? Was ist passiert?`,
+  (t: string) => `Was möchtest du mir diese Woche zu „${topicLabel(t)}“ erzählen?`,
+  (t: string) => `Wann hast du zuletzt „${topicLabel(t)}“ erlebt, und wie hat sich das angefühlt?`,
+  (t: string) => `Was hat dir „${topicLabel(t)}“ kürzlich gezeigt?`,
+  (t: string) => `Welche Erinnerung an „${topicLabel(t)}“ möchtest du aus dieser Woche behalten?`,
+  (t: string) => `Wie können wir morgen mehr Raum für „${topicLabel(t)}“ schaffen?`,
+  (t: string) => `Was würde „${topicLabel(t)}“ für dich bedeutsamer machen?`,
+  (t: string) => `Wie wirkt sich „${topicLabel(t)}“ auf deine Stimmung aus?`,
 ];
+
 export const expandedDaily: Question[] = reflections.flatMap((topic, i) =>
   dailyFrames.map((frame, j) => ({
     id: `fresh-daily-${i}-${j}`,

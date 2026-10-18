@@ -3,6 +3,9 @@ import Link from "next/link";
 import { useState } from "react";
 import { ArrowRight, ArrowUpRight, LockKeyhole } from "lucide-react";
 import { GameArt } from "@/components/games";
+import { PixelArt, PixelBanner } from "@/components/profile/pixel-art";
+import { useProfile } from "@/components/profile/provider";
+import { RoomForm } from "@/components/room-form";
 import { games } from "@/lib/games";
 import "./home.css";
 const moods = [
@@ -12,17 +15,28 @@ const moods = [
 ];
 export default function Home() {
   const [mood, setMood] = useState(0);
+  const { profile } = useProfile();
   const picks = moods[mood].ids.map((id) => games.find((game) => game.id === id)!);
   return (
     <main id="main" className="dn-home">
-      <section className="dn-intro" aria-labelledby="dn-title">
-        <h1 id="dn-title"><span>Zwei Orte</span> <span>Ein Date</span></h1>
-        <div className="dn-welcome">
-          <p>Ein Bildschirm zwischen euch.<br />Ein ganzer Spieleabend vor euch.</p>
-          <div className="dn-start">
-            <Link href="/create" className="dn-action dn-primary">Raum erstellen <ArrowRight size={21} aria-hidden="true" /></Link>
-            <Link href="/join" className="dn-action dn-secondary">Raum beitreten <ArrowUpRight size={20} aria-hidden="true" /></Link>
+      <section className="dn-profile-card" aria-labelledby="dn-title">
+        <PixelBanner id={profile?.banner || "dusk"} className="dn-home-banner">
+          <div className="dn-banner-copy">
+            <span className="dn-banner-kicker">EURE ZEIT BEGINNT HIER</span>
+            <h1 id="dn-title"><span>Zwei Orte</span><span>Ein Date</span></h1>
+            <p>Ein privater Spieleabend für zwei.</p>
           </div>
+          <div className="dn-banner-identity">
+            <PixelArt id={profile?.avatar || "cat"} />
+            <div>
+              <strong>{profile?.name && profile.name !== "Player" ? profile.name : "Dein Profil"}</strong>
+              <span>Dein Spielerprofil</span>
+            </div>
+          </div>
+        </PixelBanner>
+        <div className="dn-profile-start">
+          <RoomForm mode="create" variant="home" />
+          <Link href="/join" className="dn-join-action">Raum beitreten <ArrowUpRight size={18} aria-hidden="true" /></Link>
         </div>
       </section>
       <section className="dn-discover" aria-labelledby="dn-discover-title">
@@ -48,4 +62,3 @@ export default function Home() {
     </main>
   );
 }
-

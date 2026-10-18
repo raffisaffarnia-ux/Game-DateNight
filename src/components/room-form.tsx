@@ -11,9 +11,11 @@ import { games } from "@/lib/games";
 export function RoomForm({
   mode,
   initialCode = "",
+  variant = "page",
 }: {
   mode: "create" | "join";
   initialCode?: string;
+  variant?: "page" | "home";
 }) {
   const [name, setName] = useState<string | null>(null);
   const { profile, refresh } = useProfile();
@@ -53,6 +55,29 @@ export function RoomForm({
       setError(roomError(e));
       setBusy(false);
     }
+  }
+  if (variant === "home" && mode === "create") {
+    return (
+      <form className="dn-home-form" onSubmit={submit} aria-label="Lobby erstellen">
+        <label htmlFor="name">Dein Name</label>
+        <div className="dn-home-form-row">
+          <input
+            id="name"
+            autoComplete="given-name"
+            placeholder="Dein Vorname"
+            required
+            maxLength={30}
+            value={displayName}
+            onChange={(e) => setName(e.target.value)}
+          />
+          <Button disabled={busy || !displayName.trim()} type="submit">
+            {busy ? "Lobby wird erstellt …" : "Lobby erstellen"}
+            <ArrowRight size={17} />
+          </Button>
+        </div>
+        {error && <p className="error" role="alert">{error}</p>}
+      </form>
+    );
   }
   return (
     <main id="main" className="narrow-page">

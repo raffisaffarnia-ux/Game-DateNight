@@ -35,7 +35,7 @@ Object.assign(text, Object.fromEntries(String.raw`how we celebrate small wins|wi
 our everyday rituals|unsere Rituale im Alltag
 the way we make decisions|wie wir Entscheidungen treffen
 our sense of humour|unser Humor
-sharing space|Raum miteinander teilen
+sharing space|unser gemeinsames Zusammenleben
 feeling appreciated|sich wertgeschätzt fühlen
 trying something new together|gemeinsam etwas Neues ausprobieren
 making time for each other|Zeit füreinander finden

@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef } from "react";
-import { ArrowUp, ArrowDown, ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowUp, ArrowDown, ArrowLeft, ArrowRight, Heart } from "lucide-react";
 import { Button, Card } from "@/components/ui";
 import { GameResults } from "../shared/shell";
 import type { GameViewProps } from "../shared/types";
@@ -30,13 +30,13 @@ export function SnakeSetup({
             <span>
               {mode === "versus"
                 ? "Halte länger durch als dein Lieblingsmensch."
-                : `Collect ${TEAM_GOAL} Äpfel gemeinsam.`}
+                : `Sammelt ${TEAM_GOAL} Herzen gemeinsam.`}
             </span>
           </button>
         ))}
       </div>
       <p className="field-note">
-        Cross an edge to appear on the other side.
+        Überquert den Spielfeldrand, um auf der anderen Seite wieder aufzutauchen.
         {session.state.snake_mode === "together"
           ? " Gehe durch die andere Schlange und weiche deiner eigenen aus."
           : " Weicht euren Schlangenkörpern aus."}
@@ -104,7 +104,7 @@ export function SnakeGame(props: GameViewProps & { replay: () => void }) {
         busy={props.busy}
         description={
           together
-            ? `${teamScore} / ${TEAM_GOAL} Äpfel gemeinsam gesammelt.`
+            ? `${teamScore} / ${TEAM_GOAL} Herzen gemeinsam gesammelt.`
             : undefined
         }
       >
@@ -129,12 +129,12 @@ export function SnakeGame(props: GameViewProps & { replay: () => void }) {
       {together && (
         <div className="team-goal">
           <strong>
-            {teamScore} / {TEAM_GOAL} apples
+            <Heart size={14} fill="currentColor" aria-hidden="true" /> {teamScore} / {TEAM_GOAL} Herzen
           </strong>
           <progress
             value={teamScore}
             max={TEAM_GOAL}
-            aria-label="Gemeinsames Apfelziel"
+            aria-label="Gemeinsames Herzziel"
           />
         </div>
       )}
@@ -143,9 +143,7 @@ export function SnakeGame(props: GameViewProps & { replay: () => void }) {
           <span key={p.user_id} className={`snake-player snake-player-${i}`}>
             <i />
             {p.name}
-            <strong key={shown.snakes[p.user_id]?.score || 0}>
-              {shown.snakes[p.user_id]?.score || 0}
-            </strong>
+            <strong key={shown.snakes[p.user_id]?.score || 0}><Heart size={14} fill="currentColor" aria-hidden="true" />{shown.snakes[p.user_id]?.score || 0}</strong>
           </span>
         ))}
       </div>
@@ -209,12 +207,11 @@ export function SnakeGame(props: GameViewProps & { replay: () => void }) {
             fill="url(#snake-grid)"
             className="snake-grid"
           />
-          <circle
+          <path
             key={`${shown.food.x}-${shown.food.y}`}
-            cx={shown.food.x + 0.5}
-            cy={shown.food.y + 0.5}
-            r=".32"
-            className="snake-food"
+            className="snake-heart"
+            aria-hidden="true"
+            d={`M${shown.food.x + 0.1} ${shown.food.y + 0.22}h.16v-.1h.2v.1h.08v-.1h.2v.1h.16v.16h-.1v.16h-.1v.12h-.1v.1h-.1v.1h-.1v.1h-.1v-.1h-.1v-.1h-.1v-.1h-.1v-.12h-.1v-.16h-.1v-.16Z`}
           />
           {props.players.map((p, i) =>
             shown.snakes[p.user_id]?.body.map((point, j) => (

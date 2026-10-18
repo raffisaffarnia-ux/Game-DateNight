@@ -10,6 +10,8 @@ import {
   queueTurn,
   tick,
   TICK_MS,
+  MIN_TICK_MS,
+  SPEED_PER_HEART_MS,
   validSnapshot,
 } from "./engine";
 import type { Direction, SnakeState } from "./types";
@@ -262,14 +264,26 @@ export function useSnake({
       void control("acquire");
     heartbeat();
     const pingTimer = setInterval(ping, 1000),
-      leaseTimer = setInterval(heartbeat, 2000),
-      tickTimer = setInterval(frame, TICK_MS);
+      leaseTimer = setInterval(heartbeat, 2000);
+    let tickTimer = 0;
+    const scheduleFrame = () => {
+      const hearts = Object.values(simulation.current?.snakes ?? {}).reduce(
+        (total, snake) => total + snake.score,
+        0,
+      );
+      const delay = Math.max(MIN_TICK_MS, TICK_MS - hearts * SPEED_PER_HEART_MS);
+      tickTimer = window.setTimeout(() => {
+        frame();
+        scheduleFrame();
+      }, delay);
+    };
+    scheduleFrame();
     document.addEventListener("visibilitychange", visibility);
     return () => {
       alive.current = false;
       clearInterval(pingTimer);
       clearInterval(leaseTimer);
-      clearInterval(tickTimer);
+      clearTimeout(tickTimer);
       document.removeEventListener("visibilitychange", visibility);
     };
   }, [session.id, client, userId, idsKey, control]);

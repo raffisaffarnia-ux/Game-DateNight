@@ -129,3 +129,60 @@ body:has(.play-page),.game-shell[data-game] {
   .game-card:hover,.game-card:hover .pixel-scene,.dn-pick:hover .pixel-scene,.game-shell .duel-stage .choice:hover:not(:disabled) { transform:none; }
 }
 
+
+/* Mobile follows DateNight's dark play palette regardless of the device setting. */
+@media (max-width:700px) {
+  :root {
+    color-scheme:dark;
+    --surface:#1c2021; --card:#262d30; --soft:#333d40; --ink:#e7e5df;
+    --muted:#bdc4c5; --line:#465256; --accent:#eea39d; --accent-hover:#ffd0c8;
+    --signal:#94cbb4; --action:#bd1c2b;
+  }
+  body:has(.dn-home) {
+    --dn-paper:#1c2021; --dn-ink:#e7e5df; --dn-secondary:#333d40; --dn-muted:#bdc4c5;
+    background:var(--dn-paper); color:var(--dn-ink);
+  }
+  body:has(.dn-home) .brand { color:#e7e5df; }
+}
+/* Let the larger cooperative games use more of the wide display. */
+.game-shell[data-game="relationship-bomb"] .bomb-game {
+  width:min(100%,1320px);
+  max-width:none;
+}
+.game-shell[data-game="moral-sync"] .moral-game { width:min(100%,1240px); }
+.game-shell[data-game="rank-and-draw"] .rank-game { width:min(100%,1160px); }
+.game-shell .snake-heart {
+  fill:#ff8f9e;
+  transform-box:fill-box;
+  transform-origin:center;
+  animation:snake-heart-beat 900ms steps(2,end) infinite;
+}
+@keyframes snake-heart-beat { 50% { transform:scale(1.12); } }
+/* Moral Sync's settings get a wider, easier-to-scan layout. */
+.play-page .ready-card .new-game-setup {
+  flex:1 1 auto;
+  width:min(100%,1100px);
+  max-height:54dvh;
+  justify-content:center;
+  gap:clamp(9px,1.4vh,15px);
+}
+.play-page .ready-card .new-game-setup .category-pills { gap:8px; }
+.play-page .ready-card .new-game-setup .category-pills button {
+  min-height:34px;
+  padding-inline:12px;
+  font-size:12px;
+}
+@media (max-width:700px) {
+  .play-page .ready-card .new-game-setup {
+    max-height:52dvh;
+    width:100%;
+    padding-inline:2px;
+  }
+  .play-page .ready-card .new-game-setup .category-pills { gap:6px; }
+  .play-page .ready-card .new-game-setup .category-pills button {
+    min-height:30px;
+    padding-inline:10px;
+    font-size:11px;
+  }
+  .game-shell[data-game="relationship-bomb"] .bomb-game { width:100%; }
+}
