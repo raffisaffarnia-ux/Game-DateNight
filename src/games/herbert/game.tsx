@@ -295,6 +295,7 @@ export function Herbert(p: PlayProps) {
   return (
     <div
       ref={table}
+      data-slap-target={slap ? target : undefined}
       className={
         "herbert-table " +
         (s.caller ? "hb-last-round " : "") +
@@ -512,6 +513,15 @@ export function Herbert(p: PlayProps) {
                     : "Merke dir die Ablage. Passende Karten kannst du jederzeit wegklatschen."}
             </p>
             <div className="hb-actions">
+              {s.caller && myTurn && !seen && s.phase === "turn" && (
+                <Button
+                  secondary
+                  disabled={unavailable}
+                  onClick={() => void act("peek")}
+                >
+                  Karten ansehen
+                </Button>
+              )}
               {canSlap && (
                 <Button
                   secondary={!slap}
@@ -548,13 +558,14 @@ export function Herbert(p: PlayProps) {
               )}
               {canSwap && (
                 <Button
+                  aria-label="Gezogene Karte ablegen"
                   disabled={unavailable}
                   onClick={() => {
                     setSlap(false);
                     void act("discard");
                   }}
                 >
-                  Gezogene Karte ablegen
+                  Ablegen
                 </Button>
               )}
             </div>

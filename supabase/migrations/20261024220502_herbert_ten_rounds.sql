@@ -104,7 +104,7 @@ begin
    update public.game_sessions set ready=array[me,other],started_at=coalesce(started_at,now()) where id=target;
    msg:=player_name||' ruft FERTIG! Ein letzter Zug.';
  elsif action='peek' then
-   if h.phase<>'peek' or me=any(h.peeked) then raise exception 'Du hast deine Karten bereits angesehen'; end if;
+   if (h.phase<>'peek' and not (h.caller is not null and h.caller<>me and h.phase='turn')) or me=any(h.peeked) then raise exception 'Du hast deine Karten bereits angesehen'; end if;
    h.peeked:=array_append(h.peeked,me);
    response:=response||jsonb_build_object('peek',jsonb_build_array(h.hands->me::text->2,h.hands->me::text->3));
    msg:=player_name||' merkt sich die Karten.';

@@ -35,7 +35,8 @@ export function useHerbert(p: GameViewProps) {
       pending.current = true;
       setBusy(true);
       setMessage("");
-      if (action === "ready") setPeek(null);
+      if (["ready", "draw", "call", "next_round"].includes(action))
+        setPeek(null);
       const request = {
         target: current.session.id,
         request_id: crypto.randomUUID(),
@@ -82,8 +83,8 @@ export function useHerbert(p: GameViewProps) {
     state,
     drawn: state.drawn ?? null,
     peek:
-      state.phase === "peek" &&
-      !p.session.ready.includes(p.userId) &&
+      ((state.phase === "peek" && !p.session.ready.includes(p.userId)) ||
+        (state.caller !== null && state.phase === "turn")) &&
       peek?.round === state.round_no
         ? peek.cards
         : null,

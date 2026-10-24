@@ -413,6 +413,7 @@ test("Herbert: authoritative two-player lifecycle, privacy and edge cases", asyn
         );
         assert.equal(state.phase, mode === "opponent-draw" ? "drawn" : "turn");
         await as(mode === "opponent-draw" ? 0 : 1);
+        if (mode === "peek") assert.equal((await act("peek")).peek?.length, 2);
         if (mode !== "opponent-draw") await act("draw");
         await act("discard");
         assert.equal((await session()).state.phase, "final_slaps");

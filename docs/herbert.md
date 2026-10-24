@@ -39,3 +39,7 @@ A match has ten rounds in one persisted session. The server stores previous roun
 ## Files
 
 UI, types and private RPC client: src/games/herbert/. Metadata and rendering: src/lib/games.ts, src/games/registry.ts, src/games/shared/types.ts. Pixel cover: src/components/pixel-game-cover.tsx. SQL: the migrations above. Tests: tests/herbert.test.ts and tests/registry.test.ts.
+
+## Ten-round update verification
+
+The updated SQL passes 17 targeted tests (including existing registry/lifecycle). Browser layout checks cover five and eight cards at 320×568, 375×667 and 1440×900 using a temporary local-only layout fixture, removed before building. Live database rollout and two-device verification of this update are pending access to the DateNight Supabase dashboard.
