@@ -4,7 +4,7 @@ export type GameDefinition = {
   title: string;
   description: string;
   category: string;
-  art: "cards" | "orbits" | "tiles" | "snake" | "drawing" | "daily" | "bomb" | "moral" | "rank" | "flipper" | "dots";
+  art: "cards" | "orbits" | "tiles" | "snake" | "drawing" | "daily" | "bomb" | "moral" | "rank" | "flipper" | "dots" | "herbert";
   status: "available";
 };
 export const games: GameDefinition[] = [
@@ -61,4 +61,5 @@ export const games: GameDefinition[] = [
   { id: "rank-and-draw", title: "Rank", description: "Ordnet fünf Dinge in eure persönliche Reihenfolge und vergleicht, was euch wichtig ist.", category: "Beziehung", art: "rank", status: "available" },
   { id: "flipper-duo", title: "Flipper Duo", description: "Haltet den Ball zu zweit im Spiel und jagt euren Highscore.", category: "Arcade", art: "flipper", status: "available" },
   { id: "dots-and-dates", title: "Dots & Dates", description: "Verbindet Punkte, schließt Felder und entdeckt kleine Date-Night-Fragen.", category: "Arcade", art: "dots", status: "available" },
+  { id: "herbert", title: "Herbert", description: "Vier geheime Karten. Merken, tauschen, wegklatschen – weniger ist mehr.", category: "Arcade", art: "herbert", status: "available" },
 ];

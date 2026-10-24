@@ -9,7 +9,8 @@ export type GameId =
   | "moral-sync"
   | "rank-and-draw"
   | "flipper-duo"
-  | "dots-and-dates";
+  | "dots-and-dates"
+  | "herbert";
 export type GameStatus =
   | "lobby"
   | "starting"

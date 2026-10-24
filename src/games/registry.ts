@@ -12,6 +12,7 @@ import { MoralSync, MoralSyncSetup } from "./moral-sync/game";
 import { RankAndDraw, RankDrawSetup } from "./rank-and-draw/game";
 import { FlipperDuo } from "./flipper-duo/game";
 import { DotsDates } from "./dots-and-dates/game";
+import { Herbert } from "./herbert/game";
 export type PlayProps = GameViewProps & { replay: () => void };
 /** All game rendering and optional setup screens are registered here. */
 export const gameViews: Record<
@@ -38,5 +39,6 @@ export const gameViews: Record<
   "rank-and-draw": { Play: RankAndDraw, Setup: RankDrawSetup },
   "flipper-duo": { Play: FlipperDuo },
   "dots-and-dates": { Play: DotsDates },
+  "herbert": { Play: Herbert, immediate: true },
 };
 

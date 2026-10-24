@@ -1,9 +1,9 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { games } from "../src/lib/games.ts";
-test("registry has eleven unique available games", () => {
-  assert.equal(games.length, 11);
-  assert.equal(new Set(games.map((g) => g.id)).size, 11);
+test("registry has twelve unique available games", () => {
+  assert.equal(games.length, 12);
+  assert.equal(new Set(games.map((g) => g.id)).size, 12);
   assert.equal(games.find((game) => game.id === "flipper-duo")?.category, "Arcade");
   assert.equal(games.find((game) => game.id === "dots-and-dates")?.category, "Arcade");
   for (const g of games) {
