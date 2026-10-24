@@ -176,3 +176,7 @@ Games fill the browser viewport below a compact navigation bar. Shared flames si
 
 Apply `20261008185238_date_cosmetic_collection.sql` for the additional avatars and date-themed pixel banners: candlelight, picnic, rooftop, stargazing, love letter and movie night. Existing cosmetics and purchases are preserved. The scene illustrations are local SVG pixel art in `src/components/profile/date-scenes.tsx`; no image service is needed.
 
+
+## Herbert card game
+
+See [Herbert setup, rules, security and validation](docs/herbert.md). Apply both Herbert migrations before deploying the frontend. No additional credentials or paid services are required.

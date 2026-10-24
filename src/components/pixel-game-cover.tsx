@@ -29,6 +29,15 @@ export function PixelGameCover({ kind }: { kind: GameDefinition["art"] }) {
       <path d="M0 180h400v4H0Z" fill="#344049" />
       <Stars />
 
+      {kind === "herbert" && <>
+        <rect x="48" y="44" width="304" height="140" fill="#36534a"/><rect x="56" y="52" width="288" height="124" fill="#1e3932"/>
+        <path d="M64 60h272v4H64ZM64 164h272v4H64Z" fill="#768268"/>
+        {[0,1,2,3].map(i=><g key={i} transform={`translate(${76+i%2*40} ${64+Math.floor(i/2)*50})`}><rect width="32" height="44" fill="#cab68a"/><rect x="4" y="4" width="24" height="36" fill="#29474a"/><path d="M12 12h8v20h-8Z" fill="#b3a073"/></g>)}
+        <g className="px-steam"><rect x="184" y="84" width="44" height="64" fill="#efe4ca"/><Heart x={192} y={100} color="#b15c69"/></g>
+        <g transform="translate(252 72)"><rect width="44" height="64" fill="#dfd2b5"/><path d="M8 8h4v12H8ZM8 12h12v4H8ZM20 8h4v12h-4Z" fill="#b15c69"/><Heart x={8} y={28} color="#b15c69"/></g>
+        <Candle x={312} y={120}/>
+      </>}
+
       {kind === "snake" && <>
         <rect x="60" y="36" width="280" height="152" fill="#263b35" />
         <rect x="68" y="44" width="264" height="136" fill="#142923" />
