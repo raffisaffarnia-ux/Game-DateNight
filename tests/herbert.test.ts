@@ -89,7 +89,7 @@ test("Herbert: authoritative two-player lifecycle, privacy and edge cases", asyn
       assert.equal(s.state.phase, "peek");
       assert.equal(s.state.hands, undefined);
       assert.equal(s.state.deck, undefined);
-      assert.equal(s.state.drawn, undefined);
+      assert.equal(s.state.drawn, null);
       assert.deepEqual(s.state.occupied[users[0]], [true, true, true, true]);
       assert.deepEqual(await view(), { drawn: null });
     },
@@ -154,7 +154,7 @@ test("Herbert: authoritative two-player lifecycle, privacy and edge cases", asyn
     },
   );
   await t.test(
-    "draw private to active player, duplicate draw applies once; discard ends turn",
+    "draw visible to both players, duplicate draw applies once; discard ends turn",
     async () => {
       const before = await secret(),
         id = randomUUID(),
@@ -162,10 +162,9 @@ test("Herbert: authoritative two-player lifecycle, privacy and edge cases", asyn
       await Promise.all([act("draw", {}, id, rev), act("draw", {}, id, rev)]);
       assert.equal((await view()).drawn, before.deck[0]);
       await as(1);
-      assert.deepEqual(await view(), { drawn: null });
+      assert.deepEqual(await view(), { drawn: before.deck[0] });
       await as(0);
       await assert.rejects(() => act("draw"), /zuerst/);
-      await assert.rejects(() => act("call"), /zuerst/);
       await act("discard");
       const s = await session();
       assert.equal(s.state.discard, before.deck[0]);
@@ -199,7 +198,7 @@ test("Herbert: authoritative two-player lifecycle, privacy and edge cases", asyn
     },
   );
   await t.test(
-    "matching ranks slap outside turn; mismatches unchanged, no penalty, throttled",
+    "matching ranks remove cards; mismatches add exactly one penalty, throttled",
     async () => {
       await patch(
         "update private.herbert_games set hands=$2::jsonb,discards=array[4],phase='turn',turn_user=$3 where session_id=$1",
@@ -213,8 +212,11 @@ test("Herbert: authoritative two-player lifecycle, privacy and edge cases", asyn
       );
       const old = await secret();
       const invalid = await act("slap", { position: 1, rank: 5 });
-      assert.equal(invalid.ok, false);
-      assert.deepEqual((await secret()).hands, old.hands);
+      assert.equal(invalid.ok, true);
+      assert.deepEqual((await secret()).hands[users[0]], [
+        ...old.hands[users[0]],
+        old.deck[0],
+      ]);
       assert.equal((await act("slap", { position: 0, rank: 5 })).ok, false);
       await patch(
         "update private.herbert_games set last_slap='{}' where session_id=$1",
@@ -262,7 +264,7 @@ test("Herbert: authoritative two-player lifecycle, privacy and edge cases", asyn
       );
       await act("settle");
       const s = await session();
-      assert.equal(s.status, "finished");
+      assert.equal(s.status, "playing");
       assert.equal((await act("settle")).ok, true);
       assert.deepEqual(s.state.scores, { [users[0]]: 1, [users[1]]: 2 });
       assert.deepEqual(s.state.winners, [users[0]]);
@@ -351,6 +353,118 @@ test("Herbert: authoritative two-player lifecycle, privacy and edge cases", asyn
         ).rows[0].id,
         sid,
       );
+    },
+  );
+  await t.test(
+    "open-draw slap removes only the matching hand card; fifth slot can swap",
+    async () => {
+      await prepared();
+      await patch(
+        "update private.herbert_games set hands=$2::jsonb,deck=array[4,9,10],discards=array[0],last_slap='{}' where session_id=$1",
+        [
+          JSON.stringify({
+            [users[0]]: [1, 2, 3, 5],
+            [users[1]]: [17, 6, 7, 8],
+          }),
+        ],
+      );
+      await act("draw");
+      await as(1);
+      await act("slap", { position: 0, rank: 5, source: "drawn" });
+      const h = await secret();
+      assert.equal(h.hands[users[1]].filter((x) => x !== null).length, 3);
+      assert.equal(h.drawn, 4);
+      assert.equal(h.phase, "drawn");
+      await act("discard");
+      await as(1);
+      await act("draw");
+      await act("discard");
+      await as(0);
+      const id = randomUUID();
+      await act("slap", { position: 0, rank: 10 }, id);
+      await act("slap", { position: 0, rank: 10 }, id);
+      assert.equal((await secret()).hands[users[0]].length, 5);
+      await act("draw");
+      await act("swap", { position: 4 });
+      assert.equal((await secret()).hands[users[0]].length, 5);
+    },
+  );
+  await t.test(
+    "FERTIG is available immediately, off-turn and after drawing",
+    async () => {
+      for (const mode of ["peek", "own-draw", "opponent-draw"]) {
+        await as(0);
+        sid = await open("herbert");
+        if (mode !== "peek") {
+          await act("peek");
+          await act("ready");
+          await as(1);
+          await act("peek");
+          await act("ready");
+          await as(0);
+          await act("draw");
+        }
+        if (mode === "opponent-draw") await as(1);
+        await act("call");
+        const state = (await session()).state;
+        assert.equal(
+          state.caller,
+          mode === "opponent-draw" ? users[1] : users[0],
+        );
+        assert.equal(state.phase, mode === "opponent-draw" ? "drawn" : "turn");
+        await as(mode === "opponent-draw" ? 0 : 1);
+        if (mode !== "opponent-draw") await act("draw");
+        await act("discard");
+        assert.equal((await session()).state.phase, "final_slaps");
+      }
+    },
+  );
+  await t.test(
+    "ten rounds accumulate exactly once, survive reads, alternate start and finish the series",
+    async () => {
+      await as(0);
+      sid = await open("herbert");
+      for (let round = 1; round <= 10; round++) {
+        assert.equal((await session()).state.round_no, round);
+        await act("call");
+        await as(1);
+        await act("draw");
+        await act("discard");
+        await as(0);
+        await patch(
+          "update private.herbert_games set hands=$2::jsonb,finish_after=now()-interval '1 second' where session_id=$1",
+          [
+            JSON.stringify({
+              [users[0]]: [0, null, null, null],
+              [users[1]]: [1, null, null, null],
+            }),
+          ],
+        );
+        await Promise.all([act("settle"), act("settle")]);
+        const end = await session();
+        assert.deepEqual(end.state.totals, {
+          [users[0]]: round,
+          [users[1]]: round * 2,
+        });
+        assert.equal(end.state.history.length, round);
+        assert.equal(end.status, round === 10 ? "finished" : "playing");
+        assert.deepEqual(end.state.match_winners, [users[0]]);
+        if (round < 10) {
+          const rev = end.revision,
+            id = randomUUID();
+          await Promise.all([
+            act("next_round", {}, id, rev),
+            act("next_round", {}, id, rev),
+          ]);
+          await assert.rejects(
+            () => act("next_round", {}, randomUUID(), rev),
+            /geändert/,
+          );
+          assert.equal((await session()).state.turn_user, users[round % 2]);
+          assert.equal((await session()).state.history.length, round);
+          assert.equal((await session()).ready.length, 0);
+        } else await assert.rejects(() => act("next_round"), /Keine nächste/);
+      }
     },
   );
   await db.close();

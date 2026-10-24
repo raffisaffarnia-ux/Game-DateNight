@@ -1,6 +1,15 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { CircleHelp, Eye, Hand, RotateCcw, X } from "lucide-react";
+import {
+  CircleHelp,
+  Eye,
+  Hand,
+  RotateCcw,
+  X,
+  Trophy,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import { Button } from "@/components/ui";
 import { Celebration } from "../shared/effects";
 import type { PlayProps } from "../registry";
@@ -35,6 +44,7 @@ function PlayingCard({
   disabled = true,
   onClick,
   points,
+  marker,
 }: {
   card: CardId | null;
   label: string;
@@ -42,10 +52,12 @@ function PlayingCard({
   disabled?: boolean;
   onClick?: () => void;
   points?: number;
+  marker?: string;
 }) {
   const face = card === null ? null : cardFace(card);
   return (
     <button
+      data-card={marker}
       type="button"
       className={`hb-card ${face ? "is-face" : ""} ${face?.red ? "is-red" : ""} ${empty ? "is-empty" : ""}`}
       disabled={disabled}
@@ -94,6 +106,98 @@ function PlayingCard({
 export function Herbert(p: PlayProps) {
   const { state: s, drawn, peek, busy, message, act } = useHerbert(p);
   const [slap, setSlap] = useState(false);
+  const [slapTarget, setSlapTarget] = useState<"discard" | "drawn">("discard");
+  const [pages, setPages] = useState<Record<string, number>>({});
+  const table = useRef<HTMLDivElement>(null);
+  const priorEvent = useRef(s.event?.id);
+  const round = s.round_no ?? 1;
+  const matchOver = s.phase === "finished" && round === 10;
+  const resultWinners = matchOver ? s.match_winners : s.winners;
+  const won = s.phase === "finished" && !!resultWinners?.includes(p.userId);
+  const target = slapTarget === "drawn" && drawn !== null ? "drawn" : "discard";
+  const targetCard = target === "drawn" ? drawn : s.discard;
+  useEffect(() => {
+    setSlap(false);
+    setPages({});
+  }, [round]);
+  useEffect(() => {
+    const event = s.event;
+    if (!event || priorEvent.current === event.id) return;
+    priorEvent.current = event.id;
+    const root = table.current;
+    if (!root || window.matchMedia("(prefers-reduced-motion: reduce)").matches)
+      return;
+    const slot = event.actor + "-" + event.position;
+    const from =
+      event.kind === "draw" || event.kind === "penalty"
+        ? "deck"
+        : event.kind === "discard"
+          ? "drawn"
+          : slot;
+    const to =
+      event.kind === "draw"
+        ? "drawn"
+        : event.kind === "penalty"
+          ? slot
+          : "discard";
+    if (!["draw", "discard", "swap", "slap", "penalty"].includes(event.kind))
+      return;
+    const source = root.querySelector<HTMLElement>(
+      '[data-card="' + from + '"]',
+    );
+    const dest = root.querySelector<HTMLElement>('[data-card="' + to + '"]');
+    if (!source || !dest) return;
+    const a = source.getBoundingClientRect(),
+      b = dest.getBoundingClientRect(),
+      r = root.getBoundingClientRect();
+    const ghost = document.createElement("span");
+    ghost.className =
+      "hb-flying-card" + (event.kind === "penalty" ? " hb-penalty-flight" : "");
+    const card =
+      event.kind === "draw"
+        ? s.drawn
+        : event.kind === "penalty"
+          ? null
+          : s.discard;
+    ghost.textContent =
+      card == null ? "H" : cardFace(card).label + cardFace(card).suit;
+    ghost.setAttribute("aria-hidden", "true");
+    Object.assign(ghost.style, {
+      left: a.left - r.left + "px",
+      top: a.top - r.top + "px",
+      width: a.width + "px",
+      height: a.height + "px",
+    });
+    root.appendChild(ghost);
+    const flight = ghost.animate(
+      [
+        { transform: "translate(0,0) rotate(-8deg)", opacity: 1 },
+        {
+          transform:
+            "translate(" +
+            (b.left - a.left) +
+            "px," +
+            (b.top - a.top) +
+            "px) rotate(0deg)",
+          opacity: 0.2,
+        },
+      ],
+      { duration: 420, easing: "cubic-bezier(.2,.75,.2,1)" },
+    );
+    const pulse = dest.animate(
+      [
+        { filter: "brightness(2)", transform: "scale(1.12)" },
+        { filter: "brightness(1)", transform: "scale(1)" },
+      ],
+      { duration: 650 },
+    );
+    flight.onfinish = () => ghost.remove();
+    return () => {
+      flight.cancel();
+      pulse.cancel();
+      ghost.remove();
+    };
+  }, [s.event, s.drawn, s.discard]);
   const help = useRef<HTMLDialogElement>(null),
     confirm = useRef<HTMLDialogElement>(null);
   const me = p.players.find((x) => x.user_id === p.userId),
@@ -108,9 +212,10 @@ export function Herbert(p: PlayProps) {
   const name = (id: string | null) =>
     p.players.find((x) => x.user_id === id)?.name ?? "Dein Gegenüber";
   const status = finished
-    ? s.winners?.length === 2
+    ? resultWinners?.length === 2
       ? "Unentschieden"
-      : name(s.winners?.[0] ?? null) + " gewinnt"
+      : name(resultWinners?.[0] ?? null) +
+        (matchOver ? " gewinnt die Serie" : " gewinnt die Runde")
     : s.phase === "peek"
       ? "Zwei Karten. Ein gutes Gedächtnis."
       : s.phase === "final_slaps"
@@ -121,49 +226,82 @@ export function Herbert(p: PlayProps) {
             ? "Du bist am Zug"
             : name(s.turn_user) + " ist am Zug";
   function grid(id: string, own: boolean) {
+    const slots = s.occupied?.[id] ?? [true, true, true, true];
+    const page = Math.min(pages[id] ?? 0, Math.floor((slots.length - 1) / 6));
+    const indices = slots.map((_, i) => i).slice(page * 6, page * 6 + 6);
     return (
-      <div
-        className="hb-hand"
-        aria-label={
-          own ? "Deine vier Kartenplätze" : "Karten deines Gegenübers"
-        }
-      >
-        {[0, 1, 2, 3].map((i) => {
-          const empty = s.occupied?.[id]?.[i] === false;
-          const card = finished
-            ? (s.hands?.[id]?.[i] ?? null)
-            : own && peek && i >= 2
-              ? peek[i - 2]
-              : null;
-          return (
-            <PlayingCard
-              key={i}
-              card={card}
-              label={(own ? "Eigene Karte " : "Gegnerische Karte ") + (i + 1)}
-              empty={empty}
-              points={finished && card !== null ? s.values[card] : undefined}
-              disabled={
-                unavailable ||
-                !own ||
-                empty ||
-                finished ||
-                !((slap && canSlap) || canSwap)
-              }
-              onClick={() =>
-                void act(slap ? "slap" : "swap", {
-                  position: i as Position,
-                  rank: s.discard === null ? null : (s.discard % 13) + 1,
-                })
-              }
-            />
-          );
-        })}
+      <div className="hb-hand-wrap">
+        <div
+          className={"hb-hand " + (slots.length > 4 ? "hb-hand-expanded" : "")}
+          aria-label={own ? "Deine Kartenplätze" : "Karten deines Gegenübers"}
+        >
+          {indices.map((i) => {
+            const empty = s.occupied?.[id]?.[i] === false;
+            const card = finished
+              ? (s.hands?.[id]?.[i] ?? null)
+              : own && peek && i >= 2 && i < 4
+                ? peek[i - 2]
+                : null;
+            return (
+              <PlayingCard
+                key={round + "-" + i}
+                marker={id + "-" + i}
+                card={card}
+                label={(own ? "Eigene Karte " : "Gegnerische Karte ") + (i + 1)}
+                empty={empty}
+                points={finished && card !== null ? s.values[card] : undefined}
+                disabled={
+                  unavailable ||
+                  !own ||
+                  empty ||
+                  finished ||
+                  !((slap && canSlap) || canSwap)
+                }
+                onClick={() =>
+                  void act(slap ? "slap" : "swap", {
+                    position: i as Position,
+                    rank: targetCard === null ? null : (targetCard % 13) + 1,
+                    source: target,
+                  })
+                }
+              />
+            );
+          })}
+        </div>
+        {slots.length > 6 && (
+          <div className="hb-hand-pages">
+            <button
+              aria-label="Vorherige Karten"
+              disabled={page === 0}
+              onClick={() => setPages({ ...pages, [id]: page - 1 })}
+            >
+              <ChevronLeft size={16} />
+            </button>
+            <span>
+              {page + 1} / {Math.ceil(slots.length / 6)}
+            </span>
+            <button
+              aria-label="Weitere Karten"
+              disabled={(page + 1) * 6 >= slots.length}
+              onClick={() => setPages({ ...pages, [id]: page + 1 })}
+            >
+              <ChevronRight size={16} />
+            </button>
+          </div>
+        )}
       </div>
     );
   }
   return (
-    <div className={`herbert-table ${s.caller ? "hb-last-round" : ""}`}>
-      {finished && <Celebration />}
+    <div
+      ref={table}
+      className={
+        "herbert-table " +
+        (s.caller ? "hb-last-round " : "") +
+        (won ? "hb-victory" : "")
+      }
+    >
+      {won && <Celebration key={round} />}
       <div className="hb-toolbar">
         <div>
           <span className="hb-label">
@@ -183,6 +321,38 @@ export function Herbert(p: PlayProps) {
           <CircleHelp size={22} />
         </button>
       </div>
+      <aside className="hb-scoreboard" aria-label="Serienwertung">
+        <strong>
+          Runde {round}
+          <span> / 10</span>
+        </strong>
+        <div className="hb-round-track" aria-hidden="true">
+          {Array.from({ length: 10 }, (_, i) => (
+            <i
+              key={i}
+              className={
+                i < round - 1 || (finished && i === round - 1)
+                  ? "done"
+                  : i === round - 1
+                    ? "current"
+                    : ""
+              }
+            />
+          ))}
+        </div>
+        {p.players.map((player) => (
+          <span key={player.user_id} className="hb-total">
+            <span>{player.name}</span>
+            <b>{s.totals?.[player.user_id] ?? 0}</b>
+          </span>
+        ))}
+      </aside>
+      {won && (
+        <div className="hb-win-mark" key={"win" + round}>
+          <Trophy size={20} />
+          <span>{matchOver ? "Seriensieg" : "Rundensieg"}</span>
+        </div>
+      )}
       <div className="hb-board">
         <section
           className={`hb-player hb-opponent ${!myTurn && !finished ? "hb-active" : ""}`}
@@ -208,18 +378,30 @@ export function Herbert(p: PlayProps) {
             <PlayingCard
               card={null}
               label="Karte vom Nachziehstapel ziehen"
+              marker="deck"
               disabled={unavailable || !myTurn || s.phase !== "turn"}
               onClick={() => void act("draw")}
             />
             <span>Nachziehen · {s.deck_count}</span>
           </div>
           <div className="hb-stack" key={"discard-" + s.discard}>
-            <PlayingCard card={s.discard ?? null} label="Offene Ablage" />
-            <span>Ablage</span>
+            <PlayingCard
+              card={s.discard ?? null}
+              label="Offene Ablage"
+              marker="discard"
+              disabled={!slap || unavailable}
+              onClick={() => setSlapTarget("discard")}
+            />
+            <span>
+              {slap && target === "discard" ? "✓ Klatschziel" : "Ablage"}
+            </span>
           </div>
           <div className="hb-stack hb-drawn">
             <PlayingCard
               card={drawn}
+              marker="drawn"
+              disabled={!slap || drawn === null || unavailable}
+              onClick={() => setSlapTarget("drawn")}
               empty={!s.drawn_by}
               label={
                 myTurn
@@ -230,8 +412,12 @@ export function Herbert(p: PlayProps) {
             <span>
               {s.drawn_by
                 ? myTurn
-                  ? "Nur für dich"
-                  : "Geheim"
+                  ? slap && target === "drawn"
+                    ? "✓ Klatschziel"
+                    : "Offen gezogen"
+                  : slap && target === "drawn"
+                    ? "✓ Klatschziel"
+                    : "Offen gezogen"
                 : "Dein nächster Zug"}
             </span>
           </div>
@@ -268,9 +454,16 @@ export function Herbert(p: PlayProps) {
                     : " hat sich verschätzt.")
                 : "Die niedrigste Punktesumme gewinnt."}
             </p>
-            <Button disabled={unavailable} onClick={p.replay}>
+            <Button
+              disabled={unavailable}
+              onClick={() => (matchOver ? p.replay() : void act("next_round"))}
+            >
               <RotateCcw size={17} />
-              {p.replayLabel ?? "Nochmal spielen"}
+              {matchOver
+                ? p.replayLabel === "Nochmal spielen"
+                  ? "Neue Serie"
+                  : (p.replayLabel ?? "Neue Serie")
+                : "Weiter zu Runde " + (round + 1)}
             </Button>
           </>
         ) : s.phase === "peek" ? (
@@ -284,25 +477,34 @@ export function Herbert(p: PlayProps) {
                     ? "Dein einmaliger Blick ist vorbei. Du kannst jetzt bestätigen."
                     : "Sieh deine beiden unteren Karten einmal geheim an."}
             </p>
-            {!seen ? (
-              <Button disabled={unavailable} onClick={() => void act("peek")}>
-                <Eye size={18} />
-                Karten ansehen
-              </Button>
-            ) : (
+            <div className="hb-actions">
+              {!seen ? (
+                <Button disabled={unavailable} onClick={() => void act("peek")}>
+                  <Eye size={18} />
+                  Karten ansehen
+                </Button>
+              ) : (
+                <Button
+                  disabled={unavailable || myReady}
+                  onClick={() => void act("ready")}
+                >
+                  {myReady ? "Du bist bereit" : "Verdecken & bereit"}
+                </Button>
+              )}
               <Button
-                disabled={unavailable || myReady}
-                onClick={() => void act("ready")}
+                secondary
+                disabled={unavailable}
+                onClick={() => confirm.current?.showModal()}
               >
-                {myReady ? "Du bist bereit" : "Verdecken & bereit"}
+                FERTIG!
               </Button>
-            )}
+            </div>
           </>
         ) : (
           <>
             <p>
               {slap
-                ? "Tippe auf eine eigene Karte mit demselben Rang wie die Ablage."
+                ? "Wähle Ablage oder gezogene Karte, dann deine passende Karte."
                 : canSwap
                   ? "Tippe eine eigene Karte zum Tauschen – oder lege deine neue Karte ab."
                   : myTurn && s.phase === "turn"
@@ -332,17 +534,17 @@ export function Herbert(p: PlayProps) {
                   >
                     Karte ziehen
                   </Button>
-                  {!s.caller && (
-                    <Button
-                      secondary
-                      className="hb-call"
-                      disabled={unavailable}
-                      onClick={() => confirm.current?.showModal()}
-                    >
-                      FERTIG!
-                    </Button>
-                  )}
                 </>
+              )}
+              {!s.caller && (
+                <Button
+                  secondary
+                  className="hb-call"
+                  disabled={unavailable}
+                  onClick={() => confirm.current?.showModal()}
+                >
+                  FERTIG!
+                </Button>
               )}
               {canSwap && (
                 <Button
@@ -387,12 +589,15 @@ export function Herbert(p: PlayProps) {
             die gezogene Karte ab.
           </li>
           <li>
-            Gleicher Rang wie die Ablage? Aktiviere „Klatschen“ und tippe deine
-            passende Karte. Das geht auch im gegnerischen Zug.
+            Gleicher Rang wie die Ablage oder die offen gezogene Karte?
+            Aktiviere „Klatschen“, wähle den Zielstapel und tippe deine passende
+            Karte. Sie verschwindet aus deiner Hand. Bei falschem Klatschen
+            erhältst du eine verdeckte Strafkarte vom Nachziehstapel.
           </li>
           <li>
-            Wenige Punkte? Rufe vor dem Ziehen „FERTIG!“. Dein Gegenüber hat
-            noch einen Zug. Danach bleiben zwei Sekunden zum Klatschen.
+            Wenige Punkte? Rufe jederzeit „FERTIG!“ – auch direkt am Anfang.
+            Dein Gegenüber hat noch einen Zug. Danach bleiben zwei Sekunden zum
+            Klatschen.
           </li>
         </ol>
         <p>
@@ -400,8 +605,8 @@ export function Herbert(p: PlayProps) {
           13 · <strong>roter König 0</strong>
         </p>
         <p>
-          Die niedrigste Summe gewinnt. Keine Sonderfähigkeiten, keine Strafe
-          für falsches Klatschen.
+          Zehn Runden, eine Gesamtwertung. Nach jeder Runde werden eure Punkte
+          addiert. Die niedrigste Gesamtsumme gewinnt.
         </p>
         <Button onClick={() => help.current?.close()}>Verstanden</Button>
       </dialog>
@@ -410,7 +615,9 @@ export function Herbert(p: PlayProps) {
         <h2>FERTIG!</h2>
         <p>
           Damit beginnt die Schlussrunde. {other?.name} spielt noch genau einen
-          Zug. Danach zählt ihr eure Punkte.
+          Zug. Eine bereits gezogene Karte deines Gegenübers gehört zu diesem
+          letzten Zug. Deine eigene gezogene Karte wird abgelegt. Danach zählt
+          ihr eure Punkte.
         </p>
         <div className="hb-actions">
           <Button secondary onClick={() => confirm.current?.close()}>

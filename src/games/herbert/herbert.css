@@ -665,3 +665,246 @@
     min-height: 22px;
   }
 }
+
+/* Ten-round match, expandable hands and table-local card flights. */
+.hb-scoreboard {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 8px 12px;
+  background: #102420a6;
+  border: 1px solid #a48f5e44;
+  border-radius: 10px;
+  flex: none;
+  font-size: 12px;
+}
+.hb-scoreboard strong {
+  color: var(--hb-gold);
+  white-space: nowrap;
+}
+.hb-scoreboard strong span {
+  color: #9fae9f;
+  font-weight: 400;
+}
+.hb-round-track {
+  display: flex;
+  gap: 4px;
+}
+.hb-round-track i {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  background: #40574b;
+}
+.hb-round-track .done {
+  background: #d6bb80;
+}
+.hb-round-track .current {
+  outline: 1px solid #d6bb80;
+  outline-offset: 1px;
+}
+.hb-total {
+  display: flex;
+  gap: 8px;
+  min-width: 0;
+}
+.hb-total > span {
+  max-width: 110px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.hb-total b {
+  color: #eee2bf;
+  font-variant-numeric: tabular-nums;
+}
+.hb-hand-wrap {
+  height: 100%;
+  max-height: 25cqh;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+}
+.herbert-table .hb-hand {
+  height: 100%;
+  min-height: 0;
+  max-height: none;
+  width: auto;
+  aspect-ratio: 5/7;
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+}
+.herbert-table .hb-hand-expanded {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  aspect-ratio: 15/14;
+}
+.herbert-table .hb-hand .hb-card {
+  min-height: 44px;
+  min-width: 44px;
+  height: 100%;
+  width: auto;
+}
+.hb-hand-pages {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10px;
+  height: 44px;
+  flex: none;
+}
+.hb-hand-pages button {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #697a61;
+  border-radius: 8px;
+  color: #e1d2a6;
+  background: #20382f;
+}
+.hb-hand-pages button:disabled {
+  opacity: 0.35;
+}
+.hb-flying-card {
+  position: absolute;
+  z-index: 20;
+  pointer-events: none;
+  display: grid;
+  place-items: center;
+  background: #eee7d5;
+  color: #244036;
+  border: 2px solid #e3c98f;
+  border-radius: 8px;
+  font:
+    700 26px Georgia,
+    serif;
+  box-shadow: 0 10px 28px #0008;
+}
+.hb-penalty-flight {
+  background: #344b51;
+  color: #e4ca96;
+}
+.hb-win-mark {
+  position: absolute;
+  right: 24px;
+  top: 130px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #efd68f;
+  animation: hb-win 1s ease-out both;
+  pointer-events: none;
+}
+.hb-victory {
+  box-shadow: inset 0 0 60px #d6bb8015;
+}
+@keyframes hb-win {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.7);
+  }
+  60% {
+    transform: translateY(-5px) scale(1.12);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (min-width: 1100px) {
+  .hb-scoreboard {
+    position: absolute;
+    top: 105px;
+    left: 24px;
+    width: 175px;
+    flex-direction: column;
+    align-items: stretch;
+    padding: 16px;
+    gap: 16px;
+  }
+  .hb-total {
+    justify-content: space-between;
+  }
+}
+@media (max-width: 700px) {
+  .hb-scoreboard {
+    gap: 8px;
+    padding: 6px 8px;
+    font-size: 10px;
+  }
+  .hb-round-track {
+    display: none;
+  }
+  .hb-total {
+    gap: 4px;
+    flex: 1;
+  }
+  .hb-total > span {
+    max-width: 65px;
+  }
+  .hb-hand-wrap {
+    max-height: 120px;
+  }
+  .hb-player {
+    gap: 10px;
+  }
+  .hb-player-label {
+    width: 80px;
+    max-width: 22vw;
+    font-size: 11px;
+  }
+  .hb-win-mark {
+    right: 62px;
+    top: 14px;
+    font-size: 10px;
+  }
+  .hb-win-mark span {
+    display: none;
+  }
+  .hb-controls .button {
+    padding: 10px 12px;
+    min-height: 44px;
+    font-size: 11px;
+  }
+  .hb-help {
+    width: 44px;
+    height: 44px;
+  }
+}
+@media (max-width: 700px) and (max-height: 620px) {
+  .hb-hand-wrap {
+    height: 94px;
+    max-height: 94px;
+  }
+  .herbert-table .hb-hand {
+    aspect-ratio: 1;
+  }
+  .herbert-table .hb-hand-expanded {
+    aspect-ratio: 1.5;
+  }
+  .herbert-table .hb-hand .hb-card {
+    height: 44px;
+    width: 44px;
+    aspect-ratio: 1;
+  }
+  .herbert-table .hb-controls > p {
+    display: none;
+  }
+  .herbert-table .hb-log {
+    min-height: 20px;
+  }
+  .herbert-table .hb-scoreboard {
+    font-size: 9px;
+    padding: 4px 6px;
+  }
+  .hb-hand-wrap:has(.hb-hand-pages) {
+    height: 138px;
+    max-height: 138px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hb-win-mark {
+    animation: none;
+  }
+}

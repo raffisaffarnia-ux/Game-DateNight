@@ -1,10 +1,30 @@
 export type CardId = number;
-export type Position = 0 | 1 | 2 | 3;
+export type Position = number;
 export type HerbertPhase =
   "peek" | "turn" | "drawn" | "final_slaps" | "finished";
 export type HerbertAction =
-  "peek" | "ready" | "draw" | "discard" | "swap" | "slap" | "call" | "settle";
+  | "peek"
+  | "ready"
+  | "draw"
+  | "discard"
+  | "swap"
+  | "slap"
+  | "call"
+  | "settle"
+  | "next_round";
 export type HerbertState = {
+  round_no: number;
+  history: Record<string, number>[];
+  totals: Record<string, number>;
+  match_winners: string[];
+  drawn: CardId | null;
+  event?: {
+    id: string;
+    kind: string;
+    actor: string;
+    position: number | null;
+    source: string | null;
+  };
   phase: HerbertPhase;
   turn_user: string;
   caller: string | null;
