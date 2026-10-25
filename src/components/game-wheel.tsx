@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { ArrowRight, Dices, Sparkles, RotateCw } from "lucide-react";
 import { games } from "@/lib/games";
 
-const colors = ["#ff7192", "#ffb34f", "#ffd75e", "#70d4b0", "#6bc9eb", "#8d8ef4", "#c77ee4", "#f38bb8", "#ffa36c"];
+const colors = ["#d8847f", "#c9915e", "#b6a05b", "#6fa28c", "#6798a5", "#7f8cb9", "#a783ad", "#c67891", "#c4805d"];
 
 export function GameWheel({
   onSelect,
