@@ -42,4 +42,4 @@ UI, types and private RPC client: src/games/herbert/. Metadata and rendering: sr
 
 ## Ten-round update verification
 
-The updated SQL passes 17 targeted tests (including existing registry/lifecycle). Browser layout checks cover five and eight cards at 320×568, 375×667 and 1440×900 using a temporary local-only layout fixture, removed before building. Live database rollout and two-device verification of this update are pending access to the DateNight Supabase dashboard.
+The updated SQL passes 17 targeted tests (including existing registry/lifecycle). Browser layout checks cover five and eight cards at 320×568, 375×667 and 1440×900 using a temporary local-only layout fixture, removed before building. The migration was applied to the DateNight production database. Two independent browser identities verified a wrong slap producing five cards, both seeing the same public draw, an off-turn FERTIG call, identical 47/19 round results and the preserved totals on round two.
