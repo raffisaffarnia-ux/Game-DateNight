@@ -111,6 +111,57 @@ body:has(.play-page),.game-shell[data-game] {
 .game-shell .game-progress progress { height:6px; border-radius:0; }
 .game-shell .game-progress progress::-webkit-progress-value { background:var(--accent); }
 
+/* Match the roulette to the dark pixel-art game posters. */
+.game-wheel {
+  border:1px solid #435158;
+  border-radius:12px;
+  background:
+    radial-gradient(ellipse at 82% 54%,#61475355 0,transparent 36%),
+    linear-gradient(125deg,#1d292d,#253035 65%,#29272a);
+  box-shadow:inset 0 1px #ffffff0a,0 14px 36px #08101335;
+}
+.wheel-copy h2 { color:#eee9df; }
+.wheel-copy > p:not(.wheel-result),.wheel-footnote { color:#aeb9b5; }
+.wheel-game-list { grid-template-columns:repeat(4,minmax(0,1fr)); gap:7px; }
+.wheel-game-chip {
+  min-height:34px;
+  padding:7px 9px;
+  border:1px solid #53616966;
+  border-radius:5px;
+  background:#152126c9;
+  color:#dfe1d9;
+  font-family:var(--dn-display),monospace;
+  font-size:11px;
+  letter-spacing:.015em;
+}
+.wheel-game-chip i { border-radius:1px; box-shadow:none; }
+.wheel-game-chip.was-last { opacity:.48; }
+.wheel-game-chip.is-winner {
+  border-color:var(--chip-color);
+  background:color-mix(in srgb,var(--chip-color) 24%,#152126);
+  color:#fff8eb;
+  box-shadow:0 0 0 1px color-mix(in srgb,var(--chip-color) 45%,transparent),0 5px 18px color-mix(in srgb,var(--chip-color) 20%,transparent);
+}
+.wheel-spin-button {
+  border:1px solid #dfb77c55;
+  border-radius:7px;
+  background:linear-gradient(110deg,#97504b,#71524b 60%,#435d60);
+  box-shadow:inset 0 1px #ffffff1c,0 8px 19px #090f1040;
+}
+.wheel-spin-button:hover:not(:disabled) { filter:brightness(1.12); box-shadow:0 10px 24px #0a101344; }
+.wheel-button-icon { background:#ffffff18; }
+.wheel-halo { filter:blur(20px); opacity:.23; }
+.wheel-disc { border-color:#d7ccb1; box-shadow:0 0 0 2px #536268,0 12px 28px #080e1266,inset 0 0 0 2px #ffffff55; }
+.wheel-disc-center { border-color:#d7ccb1; background:linear-gradient(145deg,#78595c,#374f55); box-shadow:0 4px 12px #111b1eaa; }
+.wheel-pointer { border-top-color:#eddfc4; }
+.wheel-result,.wheel-result strong { color:#e8c58d !important; }
+@media (max-width:950px) { .wheel-game-list { grid-template-columns:repeat(3,minmax(0,1fr)); } }
+@media (max-width:700px) {
+  .game-wheel { border-radius:9px; background:linear-gradient(145deg,#202a2d,#29282b); }
+  .wheel-game-list { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .wheel-copy h2 { color:#eee9df; }
+}
+
 @keyframes arcade-arrive { from { opacity:0; transform:translateY(14px); } to { opacity:1; transform:translateY(0); } }
 @keyframes arcade-selected { 50% { transform:scale(.975); } }
 @keyframes arcade-wallet { 45% { transform:translateY(-4px) scale(1.2); } }

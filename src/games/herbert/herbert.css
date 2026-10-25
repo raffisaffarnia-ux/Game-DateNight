@@ -432,7 +432,7 @@
     aspect-ratio: 5/7;
   }
   .hb-stacks {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     width: 70%;
     max-width: 270px;
     height: 100%;
@@ -796,6 +796,55 @@
   animation: hb-win 1s ease-out both;
   pointer-events: none;
 }
+
+/* Desktop table: larger hands and one shared face-up pile along the left rail. */
+@media (min-width: 701px) and (min-height: 551px) {
+  .hb-board {
+    width: 100%;
+    max-width: 1500px;
+    grid-template-columns: minmax(155px, 0.34fr) minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 8px clamp(20px, 4vw, 64px);
+  }
+  .hb-opponent { grid-column: 2; grid-row: 1; }
+  .hb-self { grid-column: 2; grid-row: 2; }
+  .hb-stacks {
+    grid-column: 1;
+    grid-row: 1 / 3;
+    flex-direction: column;
+    justify-content: center;
+    gap: clamp(14px, 3vh, 30px);
+    max-width: none;
+  }
+  .hb-stack {
+    width: min(100%, 164px);
+    height: auto;
+    max-height: 32cqh;
+    aspect-ratio: 5 / 7;
+  }
+  .hb-stack .hb-card { height: 100%; width: 100%; }
+  .hb-hand-wrap { max-height: 33cqh; }
+  .hb-player-label { width: 120px; }
+  .hb-controls { justify-content: space-between; }
+  .hb-actions { flex: 1; justify-content: flex-start; }
+  .hb-actions .hb-call { margin-left: auto !important; }
+  .hb-scoreboard { left: auto; right: 24px; }
+}
+.hb-card.is-selected {
+  z-index: 3;
+  transform: translateY(-7px) scale(1.035);
+  filter: brightness(1.16) drop-shadow(0 0 10px #e3c87999);
+}
+.hb-card.is-selected::after {
+  position: absolute;
+  inset: -5px;
+  border: 2px solid #e1c77f;
+  border-radius: 12px;
+  box-shadow: 0 0 0 4px #d6bb8033;
+  content: "";
+  pointer-events: none;
+}
+.hb-pile .hb-card:not(:disabled) { cursor: pointer; }
 .hb-victory {
   box-shadow: inset 0 0 60px #d6bb8015;
 }

@@ -22,7 +22,6 @@ export function DotsDates({ session, players, userId, online, connected, busy, r
   const gameState = state as DotsState;
   const colors = useMemo(() => Object.fromEntries(players.map((player, index) => [player.user_id, DOT_COLORS[index]])), [players]);
   const progress = validBoard ? dotsProgress(gameState) : { completed: 0, total: 16, percent: 0 };
-  const completed = progress.completed;
   const scores = validBoard ? state.scores || {} : {};
   const whoseTurn = players.find((player) => player.user_id === state.turn_user_id);
   const lastPlayer = players.find((player) => player.user_id === state.last_player);

@@ -3,7 +3,6 @@ import { useEffect, useRef, useState } from "react";
 import {
   CircleHelp,
   Eye,
-  Hand,
   RotateCcw,
   X,
   Trophy,
@@ -45,6 +44,7 @@ function PlayingCard({
   onClick,
   points,
   marker,
+  selected = false,
 }: {
   card: CardId | null;
   label: string;
@@ -53,15 +53,17 @@ function PlayingCard({
   onClick?: () => void;
   points?: number;
   marker?: string;
+  selected?: boolean;
 }) {
   const face = card === null ? null : cardFace(card);
   return (
     <button
       data-card={marker}
       type="button"
-      className={`hb-card ${face ? "is-face" : ""} ${face?.red ? "is-red" : ""} ${empty ? "is-empty" : ""}`}
+      className={`hb-card ${face ? "is-face" : ""} ${face?.red ? "is-red" : ""} ${empty ? "is-empty" : ""} ${selected ? "is-selected" : ""}`}
       disabled={disabled}
       onClick={onClick}
+      aria-pressed={selected}
       aria-label={
         empty
           ? label + " – leer"
@@ -105,8 +107,9 @@ function PlayingCard({
 }
 export function Herbert(p: PlayProps) {
   const { state: s, drawn, peek, busy, message, act } = useHerbert(p);
-  const [slap, setSlap] = useState(false);
-  const [slapTarget, setSlapTarget] = useState<"discard" | "drawn">("discard");
+  const [selectedHand, setSelectedHand] = useState<number | null>(null);
+  const [selectedDrawn, setSelectedDrawn] = useState(false);
+  const selectedDrawnCard = useRef<CardId | null>(null);
   const [pages, setPages] = useState<Record<string, number>>({});
   const table = useRef<HTMLDivElement>(null);
   const priorEvent = useRef(s.event?.id);
@@ -114,10 +117,11 @@ export function Herbert(p: PlayProps) {
   const matchOver = s.phase === "finished" && round === 10;
   const resultWinners = matchOver ? s.match_winners : s.winners;
   const won = s.phase === "finished" && !!resultWinners?.includes(p.userId);
-  const target = slapTarget === "drawn" && drawn !== null ? "drawn" : "discard";
-  const targetCard = target === "drawn" ? drawn : s.discard;
+  const pileSource = s.drawn_by && drawn !== null ? "drawn" : "discard";
+  const pileCard = pileSource === "drawn" ? drawn : s.discard;
   useEffect(() => {
-    setSlap(false);
+    setSelectedHand(null);
+    setSelectedDrawn(false);
     setPages({});
   }, [round]);
   useEffect(() => {
@@ -131,15 +135,15 @@ export function Herbert(p: PlayProps) {
     const from =
       event.kind === "draw" || event.kind === "penalty"
         ? "deck"
-        : event.kind === "discard"
-          ? "drawn"
+        : event.kind === "discard" || event.kind === "swap"
+          ? "pile"
           : slot;
     const to =
       event.kind === "draw"
-        ? "drawn"
+        ? "pile"
         : event.kind === "penalty"
           ? slot
-          : "discard";
+          : "pile";
     if (!["draw", "discard", "swap", "slap", "penalty"].includes(event.kind))
       return;
     const source = root.querySelector<HTMLElement>(
@@ -158,7 +162,13 @@ export function Herbert(p: PlayProps) {
         ? s.drawn
         : event.kind === "penalty"
           ? null
-          : s.discard;
+          : event.kind === "swap"
+            ? event.actor === p.userId
+              ? selectedDrawnCard.current
+              : null
+            : event.kind === "slap" && event.source === "drawn"
+              ? s.drawn
+              : s.discard;
     ghost.textContent =
       card == null ? "H" : cardFace(card).label + cardFace(card).suit;
     ghost.setAttribute("aria-hidden", "true");
@@ -192,6 +202,9 @@ export function Herbert(p: PlayProps) {
       { duration: 650 },
     );
     flight.onfinish = () => ghost.remove();
+    setSelectedHand(null);
+    setSelectedDrawn(false);
+    selectedDrawnCard.current = null;
     return () => {
       flight.cancel();
       pulse.cancel();
@@ -255,15 +268,18 @@ export function Herbert(p: PlayProps) {
                   !own ||
                   empty ||
                   finished ||
-                  !((slap && canSlap) || canSwap)
+                  !canSlap
                 }
-                onClick={() =>
-                  void act(slap ? "slap" : "swap", {
-                    position: i as Position,
-                    rank: targetCard === null ? null : (targetCard % 13) + 1,
-                    source: target,
-                  })
-                }
+                selected={own && selectedHand === i}
+                onClick={() => {
+                  if (selectedDrawn && canSwap) {
+                    setSelectedDrawn(false);
+                    setSelectedHand(null);
+                    void act("swap", { position: i as Position });
+                  } else {
+                    setSelectedHand(selectedHand === i ? null : i);
+                  }
+                }}
               />
             );
           })}
@@ -295,7 +311,6 @@ export function Herbert(p: PlayProps) {
   return (
     <div
       ref={table}
-      data-slap-target={slap ? target : undefined}
       className={
         "herbert-table " +
         (s.caller ? "hb-last-round " : "") +
@@ -385,42 +400,35 @@ export function Herbert(p: PlayProps) {
             />
             <span>Nachziehen · {s.deck_count}</span>
           </div>
-          <div className="hb-stack" key={"discard-" + s.discard}>
+          <div className="hb-stack hb-pile" key={"pile-" + pileCard}>
             <PlayingCard
-              card={s.discard ?? null}
-              label="Offene Ablage"
-              marker="discard"
-              disabled={!slap || unavailable}
-              onClick={() => setSlapTarget("discard")}
+              card={pileCard ?? null}
+              label={s.drawn_by ? "Offene gezogene Karte" : "Offene Ablage"}
+              marker="pile"
+              selected={selectedDrawn}
+              disabled={unavailable || pileCard === null}
+              onClick={() => {
+                if (selectedHand !== null && canSlap && pileCard !== null) {
+                  const position = selectedHand as Position;
+                  setSelectedHand(null);
+                  void act("slap", {
+                    position,
+                    rank: (pileCard % 13) + 1,
+                    source: pileSource,
+                  });
+                } else if (canSwap && myTurn && drawn !== null) {
+                  if (selectedDrawn) {
+                    setSelectedDrawn(false);
+                    void act("discard");
+                  } else {
+                    setSelectedDrawn(true);
+                    selectedDrawnCard.current = drawn;
+                    setSelectedHand(null);
+                  }
+                }
+              }}
             />
-            <span>
-              {slap && target === "discard" ? "✓ Klatschziel" : "Ablage"}
-            </span>
-          </div>
-          <div className="hb-stack hb-drawn">
-            <PlayingCard
-              card={drawn}
-              marker="drawn"
-              disabled={!slap || drawn === null || unavailable}
-              onClick={() => setSlapTarget("drawn")}
-              empty={!s.drawn_by}
-              label={
-                myTurn
-                  ? "Deine gezogene Karte"
-                  : "Gezogene Karte des Gegenübers"
-              }
-            />
-            <span>
-              {s.drawn_by
-                ? myTurn
-                  ? slap && target === "drawn"
-                    ? "✓ Klatschziel"
-                    : "Offen gezogen"
-                  : slap && target === "drawn"
-                    ? "✓ Klatschziel"
-                    : "Offen gezogen"
-                : "Dein nächster Zug"}
-            </span>
+            <span>{s.drawn_by ? selectedDrawn ? "Antippen zum Ablegen · eigene Karte zum Tauschen" : "Offen gezogen" : "Ablage"}</span>
           </div>
         </section>
         <section
@@ -494,6 +502,7 @@ export function Herbert(p: PlayProps) {
               )}
               <Button
                 secondary
+                className="hb-call"
                 disabled={unavailable}
                 onClick={() => confirm.current?.showModal()}
               >
@@ -504,13 +513,15 @@ export function Herbert(p: PlayProps) {
         ) : (
           <>
             <p>
-              {slap
-                ? "Wähle Ablage oder gezogene Karte, dann deine passende Karte."
-                : canSwap
-                  ? "Tippe eine eigene Karte zum Tauschen – oder lege deine neue Karte ab."
+              {selectedHand !== null
+                ? "Karte markiert · tippe auf die offene Karte zum Klatschen."
+                : selectedDrawn
+                  ? "Gezogene Karte markiert · wähle eine eigene Karte zum Tauschen oder tippe erneut zum Ablegen."
+                  : canSwap
+                    ? "Tippe die offene Karte und danach eine eigene zum Tauschen. Tippe deine passende Karte und dann die Ablage zum Klatschen."
                   : myTurn && s.phase === "turn"
                     ? "Ziehe eine Karte oder rufe FERTIG!"
-                    : "Merke dir die Ablage. Passende Karten kannst du jederzeit wegklatschen."}
+                    : "Tippe eine passende eigene Karte und dann die Ablage, um sie zu entfernen."}
             </p>
             <div className="hb-actions">
               {s.caller && myTurn && !seen && s.phase === "turn" && (
@@ -522,23 +533,12 @@ export function Herbert(p: PlayProps) {
                   Karten ansehen
                 </Button>
               )}
-              {canSlap && (
-                <Button
-                  secondary={!slap}
-                  disabled={unavailable}
-                  aria-pressed={slap}
-                  onClick={() => setSlap(!slap)}
-                >
-                  <Hand size={17} />
-                  {slap ? "Klatschen aktiv" : "Klatschen"}
-                </Button>
-              )}
               {myTurn && s.phase === "turn" && (
                 <>
                   <Button
                     disabled={unavailable}
                     onClick={() => {
-                      setSlap(false);
+                      setSelectedHand(null);
                       void act("draw");
                     }}
                   >
@@ -554,18 +554,6 @@ export function Herbert(p: PlayProps) {
                   onClick={() => confirm.current?.showModal()}
                 >
                   FERTIG!
-                </Button>
-              )}
-              {canSwap && (
-                <Button
-                  aria-label="Gezogene Karte ablegen"
-                  disabled={unavailable}
-                  onClick={() => {
-                    setSlap(false);
-                    void act("discard");
-                  }}
-                >
-                  Ablegen
                 </Button>
               )}
             </div>
@@ -601,8 +589,8 @@ export function Herbert(p: PlayProps) {
           </li>
           <li>
             Gleicher Rang wie die Ablage oder die offen gezogene Karte?
-            Aktiviere „Klatschen“, wähle den Zielstapel und tippe deine passende
-            Karte. Sie verschwindet aus deiner Hand. Bei falschem Klatschen
+            Tippe deine passende Karte und danach die offene Ablage. Sie
+            verschwindet aus deiner Hand. Bei falschem Klatschen
             erhältst du eine verdeckte Strafkarte vom Nachziehstapel.
           </li>
           <li>
