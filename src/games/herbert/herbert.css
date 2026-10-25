@@ -524,61 +524,6 @@
   }
 }
 
-/* Both players always see their own hand below the shared stacks. */
-@media (min-width: 701px) and (min-height: 551px) {
-  .hb-board {
-    grid-template-columns: 1fr;
-    grid-template-rows: 1fr 0.65fr 1fr;
-    gap: 6px;
-  }
-  .hb-player {
-    flex-direction: row;
-    justify-content: center;
-    gap: 24px;
-    height: 100%;
-  }
-  .hb-player-label {
-    flex-direction: column;
-    align-items: flex-end;
-    width: 160px;
-    gap: 6px;
-  }
-  .hb-hand {
-    height: 100%;
-    width: auto;
-    max-height: 28cqh;
-    aspect-ratio: 5/7;
-    grid-template-rows: repeat(2, minmax(0, 1fr));
-    gap: 6px;
-  }
-  .hb-hand .hb-card {
-    height: 100%;
-    width: auto;
-    aspect-ratio: 5/7;
-  }
-  .hb-stacks {
-    display: flex;
-    justify-content: center;
-    gap: 30px;
-    max-width: 400px;
-    height: 100%;
-  }
-  .hb-stack {
-    height: 100%;
-    max-height: 17cqh;
-    width: auto;
-    aspect-ratio: 5/7;
-  }
-  .hb-stack .hb-card {
-    height: calc(100% - 20px);
-    width: auto;
-    margin: auto;
-  }
-  .hb-stack > span {
-    font-size: 11px;
-    margin-top: 5px;
-  }
-}
 .hb-hand .hb-card:nth-child(2) {
   animation-delay: 40ms;
 }
@@ -797,39 +742,6 @@
   pointer-events: none;
 }
 
-/* Desktop table: larger hands and one shared face-up pile along the left rail. */
-@media (min-width: 701px) and (min-height: 551px) {
-  .hb-board {
-    width: 100%;
-    max-width: 1500px;
-    grid-template-columns: minmax(155px, 0.34fr) minmax(0, 1fr);
-    grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
-    gap: 8px clamp(20px, 4vw, 64px);
-  }
-  .hb-opponent { grid-column: 2; grid-row: 1; }
-  .hb-self { grid-column: 2; grid-row: 2; }
-  .hb-stacks {
-    grid-column: 1;
-    grid-row: 1 / 3;
-    flex-direction: column;
-    justify-content: center;
-    gap: clamp(14px, 3vh, 30px);
-    max-width: none;
-  }
-  .hb-stack {
-    width: min(100%, 164px);
-    height: auto;
-    max-height: 32cqh;
-    aspect-ratio: 5 / 7;
-  }
-  .hb-stack .hb-card { height: 100%; width: 100%; }
-  .hb-hand-wrap { max-height: 33cqh; }
-  .hb-player-label { width: 120px; }
-  .hb-controls { justify-content: space-between; }
-  .hb-actions { flex: 1; justify-content: flex-start; }
-  .hb-actions .hb-call { margin-left: auto !important; }
-  .hb-scoreboard { left: auto; right: 24px; }
-}
 .hb-card.is-selected {
   z-index: 3;
   transform: translateY(-7px) scale(1.035);
@@ -984,7 +896,7 @@
 }
 @media (max-width: 700px) {
   .herbert-table .hb-hand-wrap {
-    --hb-card-h: clamp(44px, 10cqh, 64px);
+    --hb-card-h: clamp(44px, 11cqh, 84px);
   }
   .hb-actions {
     gap: 5px;
@@ -1034,3 +946,53 @@
   outline-offset: 3px;
   box-shadow: 0 0 22px #d6bb8033;
 }
+
+/* One desktop stage: two large hands, with both piles immediately beside them. */
+@media (min-width: 701px) and (min-height: 551px) {
+  .herbert-table { --hb-desktop-card: clamp(66px, 16cqh, 180px); }
+  .herbert-table .hb-board {
+    width: max-content; max-width: 100%; margin: 0 auto;
+    grid-template-columns: auto auto;
+    grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 12px clamp(28px, 4vw, 72px);
+    justify-content: center; align-content: center;
+  }
+  .herbert-table .hb-opponent { grid-column: 2; grid-row: 1; }
+  .herbert-table .hb-self { grid-column: 2; grid-row: 2; }
+  .herbert-table .hb-player {
+    flex-direction: column; justify-content: center; gap: 7px; height: auto;
+  }
+  .herbert-table .hb-player-label {
+    width: 100%; max-width: none; flex-direction: row; align-items: center;
+    font-size: 14px;
+  }
+  .herbert-table .hb-hand-wrap { --hb-card-h: var(--hb-desktop-card); }
+  .herbert-table .hb-hand { max-height: none; min-height: 0; gap: 9px; }
+  .herbert-table .hb-stacks {
+    grid-column: 1; grid-row: 1 / 3; display: flex; flex-direction: row;
+    gap: 18px; height: auto; max-width: none; align-items: center;
+  }
+  .herbert-table .hb-stack {
+    width: calc(var(--hb-desktop-card) * .714); height: auto;
+    max-height: none; aspect-ratio: auto;
+  }
+  .herbert-table .hb-stack .hb-card {
+    width: 100%; height: var(--hb-desktop-card); margin: 0;
+  }
+  .herbert-table .hb-stack > span { font-size: 12px; margin-top: 10px; }
+  .herbert-table .hb-controls {
+    width: min(100%, 850px); margin: 0 auto; flex-direction: column; gap: 10px;
+    align-items: stretch;
+  }
+  .herbert-table .hb-controls > p { max-width: none; text-align: center; margin: 0; }
+  .herbert-table .hb-actions { flex: none; width: 100%; justify-content: center; gap: 40px; }
+  .herbert-table .hb-actions .hb-call { margin-left: 0 !important; }
+  .herbert-table .hb-controls > .button { align-self: center; }
+  .herbert-table .hb-scoreboard {
+    position: static; width: fit-content; max-width: 100%; margin: 0 auto;
+    flex-direction: row; align-items: center; padding: 8px 14px; gap: 20px;
+  }
+  .herbert-table .hb-total { gap: 12px; }
+}
+
+.herbert-table .hb-call { background:#253b35; color:#e7cb8c !important; }

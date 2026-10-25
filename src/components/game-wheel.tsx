@@ -1,16 +1,18 @@
 "use client";
-import { useRef, useState, type CSSProperties, type TransitionEvent } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowRight, Dices, Sparkles, RotateCw } from "lucide-react";
+import { ArrowRight, RotateCw } from "lucide-react";
 import { games } from "@/lib/games";
+import "./game-wheel.css";
 
-const colors = ["#d8847f", "#c9915e", "#b6a05b", "#6fa28c", "#6798a5", "#7f8cb9", "#a783ad", "#c67891", "#c4805d"];
+const colors = ["#ca929b", "#b7a371", "#82b59c", "#83a4bd", "#aa93bd", "#ca9c7c"];
+const size = 360 / games.length;
+const point = (angle: number, radius: number) => {
+  const radians = (angle - 90) * Math.PI / 180;
+  return [Number((200 + Math.cos(radians) * radius).toFixed(4)), Number((200 + Math.sin(radians) * radius).toFixed(4))];
+};
 
-export function GameWheel({
-  onSelect,
-  disabled = false,
-  excludeGameId,
-}: {
+export function GameWheel({ onSelect, disabled = false, excludeGameId }: {
   onSelect?: (id: string) => void | Promise<void>;
   disabled?: boolean;
   excludeGameId?: string | null;
@@ -19,133 +21,85 @@ export function GameWheel({
   const [rotation, setRotation] = useState(0);
   const [spinning, setSpinning] = useState(false);
   const [winner, setWinner] = useState<string | null>(null);
-  const [confetti, setConfetti] = useState(false);
-  const targetGameId = useRef<string | null>(null);
-  const settled = useRef(true);
-  const selectableGames = games.filter((game) => game.id !== excludeGameId);
-  const segment = 360 / games.length;
-  const background = `conic-gradient(${games
-    .map((_, index) => `${colors[index % colors.length]} ${index * segment}deg ${(index + 1) * segment}deg`)
-    .join(", ")})`;
+  const [error, setError] = useState<string | null>(null);
+  const locked = useRef(false);
+  const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
+  useEffect(() => () => timers.current.forEach(clearTimeout), []);
 
   function spin() {
-    if (disabled || spinning || selectableGames.length === 0) return;
+    if (disabled || locked.current) return;
+    const choices = games.filter(game => game.id !== excludeGameId);
+    if (!choices.length) return;
     const values = new Uint32Array(1);
-    const limit = Math.floor(0x1_0000_0000 / selectableGames.length) * selectableGames.length;
-    let randomValue: number;
-    do {
-      crypto.getRandomValues(values);
-      randomValue = values[0];
-    } while (randomValue >= limit);
-    const game = selectableGames[randomValue % selectableGames.length];
-    targetGameId.current = game.id;
-    const index = games.findIndex((item) => item.id === game.id);
-    const center = (index + 0.5) * segment;
+    const limit = Math.floor(0x1_0000_0000 / choices.length) * choices.length;
+    do { crypto.getRandomValues(values); } while (values[0] >= limit);
+    const selected = choices[values[0] % choices.length];
+    const index = games.findIndex(game => game.id === selected.id);
     const current = ((rotation % 360) + 360) % 360;
-    const target = ((360 - center) % 360 + 360) % 360;
-    const extra = (target - current + 360) % 360;
-    settled.current = false;
+    const target = (360 - (index + .5) * size) % 360;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    locked.current = true;
+    setError(null);
     setWinner(null);
-    setConfetti(false);
     setSpinning(true);
-    setRotation(rotation + 360 * 7 + extra);
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      window.setTimeout(finishSpin, 80);
-    }
+    setRotation(rotation + 5 * 360 + (target - current + 360) % 360);
+    timers.current.forEach(clearTimeout);
+    timers.current = [setTimeout(() => {
+      setWinner(selected.id);
+      setSpinning(false);
+      timers.current.push(setTimeout(async () => {
+        try {
+          if (onSelect) await onSelect(selected.id);
+          else router.push("/create?game=" + encodeURIComponent(selected.id) + "&wheel=1");
+        } catch {
+          setError("Das Spiel konnte nicht starten. Bitte dreht noch einmal.");
+        } finally { locked.current = false; setWinner(null); }
+      }, reduced ? 400 : 1300));
+    }, reduced ? 80 : 4300)];
   }
 
-  function finishSpin() {
-    if (settled.current) return;
-    settled.current = true;
-    setSpinning(false);
-    setConfetti(true);
-    const selected = games.find((game) => game.id === targetGameId.current);
-    if (!selected) return;
-    setWinner(selected.id);
-    window.setTimeout(() => {
-      if (onSelect) void onSelect(selected.id);
-      else router.push("/create?game=" + encodeURIComponent(selected.id));
-    }, 850);
-  }
-
-  function settle(event: TransitionEvent<HTMLDivElement>) {
-    if (event.propertyName === "transform") finishSpin();
-  }
-
-  const discStyle = {
-    background,
-    transform: `rotate(${rotation}deg)`,
-  } as CSSProperties;
-
-  return (
-    <section className="game-wheel" aria-labelledby="game-wheel-title">
-      <div className="wheel-copy">
-        <h2 id="game-wheel-title">Das Glück entscheidet</h2>
-        <p>Ein Dreh, ein neues Spiel. Nach jeder Runde wartet das Rad wieder auf euch.</p>
-        <div className="wheel-game-list" aria-label="Spiele im Glücksrad">
-          {games.map((game, index) => (
-            <span
-              key={game.id}
-              className={`wheel-game-chip ${winner === game.id ? "is-winner" : ""} ${game.id === excludeGameId ? "was-last" : ""}`}
-              style={{ "--chip-color": colors[index % colors.length] } as CSSProperties}
-            >
-              <i />
-              {game.title}
-            </span>
-          ))}
-        </div>
-        {winner && (
-          <p className="wheel-result" role="status">
-            <Sparkles size={16} /> Ausgewählt: <strong>{games.find((game) => game.id === winner)?.title}</strong>
-          </p>
-        )}
-        <button
-          type="button"
-          className="wheel-spin-button"
-          onClick={spin}
-          disabled={disabled || spinning}
-        >
-          <span className="wheel-button-icon">
-            {spinning ? <RotateCw className="wheel-spinning-icon" size={18} /> : <Dices size={18} />}
-          </span>
-          {spinning ? "Das Rad dreht …" : "Glücksrad drehen"}
-          {!spinning && <ArrowRight size={17} />}
-        </button>
-        {!onSelect && <span className="wheel-footnote">Das Spiel startet in eurem privaten Raum.</span>}
+  return <section className="date-roulette" aria-labelledby="roulette-title">
+    <div className="roulette-intro">
+      <span className="roulette-mode">Euer Spieleabend · Zufallsmodus</span>
+      <h2 id="roulette-title">Noch eine Runde?</h2>
+      <p>Drehen. Zusammen spielen.<br />Und euch wieder überraschen lassen.</p>
+      <button type="button" className="roulette-start" onClick={spin}
+        disabled={disabled || spinning || !!winner && !error}>
+        {spinning ? <RotateCw size={19} /> : <ArrowRight size={19} />}
+        {spinning ? "Das Rad dreht …" : winner && !error ? "Spiel startet …" : "Glücksrad drehen"}
+      </button>
+      <div className="roulette-status" role="status">
+        {error || (winner ? games.find(game => game.id === winner)?.title : excludeGameId ? "Ein neues Spiel bei jedem Dreh" : "Alle Spiele. Ein gemeinsamer Abend.")}
       </div>
-
-      <div className={`wheel-visual ${confetti ? "is-celebrating" : ""}`}>
-        <div className="wheel-halo" />
-        {confetti && (
-          <div className="wheel-confetti" aria-hidden="true">
-            {Array.from({ length: 26 }, (_, index) => (
-              <i key={index} style={{
-                "--confetti-x": `${((index * 37) % 100) - 50}px`,
-                "--confetti-y": `${-20 - ((index * 29) % 100)}px`,
-                "--confetti-delay": `${(index % 8) * 25}ms`,
-                "--confetti-rotate": `${index * 47}deg`,
-                "--confetti-color": colors[index % colors.length],
-              } as CSSProperties} />
-            ))}
-          </div>
-        )}
-        <span className="wheel-pointer" aria-hidden="true" />
-        <div
-          className={`wheel-disc ${spinning ? "is-spinning" : ""}`}
-          style={discStyle}
-          onTransitionEnd={settle}
-          role="img"
-          aria-label="Buntes Glücksrad mit allen Spielen"
-        >
-          <span className="wheel-disc-gloss" />
-          <span className="wheel-disc-center">
-            <Dices size={26} />
-          </span>
-        </div>
-        <span className="wheel-spark wheel-spark-one">✦</span>
-        <span className="wheel-spark wheel-spark-two">✧</span>
-        <span className="wheel-spark wheel-spark-three">✦</span>
-      </div>
-    </section>
-  );
+    </div>
+    <div className={`roulette-machine ${winner ? "has-winner" : ""}`}>
+      <span className="roulette-pointer" aria-hidden="true" />
+      <svg className="roulette-disc" viewBox="0 0 400 400" role="img" aria-label="Glücksrad mit allen Spielnamen"
+        style={{transform: `rotate(${rotation}deg)`}}>
+        <circle cx="200" cy="200" r="195" fill="#111d24" stroke="#ad9770" strokeWidth="3" />
+        {games.map((game, index) => {
+          const a = point(index * size, 188), b = point((index + 1) * size, 188);
+          const tint = colors[index % colors.length];
+          return <g key={game.id} opacity={game.id === excludeGameId ? .32 : 1}>
+            <path d={`M200 200 L${a[0]} ${a[1]} A188 188 0 0 1 ${b[0]} ${b[1]} Z`}
+              fill={index % 2 ? "#263942" : "#1c2c34"} stroke="#52616a" strokeWidth="1" />
+            <g transform={`rotate(${(index + .5) * size} 200 200)`}>
+              <rect x="197" y="18" width="6" height="9" fill={tint} />
+              <text x="200" y="44" textAnchor="middle" fill={tint} fontSize="11" fontWeight="700">{String(index + 1).padStart(2, "0")}</text>
+              <text transform="translate(200 61) rotate(90)" x="0" y="4" fill="#eee8d9" fontSize={game.title.length > 15 ? 10 : 12} fontWeight="600">{game.title}</text>
+            </g>
+          </g>;
+        })}
+        <circle cx="200" cy="200" r="37" fill="#15232a" stroke="#ad9770" strokeWidth="2" />
+        <path d="M186 190h8v-5h8v5h8v12h-5v5h-5v5h-5v-5h-5v-5h-4Z" fill="#ca929b" />
+      </svg>
+    </div>
+    <div className="roulette-roster" aria-label="Spiele im Glücksrad">
+      {games.map((game, index) => <div key={game.id}
+        className={`roulette-entry ${winner === game.id ? "is-picked" : ""} ${game.id === excludeGameId ? "is-previous" : ""}`}
+        style={{"--entry-color": colors[index % colors.length]} as CSSProperties}>
+        <span>{String(index + 1).padStart(2,"0")}</span><strong>{game.title}</strong>
+      </div>)}
+    </div>
+  </section>;
 }
