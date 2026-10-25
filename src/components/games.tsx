@@ -15,7 +15,8 @@ export function GameCard({
   disabled?: boolean;
 }) {
   return (
-    <Card className="game-card">
+    <Card className={`game-card ${game.recommended ? "game-recommended" : ""}`}>
+      {game.recommended && <span className="game-recommendation">Empfohlen</span>}
       <GameArt kind={game.art} />
       <div className="game-details">
         <div className="game-meta">
