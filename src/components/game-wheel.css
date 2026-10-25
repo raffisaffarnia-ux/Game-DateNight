@@ -1,0 +1,23 @@
+/* Self-contained arcade roulette, independent of the retired wheel styles. */
+.date-roulette { display:grid; grid-template-columns:minmax(220px,1fr) minmax(250px,340px) minmax(290px,1.2fr); gap:clamp(20px,3vw,52px); align-items:center; padding:clamp(20px,3vw,42px); background:#17232b; border:1px solid #46515a; border-radius:12px; overflow:hidden; color:#eee8d9; margin-bottom:28px; }
+.roulette-mode { color:#baa681; font-size:11px; letter-spacing:.12em; text-transform:uppercase; }
+.roulette-intro h2 { font-family:var(--dn-display),sans-serif; font-size:clamp(30px,3vw,46px); line-height:1.05; margin:14px 0; }
+.roulette-intro p { color:#b3c1c1; line-height:1.65; font-size:15px; margin:0 0 24px; }
+.roulette-start { display:inline-flex; align-items:center; justify-content:center; gap:12px; border:1px solid #dfa4a4; background:#d29ba0; color:#17232b; min-height:48px; padding:12px 18px; border-radius:5px; font:inherit; font-weight:700; cursor:pointer; transition:background .2s,transform .2s; }
+.roulette-start:hover:not(:disabled) { background:#e9b8ba; transform:translateY(-2px); }
+.roulette-start:focus-visible { outline:3px solid #e7d0a1; outline-offset:4px; }
+.roulette-start:disabled { cursor:default; opacity:.65; }
+.roulette-status { min-height:38px; margin-top:14px; color:#b9c9c2; font-size:12px; }
+.roulette-machine { position:relative; width:100%; max-width:340px; margin:auto; }
+.roulette-disc { display:block; width:100%; overflow:visible; transition:transform 4.3s cubic-bezier(.12,.7,.08,1); filter:drop-shadow(0 10px 10px #09101680); }
+.roulette-pointer { position:absolute; z-index:2; top:-9px; left:calc(50% - 9px); width:18px; height:28px; background:#e9c88e; clip-path:polygon(0 0,100% 0,100% 55%,50% 100%,0 55%); filter:drop-shadow(0 2px 2px #000); }
+.roulette-roster { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); column-gap:22px; }
+.roulette-entry { display:flex; align-items:center; gap:10px; min-height:44px; padding:8px 4px; border-bottom:1px solid #ffffff0e; transition:background .2s; }
+.roulette-entry > span { color:var(--entry-color); font-family:var(--dn-display),sans-serif; font-size:18px; }
+.roulette-entry strong { font-size:13px; font-weight:500; }
+.roulette-entry.is-previous { opacity:.35; }
+.roulette-entry.is-picked { background:#bda67525; outline:1px solid #bda675; }
+.roulette-machine.has-winner { filter:drop-shadow(0 0 14px #cba77840); }
+@media(max-width:1100px) { .date-roulette { grid-template-columns:1fr 280px; } .roulette-roster { grid-column:1/-1; grid-template-columns:repeat(4,minmax(0,1fr)); } }
+@media(max-width:600px) { .date-roulette { grid-template-columns:1fr; gap:20px; padding:24px 18px; } .roulette-intro { text-align:center; } .roulette-intro p { margin-bottom:16px; } .roulette-machine { width:min(100%,290px); } .roulette-roster { grid-template-columns:repeat(2,minmax(0,1fr)); gap:0 12px; } .roulette-status { min-height:18px; } }
+@media(prefers-reduced-motion:reduce) { .roulette-disc,.roulette-start { transition:none; } }

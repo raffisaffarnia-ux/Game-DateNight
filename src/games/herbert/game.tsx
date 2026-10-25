@@ -141,7 +141,7 @@ export function Herbert(p: PlayProps) {
     const to =
       event.kind === "draw"
         ? "pile"
-        : event.kind === "penalty"
+        : event.kind === "penalty" || event.kind === "swap"
           ? slot
           : "pile";
     if (!["draw", "discard", "swap", "slap", "penalty"].includes(event.kind))

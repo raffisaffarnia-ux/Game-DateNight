@@ -100,9 +100,11 @@ function LobbyContent({ id }: { id: string }) {
     autoStarted.current = true;
     setRequestedGame(null);
     const url = new URL(window.location.href);
+    const fromWheel = url.searchParams.get("wheel") === "1";
     url.searchParams.delete("game");
+    url.searchParams.delete("wheel");
     window.history.replaceState({}, "", url);
-    void choose(requestedGame);
+    void choose(requestedGame, fromWheel);
   }, [requestedGame, ready, room, choose]);
 
   async function copy(kind: "code" | "link") {

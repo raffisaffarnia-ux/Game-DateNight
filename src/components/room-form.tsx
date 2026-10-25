@@ -48,7 +48,7 @@ export function RoomForm({
       if (result.error) throw result.error;
       const requestedGame = new URLSearchParams(window.location.search).get("game");
       const gameQuery = requestedGame && games.some((game) => game.id === requestedGame)
-        ? `?game=${encodeURIComponent(requestedGame)}`
+        ? `?game=${encodeURIComponent(requestedGame)}${new URLSearchParams(window.location.search).get("wheel") === "1" ? "&wheel=1" : ""}`
         : "";
       router.push(`/room/${result.data}${gameQuery}`);
     } catch (e) {
