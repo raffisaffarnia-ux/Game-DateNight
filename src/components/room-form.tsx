@@ -46,6 +46,7 @@ export function RoomForm({
             },
       );
       if (result.error) throw result.error;
+      if (!result.data) throw new Error("Einladung nicht gefunden oder zu viele Versuche. Prüfe den Code und versuche es in einer Minute erneut.");
       const requestedGame = new URLSearchParams(window.location.search).get("game");
       const gameQuery = requestedGame && games.some((game) => game.id === requestedGame)
         ? `?game=${encodeURIComponent(requestedGame)}${new URLSearchParams(window.location.search).get("wheel") === "1" ? "&wheel=1" : ""}`
@@ -112,11 +113,11 @@ export function RoomForm({
               <input
                 id="code"
                 className="code-input"
-                placeholder="8-stelliger Code"
+                placeholder="4-stelliger Code"
                 required
-                minLength={8}
+                minLength={4}
                 maxLength={8}
-                pattern="[a-fA-F0-9]{8}"
+                pattern="([A-Za-z0-9]{4}|[a-fA-F0-9]{8})"
                 autoCapitalize="characters"
                 autoComplete="off"
                 spellCheck={false}

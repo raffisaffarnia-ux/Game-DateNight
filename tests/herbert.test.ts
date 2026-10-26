@@ -154,7 +154,7 @@ test("Herbert: authoritative two-player lifecycle, privacy and edge cases", asyn
     },
   );
   await t.test(
-    "draw visible to both players, duplicate draw applies once; discard ends turn",
+    "draw remains private until discard; duplicate draw applies once",
     async () => {
       const before = await secret(),
         id = randomUUID(),
@@ -162,7 +162,8 @@ test("Herbert: authoritative two-player lifecycle, privacy and edge cases", asyn
       await Promise.all([act("draw", {}, id, rev), act("draw", {}, id, rev)]);
       assert.equal((await view()).drawn, before.deck[0]);
       await as(1);
-      assert.deepEqual(await view(), { drawn: before.deck[0] });
+      assert.deepEqual(await view(), { drawn: null });
+      assert.equal((await session()).state.drawn, null);
       await as(0);
       await assert.rejects(() => act("draw"), /zuerst/);
       await act("discard");
@@ -356,7 +357,7 @@ test("Herbert: authoritative two-player lifecycle, privacy and edge cases", asyn
     },
   );
   await t.test(
-    "open-draw slap removes only the matching hand card; fifth slot can swap",
+    "hidden draw rejects opponent slap; revealed discard permits slap and fifth slot swap",
     async () => {
       await prepared();
       await patch(
@@ -370,13 +371,14 @@ test("Herbert: authoritative two-player lifecycle, privacy and edge cases", asyn
       );
       await act("draw");
       await as(1);
-      await act("slap", { position: 0, rank: 5, source: "drawn" });
+      await assert.rejects(act("slap", { position: 0, rank: 5, source: "drawn" }), /verdeckt/);
       const h = await secret();
-      assert.equal(h.hands[users[1]].filter((x) => x !== null).length, 3);
+      assert.equal(h.hands[users[1]].filter((x) => x !== null).length, 4);
       assert.equal(h.drawn, 4);
       assert.equal(h.phase, "drawn");
       await act("discard");
       await as(1);
+      await act("slap", { position: 0, rank: 5 });
       await act("draw");
       await act("discard");
       await as(0);

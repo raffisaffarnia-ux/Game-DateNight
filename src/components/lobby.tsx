@@ -232,9 +232,6 @@ function LobbyContent({ id }: { id: string }) {
                 online={online.includes(members[0]?.user_id)}
                 you={members[0]?.user_id === userId}
               />
-              <span className="pair-connector" aria-hidden="true">
-                &
-              </span>
               <PlayerPresence
                 member={members[1]}
                 online={online.includes(members[1]?.user_id)}

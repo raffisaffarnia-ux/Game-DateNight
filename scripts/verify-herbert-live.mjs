@@ -31,11 +31,14 @@ try {
   for (const i of [0, 1]) { await act(i, "peek"); await act(i, "ready"); }
   const top = (await read()).state.discard;
   await act(0, "draw");
-  const drawn = (await read()).state.drawn;
+  const drawn = (await rpc(clients[0], "herbert_view", {target:id})).drawn;
+  assert.equal((await read(clients[1])).state.drawn,null);
+  assert.equal((await rpc(clients[1],"herbert_view",{target:id})).drawn,null);
   await act(0, "discard");
   await act(1, "take_discard");
   let s = await read();
-  assert.equal(s.state.drawn, drawn);
+  assert.equal(s.state.drawn, null);
+  assert.equal((await rpc(clients[1],"herbert_view",{target:id})).drawn,drawn);
   assert.equal(s.state.discard, top);
   assert.equal(s.state.draw_source, "discard");
   assert.deepEqual(s.state, (await read(clients[1])).state);

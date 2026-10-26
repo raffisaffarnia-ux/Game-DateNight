@@ -27,9 +27,9 @@ test("Herbert pops the real discard stack, preserves cards and enforces the 20-s
   await as(0);
   let s=await read();assert.ok(s.state.turn_deadline);
   const deadline=s.state.turn_deadline, originalTop=s.state.discard;
-  await act("draw");const drawn=(await read()).state.drawn;
+  await act("draw");const drawn=(await db.query<{v:{drawn:number}}>("select public.herbert_view($1) v",[id])).rows[0].v.drawn;
   await act("discard");await as(1);await act("take_discard");
-  s=await read();assert.equal(s.state.drawn,drawn);assert.equal(s.state.discard,originalTop);assert.equal(s.state.draw_source,"discard");
+  s=await read();assert.equal(s.state.drawn,null);assert.equal((await db.query<{v:{drawn:number}}>("select public.herbert_view($1) v",[id])).rows[0].v.drawn,drawn);assert.equal(s.state.discard,originalTop);assert.equal(s.state.draw_source,"discard");
   await as(0);await assert.rejects(act("swap",{position:0}),/am Zug/);
   await as(1);await act("swap",{position:0});
   await db.exec("reset role");
