@@ -1025,6 +1025,18 @@
 .hb-pile { position:relative; isolation:isolate; }
 .hb-under-card { position:absolute; z-index:-1; inset:5px -7px 20px 7px; background:#d6c9ad; border:1px solid #bca878; border-radius:8px; padding:4px; color:#294047; font-size:12px; transform:rotate(4deg); }
 .hb-under-card.is-red { color:#ab5260; }
+@media(max-width:700px) {
+ .herbert-table .hb-board { grid-template-rows:auto minmax(62px,1fr) auto; gap:8px; }
+ .herbert-table .hb-hand-wrap { --hb-card-h:clamp(44px,calc((100cqh - 330px)/4),84px); }
+ .herbert-table .hb-stacks { height:100%; max-height:100px; align-items:center; justify-content:center; }
+ .herbert-table .hb-stack { height:100%; min-height:62px; max-height:100px; }
+ .herbert-table .hb-controls { flex:none; }
+ .herbert-table .hb-player { height:auto; }
+}
+@media(max-width:700px) and (max-height:740px) {
+ .herbert-table .hb-controls > p { display:none; }
+ .herbert-table .hb-turn-timer > span { white-space:nowrap; max-width:none; }
+}
 .herbert-table .hb-controls .hb-actions:has(>.hb-call:only-child) { justify-content:flex-end; }
 @media(min-width:701px) and (min-height:551px) {
  .herbert-table .hb-board { row-gap:22px; }
