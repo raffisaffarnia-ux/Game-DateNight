@@ -20,7 +20,7 @@ test("Moral Sync keeps choices private, inserts Change My Mind, then advances", 
     await as(1); await action(id, 1, "lock", { choice: "D" });
     await as(0); await action(id, 1, "continue");
     await as(1); await action(id, 1, "continue");
-    const session = (await db.query<{ state: { phase: string }; round: number }>("select state,round from public.game_sessions where id=$1", [id])).rows[0];
+    let session = (await db.query<{ state: { phase: string }; round: number }>("select state,round from public.game_sessions where id=$1", [id])).rows[0];
     assert.equal(session.state.phase, "change");
     assert.equal((await db.query("select * from public.couple_game_inputs where round=1 and kind='next'")).rows.length, 0);
     await as(0); await action(id, 1, "change_mind", { choice: "stay" });
