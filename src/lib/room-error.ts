@@ -4,6 +4,7 @@ export function roomError(error: unknown) {
     error && typeof error === "object" && "message" in error
       ? String(error.message)
       : "";
+  if (message.startsWith("Einladung nicht gefunden")) return message;
   if (message.startsWith("Rooms are not connected yet.")) return message;
   if (message.startsWith("This room already has two people."))
     return "This room already has two people. Ask your partner for a new invitation.";

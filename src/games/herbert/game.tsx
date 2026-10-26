@@ -127,7 +127,7 @@ export function Herbert(p: PlayProps) {
   const matchOver = s.phase === "finished" && round === 10;
   const resultWinners = matchOver ? s.match_winners : s.winners;
   const won = s.phase === "finished" && !!resultWinners?.includes(p.userId);
-  const pileSource = s.drawn_by && drawn !== null ? "drawn" : "discard";
+  const pileSource = s.drawn_by ? "drawn" : "discard";
   const pileCard = pileSource === "drawn" ? drawn : s.discard;
   const belowPile = pileSource === "drawn" ? s.discard : s.discard_below;
   useEffect(() => {
@@ -235,9 +235,9 @@ export function Herbert(p: PlayProps) {
   const canSwap = s.phase === "drawn" && myTurn;
   useEffect(() => {
     if (s.phase === "drawn" && s.turn_user === p.userId && s.draw_source === "discard") {
-      setSelectedDrawn(true); selectedDrawnCard.current = s.drawn;
+      setSelectedDrawn(true); selectedDrawnCard.current = drawn;
     }
-  }, [s.phase, s.turn_user, s.draw_source, s.drawn, p.userId]);
+  }, [s.phase, s.turn_user, s.draw_source, drawn, p.userId]);
   const myReady = p.session.ready.includes(p.userId),
     seen = s.peeked?.includes(p.userId);
   const name = (id: string | null) =>
@@ -423,7 +423,7 @@ export function Herbert(p: PlayProps) {
             {belowPile != null && <span className={"hb-under-card " + (cardFace(belowPile).red ? "is-red" : "")} aria-hidden="true">{cardFace(belowPile).label}{cardFace(belowPile).suit}</span>}
             <PlayingCard
               card={pileCard ?? null}
-              label={s.drawn_by ? "Offene gezogene Karte" : "Offene Ablage"}
+              label={s.drawn_by ? myTurn ? "Deine gezogene Karte" : "Verdeckte gezogene Karte" : "Offene Ablage"}
               marker="pile"
               selected={selectedDrawn}
               disabled={unavailable || pileCard === null}
@@ -450,7 +450,7 @@ export function Herbert(p: PlayProps) {
                 }
               }}
             />
-            <span>{s.drawn_by ? selectedDrawn ? "Zum Tauschen markiert" : "Offene Karte" : "Ablage"}</span>
+            <span>{s.drawn_by ? myTurn ? selectedDrawn ? "Zum Tauschen markiert" : "Nur für dich sichtbar" : "Noch verdeckt" : "Ablage"}</span>
           </div>
         </section>
         <section
@@ -538,9 +538,9 @@ export function Herbert(p: PlayProps) {
               {selectedHand !== null
                 ? "Karte markiert · tippe auf die offene Karte zum Klatschen."
                 : selectedDrawn
-                  ? "Gezogene Karte markiert · wähle eine eigene Karte zum Tauschen oder tippe erneut zum Ablegen."
+                  ? "Wähle eine eigene Karte zum Tauschen oder drücke Weiter."
                   : canSwap
-                    ? "Tippe die offene Karte und danach eine eigene zum Tauschen. Tippe deine passende Karte und dann die Ablage zum Klatschen."
+                    ? "Tippe deine gezogene Karte zum Tauschen oder drücke Weiter zum offenen Ablegen."
                   : myTurn && s.phase === "turn"
                     ? "Tippe auf Nachziehen oder nimm die offene Ablage."
                     : "Tippe eine passende eigene Karte und dann die Ablage, um sie zu entfernen."}
@@ -555,6 +555,7 @@ export function Herbert(p: PlayProps) {
                   Karten ansehen
                 </Button>
               )}
+              {canSwap && <Button disabled={unavailable} onClick={() => void act("discard")}>Weiter</Button>}
               {!s.caller && (
                 <Button
                   secondary
@@ -581,7 +582,7 @@ export function Herbert(p: PlayProps) {
           <X />
         </button>
         <h2>So spielt ihr Herbert</h2>
-        <p>Du hast pro Zug 20 Sekunden. Wähle Nachziehen oder die offene Ablage. Läuft die Zeit ab, wird eine gezogene Karte abgelegt und dein Zug endet.</p>
+        <p>Gezogene Karten siehst nur du. Mit Weiter legst du sie offen ab und beendest deinen Zug. Du hast pro Zug 20 Sekunden. Wähle Nachziehen oder die offene Ablage. Läuft die Zeit ab, wird eine gezogene Karte abgelegt und dein Zug endet.</p>
         <div className="hb-rule-cards" aria-hidden="true">
           <span>?</span>
           <span>?</span>
@@ -598,7 +599,7 @@ export function Herbert(p: PlayProps) {
             die gezogene Karte ab.
           </li>
           <li>
-            Gleicher Rang wie die Ablage oder die offen gezogene Karte?
+            Gleicher Rang wie eine offen abgelegte Karte?
             Tippe deine passende Karte und danach die offene Ablage. Sie
             verschwindet aus deiner Hand. Bei falschem Klatschen
             erhältst du eine verdeckte Strafkarte vom Nachziehstapel.
