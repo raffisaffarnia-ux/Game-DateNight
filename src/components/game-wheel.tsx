@@ -85,13 +85,13 @@ export function GameWheel({ onSelect, disabled = false, excludeGameId }: {
               fill={index % 2 ? "#263942" : "#1c2c34"} stroke="#52616a" strokeWidth="1" />
             <g transform={`rotate(${(index + .5) * size} 200 200)`}>
               <rect x="197" y="18" width="6" height="9" fill={tint} />
-              <text x="200" y="44" textAnchor="middle" fill={tint} fontSize="11" fontWeight="700">{String(index + 1).padStart(2, "0")}</text>
-              <text transform="translate(200 61) rotate(90)" x="0" y="4" fill="#eee8d9" fontSize={game.title.length > 15 ? 10 : 12} fontWeight="600">{game.title}</text>
+              <text x="200" y="76" textAnchor="middle" fill={tint} fontSize="20" fontWeight="700">{String(index + 1).padStart(2, "0")}</text>
+              
             </g>
           </g>;
         })}
         <circle cx="200" cy="200" r="37" fill="#15232a" stroke="#ad9770" strokeWidth="2" />
-        <path d="M186 190h8v-5h8v5h8v12h-5v5h-5v5h-5v-5h-5v-5h-4Z" fill="#ca929b" />
+        <path d="M180 190h4v-4h12v4h8v-4h12v4h4v12h-4v4h-4v4h-4v4h-4v4h-8v-4h-4v-4h-4v-4h-4v-4h-4Z" fill="#ca929b" />
       </svg>
     </div>
     <div className="roulette-roster" aria-label="Spiele im Glücksrad">

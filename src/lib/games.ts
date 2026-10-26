@@ -7,9 +7,18 @@ export type GameDefinition = {
   art: "cards" | "orbits" | "tiles" | "snake" | "drawing" | "daily" | "bomb" | "moral" | "rank" | "flipper" | "dots" | "herbert";
   status: "available";
   recommended?: boolean;
+  daily?: boolean;
 };
 export const games: GameDefinition[] = [
   { id: "herbert", title: "Herbert", description: "Zehn Runden. Merken, tauschen, wegklatschen – weniger ist mehr.", category: "Arcade", art: "herbert", status: "available", recommended: true },
+  {
+    id: "daily-us",
+    title: "Daily Us",
+    description: "Eine Frage. Jeden Tag.",
+    category: "Täglich",
+    art: "daily",
+    status: "available", daily: true,
+  },
   {
     id: "this-or-that",
     title: "This or That",
@@ -50,14 +59,7 @@ export const games: GameDefinition[] = [
     art: "drawing",
     status: "available",
   },
-  {
-    id: "daily-us",
-    title: "Daily Us",
-    description: "Eine Frage. Jeden Tag.",
-    category: "Täglich",
-    art: "daily",
-    status: "available",
-  },
+
   { id: "relationship-bomb", title: "Relationship Bomb", description: "Meistert acht kleine Herausforderungen im Team.", category: "Koop", art: "bomb", status: "available" },
   { id: "moral-sync", title: "Moral Sync", description: "Entdeckt, was eure Sicht auf die Welt prägt.", category: "Gespräch", art: "moral", status: "available" },
   { id: "rank-and-draw", title: "Rank", description: "Ordnet fünf Dinge in eure persönliche Reihenfolge und vergleicht, was euch wichtig ist.", category: "Beziehung", art: "rank", status: "available" },

@@ -996,3 +996,37 @@
 }
 
 .herbert-table .hb-call { background:#253b35; color:#e7cb8c !important; }
+
+/* The deadline stays central; the series ledger belongs beside the table. */
+.hb-turn-timer { display:flex; gap:12px; align-items:center; width:min(100%,650px); margin:2px auto 8px; flex:none; font-size:12px; color:#c9d5c8; }
+.hb-turn-timer progress { flex:1; min-width:40px; height:8px; border:0; border-radius:4px; overflow:hidden; appearance:none; }
+.hb-turn-timer progress::-webkit-progress-bar { background:#344a42; }
+.hb-turn-timer progress::-webkit-progress-value { background:#a9c6a2; transition:width .1s linear; }
+.hb-turn-timer progress::-moz-progress-bar { background:#a9c6a2; }
+.hb-turn-timer.is-urgent progress::-webkit-progress-value { background:#e0a077; }
+.hb-turn-timer strong { min-width:35px; font-variant-numeric:tabular-nums; }
+.hb-back-heart { width:54%; height:auto; fill:#c6a577; stroke:#eed9ae; stroke-width:.6; filter:drop-shadow(0 3px 2px #091c22); }
+.herbert-table .hb-dialog { position:fixed; inset:0; margin:auto; }
+.herbert-table .can-draw .hb-card { box-shadow:0 0 0 2px #b9ca8d44,0 0 24px #b9ca8d25; border-radius:9px; }
+.herbert-table .can-draw .hb-card:hover { filter:brightness(1.2); box-shadow:0 0 0 2px #d6bb80,0 0 30px #d6bb8033; }
+@media(min-width:901px) and (min-height:551px) {
+ .herbert-table .hb-scoreboard { position:absolute; top:110px; left:24px; right:auto; width:150px; margin:0; flex-direction:column; align-items:stretch; gap:12px; padding:14px; }
+ .herbert-table .hb-total { justify-content:space-between; }
+}
+@media(min-width:701px) and (min-height:551px) {
+ .herbert-table { --hb-desktop-card:clamp(50px,min(16cqh,calc((100cqh - 210px)/4)),180px); }
+}
+@media(max-width:700px) {
+ .hb-turn-timer { margin:0; gap:6px; font-size:10px; }
+ .hb-turn-timer > span { max-width:100px; }
+ .herbert-table .hb-hand { min-height:0; }
+}
+
+.hb-pile { position:relative; isolation:isolate; }
+.hb-under-card { position:absolute; z-index:-1; inset:5px -7px 20px 7px; background:#d6c9ad; border:1px solid #bca878; border-radius:8px; padding:4px; color:#294047; font-size:12px; transform:rotate(4deg); }
+.hb-under-card.is-red { color:#ab5260; }
+.herbert-table .hb-controls .hb-actions:has(>.hb-call:only-child) { justify-content:flex-end; }
+@media(min-width:701px) and (min-height:551px) {
+ .herbert-table .hb-board { row-gap:22px; }
+ .herbert-table { --hb-desktop-card:clamp(50px,min(16cqh,calc((100cqh - 230px)/4)),180px); }
+}

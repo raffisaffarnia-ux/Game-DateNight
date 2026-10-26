@@ -36,7 +36,7 @@ test("Dots & Dates serializes two-player turns, extra moves, fresh cards, comple
   try {
     const id = await open("dots-and-dates");
     let current = await session(db, id);
-    assert.equal(current.question_ids.length, 4);
+    assert.equal(current.question_ids.length, 16);
     assert.deepEqual(Object.values(current.state.conversation_boxes).sort(), [...current.question_ids].sort());
     await ready(id);
     current = await session(db, id);
@@ -66,11 +66,13 @@ test("Dots & Dates serializes two-player turns, extra moves, fresh cards, comple
     assert.equal((await db.query("select * from public.game_answers where session_id=$1", [id])).rows.length, 0);
     assert.equal((await db.query("select * from public.couple_game_inputs where session_id=$1", [id])).rows.length, 0);
 
+    let prompts=1;
     await dotsAction(db, id, current.revision, "dismiss_prompt", { prompt_id: current.state.active_prompt });
     for (let edge = 0; edge < 40; edge++) {
       current = await session(db, id);
       if (current.status === "finished") break;
-      if (current.state.phase === "prompt") {
+      while (current.state.phase === "prompt") {
+        prompts++;
         await as(0);
         await dotsAction(db, id, current.revision, "dismiss_prompt", { prompt_id: current.state.active_prompt });
         current = await session(db, id);
@@ -81,11 +83,13 @@ test("Dots & Dates serializes two-player turns, extra moves, fresh cards, comple
       await dotsAction(db, id, current.revision, "move", { edge });
     }
     current = await session(db, id);
-    if (current.state.phase === "prompt") {
+    while (current.state.phase === "prompt") {
+        prompts++;
       await as(0);
       await dotsAction(db, id, current.revision, "dismiss_prompt", { prompt_id: current.state.active_prompt });
       current = await session(db, id);
     }
+    assert.equal(prompts,16);
     assert.equal(current.status, "finished");
     assert.equal(current.state.boxes.filter(Boolean).length, 16);
     assert.equal(Object.values(current.state.scores).reduce((sum, score) => sum + score, 0), 16);
@@ -114,7 +118,7 @@ test("Flipper Duo starts once, fences the host, pauses and persists only the fin
     await as(1);
     await arcadeControl(db, id, clientB, 0, "start");
     current = await session(db, id);
-    assert.equal(current.starts_at, startsAt);
+    assert.equal(String(current.starts_at), String(startsAt));
     assert.equal(current.state.phase, "countdown");
 
     await as(0);

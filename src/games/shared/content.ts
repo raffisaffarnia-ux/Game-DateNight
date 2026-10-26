@@ -1,5 +1,5 @@
 import type { Question } from "./types.ts";
-import { germanText } from "./german-content";
+import { germanText } from "./german-content.ts";
 import {
   expandedChoices,
   expandedConversations,

@@ -114,8 +114,8 @@ export function tick(
     if (d && d !== opposite[s.direction]) s.direction = d;
     const v = vectors[s.direction];
     heads[id] = {
-      x: (s.body[0].x + v.x + GRID) % GRID,
-      y: (s.body[0].y + v.y + GRID) % GRID,
+      x: s.body[0].x + v.x,
+      y: s.body[0].y + v.y,
     };
     growing[id] = same(heads[id], state.food);
   }
@@ -123,7 +123,7 @@ export function tick(
     growing[ids[1]] = false;
   for (const id of ids) {
     const head = heads[id];
-    let dead = false;
+    let dead = head.x < 0 || head.x >= GRID || head.y < 0 || head.y >= GRID;
     for (const other of ids) {
       // Team mates can pass through each other; each snake still avoids its own body.
       if (next.mode === "together" && other !== id) continue;

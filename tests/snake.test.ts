@@ -25,20 +25,20 @@ test("Snake is deterministic, grows and rejects reversals and double turns", () 
   assert.ok(validSnapshot(b, ["a", "b"]));
   assert.equal(validSnapshot({ ...b, tick: -1 }, ["a", "b"]), false);
 });
-test("Snake wraps around walls and resolves body and head collisions", () => {
+test("Snake dies at walls and resolves body and head collisions", () => {
   let s = initialSnake(["a", "b"], 1);
   s.snakes.a.body = [
     { x: 23, y: 7 },
     { x: 22, y: 7 },
   ];
-  assert.equal(tick(s).snakes.a.body[0].x, 0);
-  assert.equal(tick(s).snakes.a.alive, true);
+  assert.equal(tick(s).status, "finished");
+  assert.equal(tick(s).snakes.a.alive, false);
   s.snakes.a.body = [
     { x: 0, y: 0 },
     { x: 0, y: 1 },
   ];
   s.snakes.a.direction = "up";
-  assert.equal(tick(s).snakes.a.body[0].y, 23);
+  assert.equal(tick(s).snakes.a.alive, false);
   s = initialSnake(["a", "b"], 1);
   s.snakes.a.body = [
     { x: 4, y: 4 },

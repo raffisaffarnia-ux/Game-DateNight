@@ -11,6 +11,7 @@ export type DotsState = {
   turn_user_id: string;
   scores: Record<string, number>;
   conversation_boxes: Record<string, string>;
+  pending_prompts?: {id:string;box:number}[];
   active_prompt: string | null;
   active_prompt_box: number | null;
   last_move: number | null;
@@ -57,7 +58,7 @@ export const conversationCards: Record<string, string> = {
   dd36: "Was möchtest du bei unserem nächsten Spieleabend ausprobieren?",
   dd37: "Welche gemeinsame Erinnerung würdest du in einem Foto festhalten?",
   dd38: "Wie würde unser idealer Urlaubstag aussehen?",
-  dd39: "Welche Sache sollten wir uns öfter bewusst Zeit dafür nehmen?",
+  dd39: "Wofür sollten wir uns öfter bewusst Zeit nehmen?",
   dd40: "Welche gemeinsame Kleinigkeit macht deinen Alltag schöner?",
 };
 
@@ -81,7 +82,8 @@ export function createDotsState(players: string[]): DotsState {
     boxes: Array(DOT_BOX_COUNT).fill(null),
     turn_user_id: players[0],
     scores: { [players[0]]: 0, [players[1]]: 0 },
-    conversation_boxes: { "0": "dd01", "3": "dd02", "12": "dd03", "15": "dd04" },
+    conversation_boxes: Object.fromEntries(Array.from({length:16},(_,i)=>[String(i), `dd${String(i+1).padStart(2,"0")}`])),
+    pending_prompts: [],
     active_prompt: null,
     active_prompt_box: null,
     last_move: null,
@@ -139,6 +141,7 @@ export function applyDotsMove(state: DotsState, playerId: string, edge: number):
   const scores = Object.fromEntries(Object.entries(state.scores).map(([id]) => [
     id, boxes.filter((owner) => owner === id).length,
   ]));
+  const queue = completed.filter(box => state.conversation_boxes[String(box)]).map(box => ({box,id:state.conversation_boxes[String(box)]}));
   const promptedBox = completed.find((box) => Boolean(state.conversation_boxes[String(box)]));
   const conversationId = promptedBox === undefined ? null : state.conversation_boxes[String(promptedBox)];
   const finished = boxes.every(Boolean) && conversationId === null;
@@ -153,6 +156,7 @@ export function applyDotsMove(state: DotsState, playerId: string, edge: number):
     boxes,
     scores,
     turn_user_id: nextPlayer,
+    pending_prompts: queue.slice(1),
     active_prompt: conversationId,
     active_prompt_box: promptedBox ?? null,
     last_move: edge,
@@ -163,11 +167,13 @@ export function applyDotsMove(state: DotsState, playerId: string, edge: number):
 
 export function dismissDotsPrompt(state: DotsState): DotsState {
   if (state.phase !== "prompt") return state;
+  const next = state.pending_prompts?.[0];
   return {
     ...state,
-    phase: state.boxes.every(Boolean) ? "result" : "board",
-    active_prompt: null,
-    active_prompt_box: null,
+    pending_prompts: (state.pending_prompts || []).slice(1),
+    phase: next ? "prompt" : state.boxes.every(Boolean) ? "result" : "board",
+    active_prompt: next?.id ?? null,
+    active_prompt_box: next?.box ?? null,
   };
 }
 
