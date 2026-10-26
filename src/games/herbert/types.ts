@@ -5,6 +5,8 @@ export type HerbertPhase =
 export type HerbertAction =
   | "peek"
   | "ready"
+  | "timeout"
+  | "take_discard"
   | "draw"
   | "discard"
   | "swap"
@@ -18,6 +20,10 @@ export type HerbertState = {
   totals: Record<string, number>;
   match_winners: string[];
   drawn: CardId | null;
+  turn_deadline?: string | null;
+  draw_source?: "deck" | "discard" | null;
+  discard_count?: number;
+  discard_below?: CardId | null;
   event?: {
     id: string;
     kind: string;

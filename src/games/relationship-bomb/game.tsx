@@ -1,12 +1,12 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Bomb, Check, Heart, RotateCcw, ShieldAlert, Timer } from "lucide-react";
 import { Button, Card } from "@/components/ui";
 import { usePrivateInputs } from "../shared/use-private-inputs";
 import type { GameViewProps } from "../shared/types";
 import { bombCards } from "../moral-sync/content";
 
-export function BombSetup({session,command,busy}:Pick<GameViewProps,"session"|"command"|"busy">){
+export function BombSetup({session,command}:Pick<GameViewProps,"session"|"command"|"busy">){
  const [difficulty,setDifficulty]=useState(String(session.state.difficulty||"normal"));
  const options:[[string,string],[string,string],[string,string]]=[["chill","ENTSPANNT"],["normal","NORMAL"],["chaos","CHAOS"]];
  return <div className="bomb-setup"><div className="bomb-device mini"><Bomb size={35}/><span>05:00</span></div><span className="eyebrow">BEZIEHUNGS-BOMBE</span><h2>Haltet ihr unter Druck zusammen?</h2><p>Acht kleine Aufgaben. Drei Fehler. Gemeinsam entschärfen.</p><div className="bomb-difficulty">{options.map(([value,label])=><button key={value} className={difficulty===value?"selected":""} aria-pressed={difficulty===value} onClick={()=>{setDifficulty(value);void command("configure",{difficulty:value})}}><strong>{label}</strong><small>{value==="chill"?"8 Minuten · entspannt":""}{value==="normal"?"6 Minuten · gleichmäßig":""}{value==="chaos"?"4 Minuten · rasant":""}</small></button>)}</div></div>

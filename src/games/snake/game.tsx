@@ -120,7 +120,7 @@ export function SnakeSetup({
         ))}
       </div>
       <p className="field-note">
-        Überquert den Spielfeldrand, um auf der anderen Seite wieder aufzutauchen.
+        Weicht den Wänden aus – eine Berührung beendet eure Runde.
         {session.state.snake_mode === "together"
           ? " Gehe durch die andere Schlange und weiche deiner eigenen aus."
           : " Weicht euren Schlangenkörpern aus."}
@@ -212,7 +212,7 @@ export function SnakeGame(props: GameViewProps & { replay: () => void }) {
     <Card className="snake-card">
       <div className="snake-mode-label">
         <span>{together ? "MITEINANDER" : "GEGENEINANDER"}</span>
-        <span>↔ Spielfeld ohne Rand</span>
+        <span>Wände meiden</span>
       </div>
       {together && (
         <div className="team-goal">

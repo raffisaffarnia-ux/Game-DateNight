@@ -23,7 +23,7 @@ export function usePrivateInputs(session: GameSession) {
       .eq("session_id", session.id)
       .then(({ data, error: queryError }) => {
         if (!active) return;
-        setError(queryError ? "Some shared progress could not be restored." : "");
+        setError(queryError ? "Der gemeinsame Spielstand konnte nicht vollständig geladen werden." : "");
         if (data) setInputs(data as PrivateInput[]);
       });
     return () => {

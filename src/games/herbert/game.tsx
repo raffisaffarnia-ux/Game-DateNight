@@ -77,7 +77,7 @@ function PlayingCard({
     >
       <span className="hb-card-inner">
         <span className="hb-card-back" aria-hidden="true">
-          <span>H</span>
+          <svg className="hb-back-heart" viewBox="0 0 24 24"><path d="M12 21C10 19 2 14 2 8A5 5 0 0 1 12 6A5 5 0 0 1 22 8C22 14 14 19 12 21Z" /></svg>
           <i>✦</i>
         </span>
         <span className="hb-card-front" aria-hidden="true">
@@ -105,6 +105,16 @@ function PlayingCard({
     </button>
   );
 }
+function TurnTimer({ deadline }: { deadline: string | null | undefined }) {
+  const [now, setNow] = useState(Date.now());
+  useEffect(() => { const id = setInterval(() => setNow(Date.now()), 100); return () => clearInterval(id); }, []);
+  const left = deadline ? Math.max(0, Math.min(20, (Date.parse(deadline) - now) / 1000)) : 20;
+  return <div className={"hb-turn-timer " + (left <= 5 ? "is-urgent" : "")}>
+    <span>{deadline ? "Zugzeit" : "Bereit, wenn ihr es seid"}</span>
+    <progress max="20" value={left} aria-label="Verbleibende Zugzeit" />
+    <strong>{deadline ? Math.ceil(left) + " s" : "20 s pro Zug"}</strong>
+  </div>;
+}
 export function Herbert(p: PlayProps) {
   const { state: s, drawn, peek, busy, message, act } = useHerbert(p);
   const [selectedHand, setSelectedHand] = useState<number | null>(null);
@@ -119,6 +129,7 @@ export function Herbert(p: PlayProps) {
   const won = s.phase === "finished" && !!resultWinners?.includes(p.userId);
   const pileSource = s.drawn_by && drawn !== null ? "drawn" : "discard";
   const pileCard = pileSource === "drawn" ? drawn : s.discard;
+  const belowPile = pileSource === "drawn" ? s.discard : s.discard_below;
   useEffect(() => {
     setSelectedHand(null);
     setSelectedDrawn(false);
@@ -128,6 +139,8 @@ export function Herbert(p: PlayProps) {
     const event = s.event;
     if (!event || priorEvent.current === event.id) return;
     priorEvent.current = event.id;
+    setSelectedHand(null);
+    setSelectedDrawn(false);
     const root = table.current;
     if (!root || window.matchMedia("(prefers-reduced-motion: reduce)").matches)
       return;
@@ -170,7 +183,7 @@ export function Herbert(p: PlayProps) {
               ? s.drawn
               : s.discard;
     ghost.textContent =
-      card == null ? "H" : cardFace(card).label + cardFace(card).suit;
+      card == null ? "♥" : cardFace(card).label + cardFace(card).suit;
     ghost.setAttribute("aria-hidden", "true");
     Object.assign(ghost.style, {
       left: a.left - r.left + "px",
@@ -220,6 +233,11 @@ export function Herbert(p: PlayProps) {
   const unavailable = busy || !p.connected || p.online.length < 2;
   const canSlap = ["turn", "drawn", "final_slaps"].includes(s.phase);
   const canSwap = s.phase === "drawn" && myTurn;
+  useEffect(() => {
+    if (s.phase === "drawn" && s.turn_user === p.userId && s.draw_source === "discard") {
+      setSelectedDrawn(true); selectedDrawnCard.current = s.drawn;
+    }
+  }, [s.phase, s.turn_user, s.draw_source, s.drawn, p.userId]);
   const myReady = p.session.ready.includes(p.userId),
     seen = s.peeked?.includes(p.userId);
   const name = (id: string | null) =>
@@ -337,6 +355,7 @@ export function Herbert(p: PlayProps) {
           <CircleHelp size={22} />
         </button>
       </div>
+      {!finished && <TurnTimer deadline={s.turn_deadline} />}
       <aside className="hb-scoreboard" aria-label="Serienwertung">
         <strong>
           Runde {round}
@@ -390,7 +409,7 @@ export function Herbert(p: PlayProps) {
           {other && grid(other.user_id, false)}
         </section>
         <section className="hb-stacks" aria-label="Kartenstapel">
-          <div className="hb-stack">
+          <div className={`hb-stack ${myTurn && s.phase === "turn" && !unavailable ? "can-draw" : ""}`}>
             <PlayingCard
               card={null}
               label="Karte vom Nachziehstapel ziehen"
@@ -400,7 +419,8 @@ export function Herbert(p: PlayProps) {
             />
             <span>Nachziehen · {s.deck_count}</span>
           </div>
-          <div className="hb-stack hb-pile" key={"pile-" + pileCard}>
+          <div className={`hb-stack hb-pile ${myTurn && s.phase === "turn" && !unavailable && pileCard !== null ? "can-draw" : ""}`} key={"pile-" + pileCard}>
+            {belowPile != null && <span className={"hb-under-card " + (cardFace(belowPile).red ? "is-red" : "")} aria-hidden="true">{cardFace(belowPile).label}{cardFace(belowPile).suit}</span>}
             <PlayingCard
               card={pileCard ?? null}
               label={s.drawn_by ? "Offene gezogene Karte" : "Offene Ablage"}
@@ -416,6 +436,8 @@ export function Herbert(p: PlayProps) {
                     rank: (pileCard % 13) + 1,
                     source: pileSource,
                   });
+                } else if (myTurn && s.phase === "turn") {
+                  void act("take_discard");
                 } else if (canSwap && myTurn && drawn !== null) {
                   if (selectedDrawn) {
                     setSelectedDrawn(false);
@@ -428,7 +450,7 @@ export function Herbert(p: PlayProps) {
                 }
               }}
             />
-            <span>{s.drawn_by ? selectedDrawn ? "Antippen zum Ablegen · eigene Karte zum Tauschen" : "Offen gezogen" : "Ablage"}</span>
+            <span>{s.drawn_by ? selectedDrawn ? "Zum Tauschen markiert" : "Offene Karte" : "Ablage"}</span>
           </div>
         </section>
         <section
@@ -520,7 +542,7 @@ export function Herbert(p: PlayProps) {
                   : canSwap
                     ? "Tippe die offene Karte und danach eine eigene zum Tauschen. Tippe deine passende Karte und dann die Ablage zum Klatschen."
                   : myTurn && s.phase === "turn"
-                    ? "Ziehe eine Karte oder rufe FERTIG!"
+                    ? "Tippe auf Nachziehen oder nimm die offene Ablage."
                     : "Tippe eine passende eigene Karte und dann die Ablage, um sie zu entfernen."}
             </p>
             <div className="hb-actions">
@@ -532,19 +554,6 @@ export function Herbert(p: PlayProps) {
                 >
                   Karten ansehen
                 </Button>
-              )}
-              {myTurn && s.phase === "turn" && (
-                <>
-                  <Button
-                    disabled={unavailable}
-                    onClick={() => {
-                      setSelectedHand(null);
-                      void act("draw");
-                    }}
-                  >
-                    Karte ziehen
-                  </Button>
-                </>
               )}
               {!s.caller && (
                 <Button
@@ -572,6 +581,7 @@ export function Herbert(p: PlayProps) {
           <X />
         </button>
         <h2>So spielt ihr Herbert</h2>
+        <p>Du hast pro Zug 20 Sekunden. Wähle Nachziehen oder die offene Ablage. Läuft die Zeit ab, wird eine gezogene Karte abgelegt und dein Zug endet.</p>
         <div className="hb-rule-cards" aria-hidden="true">
           <span>?</span>
           <span>?</span>

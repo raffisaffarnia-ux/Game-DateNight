@@ -1,5 +1,6 @@
+import { talkScenes, talkFollowups, nativePrediction, predictionSceneCount, predictionQuestionCount } from "./native-prompts.ts";
 import type { Question } from "./types.ts";
-import { germanText } from "./german-content";
+import { germanText } from "./german-content.ts";
 
 const topicNames: Record<string, string> = {
   "how we celebrate small wins": "gemeinsame kleine Erfolge",
@@ -210,196 +211,15 @@ export const expandedChoices: Question[] = Object.entries(choices).flatMap(
     ),
 );
 
-const topics: Record<string, string[]> = {
-  Us: [
-    "how we celebrate small wins",
-    "our everyday rituals",
-    "the way we make decisions",
-    "our sense of humour",
-    "sharing space",
-    "feeling appreciated",
-    "trying something new together",
-    "making time for each other",
-    "how we show affection",
-    "being a team",
-    "our different personalities",
-    "time apart",
-  ],
-  Future: [
-    "the home we want to create",
-    "a future adventure",
-    "our priorities in five years",
-    "growing older together",
-    "a skill we could learn",
-    "the traditions we could start",
-    "a project we could build",
-    "the places we could live",
-    "how we want to spend our weekends",
-    "our shared dreams",
-    "our next big decision",
-    "a slower way of life",
-  ],
-  Dreams: [
-    "a creative ambition",
-    "an adventure you keep imagining",
-    "the person you hope to become",
-    "a place you want to discover",
-    "a skill you secretly want to master",
-    "your idea of a fulfilling life",
-    "something you would make just for joy",
-    "a dream you had as a teenager",
-    "a chance you would love to take",
-    "a life with more freedom",
-    "a project you would start tomorrow",
-    "a wish you rarely talk about",
-  ],
-  Childhood: [
-    "the games you played as a child",
-    "your childhood neighbourhood",
-    "your earliest friendships",
-    "your favourite family ritual",
-    "the stories you grew up with",
-    "your first experience of independence",
-    "the adults you looked up to",
-    "the places you explored",
-    "your childhood imagination",
-    "your school-day routines",
-    "the things you used to collect",
-    "a childhood lesson you kept",
-  ],
-  Memories: [
-    "our first adventures",
-    "a moment we laughed until it hurt",
-    "a place that reminds you of us",
-    "a meal we still talk about",
-    "a surprise that stayed with you",
-    "a difficult day we got through",
-    "a song attached to a memory",
-    "a journey that changed you",
-    "a moment of unexpected kindness",
-    "a celebration that felt special",
-    "a photo you treasure",
-    "an ordinary day you remember",
-  ],
-  Funny: [
-    "our most unlikely business idea",
-    "a ridiculous talent show",
-    "a holiday with no luggage",
-    "our imaginary reality show",
-    "a dinner cooked by robots",
-    "a day when animals could talk",
-    "our secret superhero identities",
-    "a wildly impractical house",
-    "a surprise comedy routine",
-    "a competition we would definitely lose",
-    "our imaginary royal titles",
-    "a completely unnecessary invention",
-  ],
-  Vulnerable: [
-    "asking for support",
-    "feeling truly understood",
-    "saying what you need",
-    "making a mistake",
-    "trusting your own judgment",
-    "the pressure to have everything figured out",
-    "feeling safe in a relationship",
-    "setting a boundary",
-    "being honest about a worry",
-    "giving yourself permission to rest",
-    "accepting a compliment",
-    "showing a softer side",
-  ],
-  Random: [
-    "a song that changes your mood",
-    "a place where you feel at home",
-    "a habit you want to try",
-    "a book that stayed with you",
-    "a tiny everyday luxury",
-    "a conversation you wish you could have",
-    "an unusual thing you find beautiful",
-    "a skill you admire",
-    "a question you never get asked",
-    "a sound you love",
-    "a piece of advice you disagree with",
-    "an unexpectedly good day",
-  ],
-};
-const conversationFrames = [
-  (t: string) => `Was ist dir beim Thema „${topicLabel(t)}“ besonders wichtig?`,
-  (t: string) => `Was möchtest du mir zum Thema „${topicLabel(t)}“ erzählen?`,
-  (t: string) => `Welche Geschichte verbindest du mit dem Thema „${topicLabel(t)}“?`,
-  (t: string) => `Wie hat sich deine Sicht auf das Thema „${topicLabel(t)}“ verändert?`,
-  (t: string) => `Was überrascht dich an dem Thema „${topicLabel(t)}“?`,
-  (t: string) => `Welche Gefühle löst der Gedanke an das Thema „${topicLabel(t)}“ bei dir aus?`,
-  (t: string) => `Was würdest du mich zum Thema „${topicLabel(t)}“ fragen?`,
-  (t: string) => `Was möchtest du zum Thema „${topicLabel(t)}“ noch herausfinden?`,
-];
-
-export const expandedConversations: Question[] = Object.entries(topics).flatMap(
-  ([category, items]) =>
-    items.flatMap((topic, i) =>
-      conversationFrames.map((frame, j) => ({
-        id: `fresh-talk-${category.toLowerCase()}-${i}-${j}`,
-        game: "deep-talk" as const,
-        category,
-        prompt: frame(topic),
-      })),
-    ),
+export const expandedConversations: Question[] = Object.entries(talkScenes).flatMap(
+  ([category, scenes]) => scenes.flatMap((scene, i) => talkFollowups[category].map((question, j) => ({
+    id: `fresh-talk-${category.toLowerCase()}-${i}-${j}`,
+    game: "deep-talk" as const, category, prompt: `${scene} ${question}`,
+  }))),
 );
-
-const situations = [
-  "a rainy Sunday",
-  "a free afternoon",
-  "a weekend by the sea",
-  "a winter evening",
-  "a summer road trip",
-  "a visit to a new city",
-  "a birthday celebration",
-  "a quiet night at home",
-  "a surprise day off",
-  "a stressful workday",
-  "a long train ride",
-  "a lazy brunch",
-  "a holiday with friends",
-  "a first day in a new home",
-  "an evening without screens",
-  "a visit to a night market",
-  "a snowy weekend",
-  "a festival weekend",
-  "a family gathering",
-  "a day in the countryside",
-  "a mountain holiday",
-  "a spontaneous date",
-  "a week with no plans",
-  "a nostalgic evening",
-  "a seaside picnic",
-  "a very early morning",
-  "a day with a tiny budget",
-  "a celebration of a small win",
-  "a weekend without internet",
-  "an adventure abroad",
-];
-const predictionFrames = [
-  (t: string) => `Bei „${topicLabel(t)}“: Was würde ich am liebsten essen?`,
-  (t: string) => `Bei „${topicLabel(t)}“: Welche Musik würde ich auflegen?`,
-  (t: string) => `Bei „${topicLabel(t)}“: Wen würde ich einladen?`,
-  (t: string) => `Bei „${topicLabel(t)}“: Was würde ich einpacken?`,
-  (t: string) => `Bei „${topicLabel(t)}“: Was würde ich fotografieren?`,
-  (t: string) => `Bei „${topicLabel(t)}“: Welchen kleinen Luxus würde ich mir gönnen?`,
-  (t: string) => `Bei „${topicLabel(t)}“: Was würde ich zuerst tun?`,
-  (t: string) => `Bei „${topicLabel(t)}“: Worauf würde ich mich am meisten freuen?`,
-  (t: string) => `Bei „${topicLabel(t)}“: Worauf würde ich gern verzichten?`,
-  (t: string) => `Bei „${topicLabel(t)}“: Wie würde ich den Moment besonders machen?`,
-];
-
-export const expandedPredictions: Question[] = situations.flatMap((topic, i) =>
-  predictionFrames.map((frame, j) => ({
-    id: `fresh-know-${i}-${j}`,
-    game: "do-you-know-me" as const,
-    category: "Imagination",
-    prompt: frame(topic),
-  })),
-);
+export const expandedPredictions: Question[] = Array.from({length:predictionSceneCount},(_,i)=>
+  Array.from({length:predictionQuestionCount},(_,j)=>({id:`fresh-know-${i}-${j}`,game:"do-you-know-me" as const,category:"Imagination",prompt:nativePrediction(i,j)})),
+).flat();
 
 const reflections = [
   "a small act of kindness",

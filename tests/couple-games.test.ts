@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { database, users } from "./database.ts";
+import { database } from "./database.ts";
 
 test("Moral Sync keeps choices private, inserts Change My Mind, then advances", async () => {
   const { db, as, open, action, ready } = await database();
@@ -64,7 +64,7 @@ test("Relationship Bomb hides a locked answer until both players lock", async ()
   }
 });
 
-test("Rank & Draw reveals rankings together and protects the hidden target", async () => {
+test("Rank reveals rankings together and starts the next ranking without drawing", async () => {
   const { db, as, open, action, ready } = await database();
   try {
     const id = await open("rank-and-draw");
@@ -72,29 +72,18 @@ test("Rank & Draw reveals rankings together and protects the hidden target", asy
     const ranking = ["A", "B", "C", "D", "E"];
     await action(id, 0, "lock", { rank: ranking });
     await as(1);
-    assert.equal((await db.query("select * from public.couple_game_inputs where kind='ranking'")).rows.length, 1);
+    assert.equal((await db.query("select * from public.couple_game_inputs where kind='ranking'")).rows.length, 0);
     await action(id, 0, "lock", { rank: ranking });
-    let session = (await db.query<{ state: { phase: string; creator_id?: string; last_guess?: string } }>("select state from public.game_sessions where id=$1", [id])).rows[0];
+    const session = (await db.query<{ state: { phase: string; creator_id?: string; last_guess?: string } }>("select state from public.game_sessions where id=$1", [id])).rows[0];
     assert.equal(session.state.phase, "reveal");
 
     await as(0); await action(id, 0, "continue");
     await as(1); await action(id, 0, "continue");
-    session = (await db.query<{ state: { phase: string; creator_id: string } }>("select state from public.game_sessions where id=$1", [id])).rows[0];
-    assert.equal(session.state.phase, "create");
-    const creatorIndex = session.state.creator_id === users[0] ? 0 : 1;
-    const guesserIndex = creatorIndex === 0 ? 1 : 0;
-    await as(guesserIndex);
-    assert.equal((await db.query("select * from public.couple_game_inputs where kind='target'")).rows.length, 0);
-    await as(creatorIndex);
-    await action(id, 0, "draw_finish");
-    session = (await db.query<{ state: { phase: string } }>("select state from public.game_sessions where id=$1", [id])).rows[0];
-    assert.equal(session.state.phase, "guess");
-    await as(guesserIndex);
-    await action(id, 0, "guess", { item: "A" });
-    session = (await db.query<{ state: { phase: string; last_guess: string } }>("select state from public.game_sessions where id=$1", [id])).rows[0];
-    assert.equal(session.state.phase, "compare");
-    assert.equal(session.state.last_guess, "A");
-    assert.equal((await db.query("select * from public.couple_game_inputs where kind='target' and revealed")).rows.length, 1);
+    const next = (await db.query<{state:{phase:string};round:number}>("select state,round from public.game_sessions where id=$1", [id])).rows[0];
+    assert.equal(next.state.phase,"rank");
+    assert.equal(next.round,1);
+    await assert.rejects(action(id,1,"draw_finish"), /unavailable/);
+
   } finally {
     await db.close();
   }

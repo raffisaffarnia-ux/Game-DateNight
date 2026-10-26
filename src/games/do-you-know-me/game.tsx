@@ -4,9 +4,12 @@ import type { GameViewProps } from "../shared/types";
 import { Button, Card } from "@/components/ui";
 import { AnswerForm, GameProgress, GameResults } from "../shared/shell";
 import { RoundMoment } from "../shared/effects";
+import { nativePrediction } from "../shared/native-prompts";
 const possessive = (name: string) => `${name}${/[sxz]$/i.test(name) ? "'" : "s"}`;
 
-const guessPrompt = (prompt: string, name: string) => {
+const guessPrompt = (prompt: string, name: string, id?: string) => {
+  const fresh = id?.match(/^fresh-know-(\d+)-(\d+)$/);
+  if (fresh) return nativePrediction(Number(fresh[1]), Number(fresh[2]), name);
   const prompts: Record<string, string> = {
     "Was esse ich am liebsten, wenn ich Trost brauche?": `Was isst ${name} am liebsten, wenn ${name} Trost braucht?`,
     "Wie sieht mein perfekter Sonntag aus?": `Wie sieht ${possessive(name)} perfekter Sonntag aus?`,
@@ -46,7 +49,7 @@ const guessPrompt = (prompt: string, name: string) => {
     "Welchen Beruf würde ich einen Tag lang ausprobieren?": `Welchen Beruf würde ${name} einen Tag lang ausprobieren?`,
     "Wofür hätte ich gern mehr Zeit?": `Wofür hätte ${name} gern mehr Zeit?`,
     "Wie stelle ich mir einen perfekten Geburtstag vor?": `Wie stellt sich ${name} einen perfekten Geburtstag vor?`,
-    "Wofür würde ich unerwartete 1.000 € zuerst ausgeben?": `Wofür würde ${name} unerwartete 1.000 € zuerst ausgeben?`,
+    "Wofür würde ich zuerst Geld ausgeben, wenn ich überraschend 1.000 € bekäme?": `Wofür würde ${name} unerwartete 1.000 € zuerst ausgeben?`,
     "Was ist mein nutzlosestes Talent?": `Was ist ${possessive(name)} nutzlosestes Talent?`,
     "In welcher Realityshow würde ich am längsten durchhalten?": `In welcher Realityshow würde ${name} am längsten durchhalten?`,
     "Welches Tier passt am besten zu meiner Persönlichkeit?": `Welches Tier passt am besten zu ${possessive(name)} Persönlichkeit?`,
@@ -69,7 +72,7 @@ const guessPrompt = (prompt: string, name: string) => {
       .replace(/\bich\b/g, name);
     return dynamic[1] + question;
   }
-  return `Wie würde ${name} diese Frage beantworten?`;
+  return `Was würde ${name} auf die Frage „${prompt}“ antworten?`;
 };
 export function KnowMe({
   session,
@@ -129,7 +132,7 @@ export function KnowMe({
         <span className="eyebrow">
           {isSubject ? "ÜBER DICH" : `WIE WÜRDE ${subject.name} ANTWORTEN?`}
         </span>
-        <h2>{isSubject ? question?.prompt : guessPrompt(question?.prompt || "", subject.name)}</h2>
+        <h2>{isSubject ? question?.prompt : guessPrompt(question?.prompt || "", subject.name, question?.id)}</h2>
         {session.status === "round_end" ? (
           <div className="reveal">
             <div className="answer-pair">

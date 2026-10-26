@@ -101,11 +101,8 @@ export function DotsDates({ session, players, userId, online, connected, busy, r
         {state.boxes!.map((owner, box) => {
           const row = Math.floor(box / 4), column = box % 4;
           const x = BOARD_START + column * CELL + 8, y = BOARD_START + row * CELL + 8;
-          const promptHere = state.conversation_boxes?.[String(box)];
           return <g key={"box-" + box}>
             {owner && <rect className="dots-box-fill" x={x} y={y} width={CELL - 16} height={CELL - 16} rx="8" fill={colors[owner] || "#bea98a"} />}
-            {owner && <text className="dots-box-number" x={x + (CELL - 16) / 2} y={y + (CELL - 16) / 2 + 6} textAnchor="middle">{players.findIndex((player) => player.user_id === owner) + 1}</text>}
-            {promptHere && <g className={"dots-card-marker " + (state.active_prompt_box === box ? "is-active" : "")} transform={"translate(" + (x + CELL - 28) + " " + (y + 14) + ")"} aria-hidden="true"><circle r="13" /><path className="dots-card-glyph" d="M-6-5h12v8H2l-3 3v-3h-5z" /><path className="dots-card-lines" d="M-3-2h6M-3 1h4" /></g>}
           </g>;
         })}
         {state.last_move !== null && state.last_move !== undefined && <line className="dots-last-move" {...lineCoordinates(state.last_move)} />}

@@ -14,7 +14,7 @@ import {
 
 test("two players close a box, receive an extra turn and reveal an optional card", () => {
   let state = createDotsState(["alex", "sam"]);
-  assert.deepEqual(state.conversation_boxes, { "0": "dd01", "3": "dd02", "12": "dd03", "15": "dd04" });
+  assert.equal(Object.keys(state.conversation_boxes).length,16);
   assert.ok(Object.values(state.conversation_boxes).every((id) => conversationCards[id]));
   assert.deepEqual(dotsProgress(state), { completed: 0, total: 16, percent: 0 });
   assert.deepEqual(edgesForBox(0), [0, 4, 20, 21]);
@@ -43,11 +43,11 @@ test("rejects a duplicate line and a move from the player without the turn", () 
 test("two-player match fills every box and resolves the winner after optional cards", () => {
   let state = createDotsState(["alex", "sam"]);
   for (let edge = 0; edge < 40 && state.phase !== "result"; edge++) {
-    if (state.phase === "prompt") state = dismissDotsPrompt(state);
+    while (state.phase === "prompt") state = dismissDotsPrompt(state);
     if (state.phase !== "board" || state.lines[edge]) continue;
     state = applyDotsMove(state, state.turn_user_id, edge);
   }
-  if (state.phase === "prompt") state = dismissDotsPrompt(state);
+  while (state.phase === "prompt") state = dismissDotsPrompt(state);
   assert.equal(state.phase, "result");
   assert.equal(state.boxes.filter(Boolean).length, 16);
   assert.deepEqual(dotsProgress(state), { completed: 16, total: 16, percent: 100 });

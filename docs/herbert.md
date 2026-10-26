@@ -24,7 +24,9 @@ The initial peek is returned once directly from the authenticated action, never 
 
 FERTIG is available from the initial peek, off-turn, or after drawing. The caller’s unresolved draw is discarded; an opponent’s unresolved draw remains their final turn. FERTIG gives the other player one last complete turn, followed by a two-second shared slap window. Clients request settlement; the server clock determines when it may occur. Repeated settlement is a no-op. An exhausted deck recycles older discards while preserving the top card; if none are available, the same final window safely ends the round. Ties include both lowest players; caller_correct is calculated by the server.
 
-No automatic turn timer runs during a disconnect. The UI disables actions when the partner is absent and resumes from the persisted state. Existing five-second session reconciliation backs up Realtime.
+Turns have an authoritative 20-second deadline, starting after both players are ready or when FERTIG is called. Drawing does not reset it. Either connected client can settle an expired turn; delayed actions cannot bypass the deadline. An unresolved draw is discarded on timeout, otherwise the turn is skipped. The deadline persists across disconnects and refreshes. Existing five-second session reconciliation backs up Realtime.
+
+A player may take the top discard instead of drawing from the deck. The server pops the real discard stack, preserving the card below. Swapping or discarding completes the turn. The public state exposes only previously visible discard cards, never hidden hands or deck order.
 
 A match has ten rounds in one persisted session. The server stores previous round scores privately; public totals include the current result exactly once. next_round uses revisions and request IDs, resets peeks/readiness and alternates the starting player. Only round ten marks the session finished and triggers the existing series-completion rewards. The wheel returns after the full series. Hands expand to six visible slots with paging for further penalty cards.
 
@@ -43,3 +45,9 @@ UI, types and private RPC client: src/games/herbert/. Metadata and rendering: sr
 ## Ten-round update verification
 
 The updated SQL passes 17 targeted tests (including existing registry/lifecycle). Browser layout checks cover five and eight cards at 320×568, 375×667 and 1440×900 using a temporary local-only layout fixture, removed before building. The migration was applied to the DateNight production database. Two independent browser identities verified a wrong slap producing five cards, both seeing the same public draw, an off-turn FERTIG call, identical 47/19 round results and the preserved totals on round two.
+
+## October 2026 gameplay polish
+
+Apply `20261025170949_gameplay_room_polish.sql` and `20261025213344_native_german_prompts.sql` before the updated client. The first adds the timer and discard source, replaces the old room quota with automatic expiration of the creator's previous rooms, and allocates one fresh conversation card per Dots box. The second corrects German prompts while retaining IDs and question history. No credentials or paid services are added.
+
+Validation: all 51 runnable tests pass (two opt-in live suites skipped), plus explicit two-client production smoke tests in `scripts/verify-dots-live.mjs` and `scripts/verify-herbert-live.mjs`. Dots completes 40 moves, 16 boxes and 16 questions with matching client states and rematch. Herbert verifies the underlying discard, swap, real 20-second timeout, result and next round.
