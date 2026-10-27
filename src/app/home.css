@@ -36,8 +36,8 @@ body:has(.dn-home) {
   background:var(--card);
 }
 .dn-home-banner {
-  height:clamp(205px,26vh,280px);
-  min-height:205px;
+  height:clamp(260px,30vh,300px);
+  min-height:260px;
   display:flex;
   align-items:flex-end;
   padding:clamp(18px,2.3vw,28px);
@@ -97,7 +97,8 @@ body:has(.dn-home) {
   max-width:min(52%, 260px);
   z-index:1;
   top:18px;
-  right:20px;
+  left:20px;
+  right:auto;
   display:flex;
   align-items:center;
   gap:9px;
@@ -221,7 +222,7 @@ body:has(.dn-home) {
   .dn-banner-copy { padding-top:36px; }
   .dn-banner-copy h1 { font-size:clamp(38px,10.8vw,58px); line-height:.9; }
   .dn-banner-copy p { margin-top:8px; font-size:13px; line-height:1.3; }
-  .dn-banner-identity { top:10px; right:10px; gap:6px; padding:4px 9px 4px 4px; }
+  .dn-banner-identity { top:10px; left:10px; right:auto; gap:6px; padding:4px 9px 4px 4px; }
   .dn-banner-identity > .pixel-art { width:32px; height:32px; }
   .dn-banner-identity strong { font-size:11px; }
   .dn-banner-identity span { font-size:9px; }
