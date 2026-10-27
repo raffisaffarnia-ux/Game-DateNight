@@ -881,3 +881,5 @@ body:has(.profile-dialog[open]) {
 .lobby-card .player-look { border-radius:14px; clip-path:inset(0 round 14px); }
 .lobby-card .player-look > .pixel-art:not(.player-badge) { position:relative; inset:auto; flex:none; }
 .lobby-card .player-look > .player-badge { inset:auto 10px 8px auto; }
+
+.lobby-card .player-look { justify-content:flex-start; padding-left:14px; }
