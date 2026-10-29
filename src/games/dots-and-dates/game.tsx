@@ -172,7 +172,7 @@ function lineCoordinates(edge: number) {
 
 function edgeLabel(edge: number) {
   const coords = lineCoordinates(edge);
-  return "Linie bei Punkt " + Math.round((coords.x1 - BOARD_START) / CELL + 1) + ", " + Math.round((coords.y1 - BOARD_START) / CELL + 1) + " setzen";
+  return (edge < 20 ? "Waagrechte" : "Senkrechte") + " Linie bei Punkt " + Math.round((coords.x1 - BOARD_START) / CELL + 1) + ", " + Math.round((coords.y1 - BOARD_START) / CELL + 1) + " setzen";
 }
 
 function lineOwner(state: Partial<DotsState>, edge: number, players: GamePlayer[]) {

@@ -59,7 +59,7 @@ export function serveFlipperBall(state: FlipperState): FlipperState {
   return {
     ...state,
     ballActive: true,
-    ball: { x: 420, y: 590, vx: -95, vy: -390 },
+    ball: { x: 420, y: 590, vx: -95, vy: -760 },
     lastEvent: "serve",
     eventId: state.eventId + 1,
   };
@@ -128,8 +128,6 @@ export function stepFlipper(state: FlipperState, input: FlipperInput, playerIds:
   let next: FlipperState = { ...state, ball: { ...state.ball }, tick: state.tick + 1, leftHeld: input.left, rightHeld: input.right };
   if (next.tick - next.lastHitTick > 180) next.combo = 0;
   if (!state.ballActive) return next;
-  if (input.left) next.lastFlipper = "left";
-  else if (input.right) next.lastFlipper = "right";
   next.rampCooldown = Math.max(0, next.rampCooldown - 1);
   next.targetCooldown = Math.max(0, next.targetCooldown - 1);
   next.ball.vy = Math.min(780, next.ball.vy + 560 * FLIPPER_STEP_SECONDS);

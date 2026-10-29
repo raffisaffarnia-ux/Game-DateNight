@@ -10,19 +10,15 @@ import { moralCards } from "./content";
 const categories = ["Relationship","Loyalty","Money","Family","Friendship","Career","Truth","Privacy","Future","Technology","Social Media"];
 const categoryLabel: Record<string,string> = { Mixed:"Gemischt", Relationship:"Beziehung", Loyalty:"Loyalität", Money:"Geld", Family:"Familie", Friendship:"Freundschaft", Career:"Beruf", Truth:"Wahrheit", Privacy:"Privatsphäre", Future:"Zukunft", Technology:"Technologie", "Social Media":"Soziale Medien" };
 export function MoralSyncSetup({ session, command, busy }: Pick<GameViewProps,"session"|"command"|"busy">) {
-  const [count,setCount]=useState(session.total_rounds || 10);
-  const [selected,setSelected]=useState<string[]>(()=>session.state.category&&session.state.category!=="Mixed"?String(session.state.category).split(", "):["Mixed"]);
-  const [deep,setDeep]=useState(session.state.deep_mode===true);
+  const count=session.total_rounds || 10;
+  const selected=session.state.category&&session.state.category!=="Mixed"?String(session.state.category).split(", "):["Mixed"];
+  const deep=session.state.deep_mode===true;
+  const locked=busy||session.ready.length>0;
   async function configure(nextCount=count,nextSelected=selected,nextDeep=deep) {
-    const eligible=moralCards.filter(card=>(nextSelected.includes("Mixed")||nextSelected.includes(card.category))&&(!nextDeep||card.deep)).length;
-    const effectiveCount=Math.max(1,Math.min(nextCount,eligible));
-    setCount(effectiveCount); setSelected(nextSelected); setDeep(nextDeep);
-    const saved=await command("configure",{count:effectiveCount,categories:nextSelected,deep_mode:nextDeep});
-    if(!saved){
-      setCount(session.total_rounds||10);
-      setSelected(session.state.category&&session.state.category!=="Mixed"?String(session.state.category).split(", "):["Mixed"]);
-      setDeep(session.state.deep_mode===true);
-    }
+    const topics=nextSelected.length?nextSelected:["Mixed"];
+    const eligible=moralCards.filter(card=>(topics.includes("Mixed")||topics.includes(card.category))&&(!nextDeep||card.deep)).length;
+    if(!eligible)return;
+    await command("configure",{count:Math.max(1,Math.min(nextCount,eligible)),categories:topics,deep_mode:nextDeep});
   }
   function toggle(category:string){
     const next=category==="Mixed"?["Mixed"]:selected.includes("Mixed")?[category]:selected.includes(category)?selected.filter(x=>x!==category):[...selected,category];
@@ -32,9 +28,9 @@ export function MoralSyncSetup({ session, command, busy }: Pick<GameViewProps,"s
     <span className="eyebrow">RAUM FÜR ZWISCHENTÖNE</span>
     <h2>Wie ähnlich sind eure ersten Impulse?</h2>
     <p>Wählt Themen und Rundenzahl. Es gibt kein Richtig oder Falsch.</p>
-    <div className="setup-control"><span>Runden</span><div className="segmented-control">{[...new Set([5,10,15,count])].sort((a,b)=>a-b).map(n=><button key={n} className={count===n?"selected":""} aria-pressed={count===n} disabled={busy} onClick={()=>configure(n)}>{n}</button>)}</div></div>
-    <div className="moral-categories"><span>Themen</span><div className="category-pills">{["Mixed",...categories].map(x=><button key={x} className={selected.includes(x)?"selected":""} aria-pressed={selected.includes(x)} disabled={busy} onClick={()=>toggle(x)}>{categoryLabel[x]}</button>)}</div></div>
-    <label className="toggle-row"><input type="checkbox" checked={deep} disabled={busy} onChange={e=>configure(count,selected,e.target.checked)}/><span><strong>Tiefgang</strong><small>Nur längere Szenarien</small></span></label>
+    <div className="setup-control"><span>Runden</span><div className="segmented-control">{[...new Set([5,10,15,count])].sort((a,b)=>a-b).map(n=><button key={n} className={count===n?"selected":""} aria-pressed={count===n} disabled={locked} onClick={()=>configure(n)}>{n}</button>)}</div></div>
+    <div className="moral-categories"><span>Themen</span><div className="category-pills">{["Mixed",...categories].map(x=><button key={x} className={selected.includes(x)?"selected":""} aria-pressed={selected.includes(x)} disabled={locked} onClick={()=>toggle(x)}>{categoryLabel[x]}</button>)}</div></div>
+    <label className="toggle-row"><input type="checkbox" checked={deep} disabled={locked} onChange={e=>configure(count,selected,e.target.checked)}/><span><strong>Tiefgang</strong><small>Nur längere Szenarien</small></span></label>
     <p className="field-note">Einstellungen werden direkt übernommen.</p>
   </div>;
 }
@@ -70,7 +66,7 @@ export function MoralSync({ session, players, userId, command, busy, replay }: G
       <Button disabled={!choice||!!ownAnswer||busy} onClick={()=>submit("lock",{choice})}><LockKeyhole size={16}/>{ownAnswer?"Entscheidung gespeichert":"Entscheidung bestätigen"}</Button>
       {ownAnswer&&<p className="field-note"><Check size={14}/> Deine Entscheidung ist privat gespeichert. Warte auf deinen Lieblingsmenschen …</p>}
     </>}
-    {phase==="discussion"&&<Card className="moral-discussion"><span className="eyebrow">{categoryLabel[card.category] || card.category} · BEIDE HABEN ENTSCHIEDEN</span><h2>{answers[0]?.value.choice===answers[1]?.value.choice?"Ihr denkt ähnlich":"Andere Sichtweise"}</h2><div className="moral-reveals">{players.map(player=>{const answer=answers.find(x=>x.user_id===player.user_id);const key=String(answer?.value.choice||"A");return <div key={player.user_id}><span>{player.user_id===userId?"DU":player.name.toUpperCase()}</span><strong>{key}</strong><p>{card.options[key.charCodeAt(0)-65]}</p></div>})}</div><h3>Was hat deine Entscheidung geprägt?</h3><ul>{(card?.discuss || []).map(item=><li key={item}>{item}</li>)}</ul><Button disabled={busy||inputs.some(x=>x.round===session.round&&x.kind==="next"&&x.user_id===userId)} onClick={()=>submit("continue")}><ArrowRight size={16}/> Nächstes Dilemma</Button><p className="field-note">Geht weiter, wenn ihr beide bereit seid.</p></Card>}
+    {phase==="discussion"&&<Card className="moral-discussion"><span className="eyebrow">{categoryLabel[card.category] || card.category} · BEIDE HABEN ENTSCHIEDEN</span><h2>{answers[0]?.value.choice===answers[1]?.value.choice?"Ihr denkt ähnlich":"Andere Sichtweise"}</h2><div className="moral-reveals">{players.map(player=>{const answer=answers.find(x=>x.user_id===player.user_id);const key=String(answer?.value.choice||"A");return <div key={player.user_id}><span>{player.user_id===userId?"DU":player.name.toUpperCase()}</span><strong>{key}</strong><p>{card.options[key.charCodeAt(0)-65]}</p></div>})}</div>{session.state.mind_done === true && <p className="field-note">Eure Reflexion ist gespeichert. Bereit für die nächste Frage?</p>}<h3>Was hat deine Entscheidung geprägt?</h3><ul>{(card?.discuss || []).map(item=><li key={item}>{item}</li>)}</ul><Button disabled={busy||inputs.some(x=>x.round===session.round&&x.kind==="next"&&x.user_id===userId)} onClick={()=>submit("continue")}><ArrowRight size={16}/> {session.round % 3 === 1 && !session.state.mind_done ? "Kurz reflektieren" : session.round + 1 === session.total_rounds ? "Ergebnis ansehen" : "Nächstes Dilemma"}</Button><p className="field-note">Geht weiter, wenn ihr beide bereit seid.</p></Card>}
     {phase==="change"&&<Card className="moral-discussion"><span className="eyebrow">NACH DEM GESPRÄCH</span><h2>Meine Meinung ändern</h2><p>Hat die Sicht deines Lieblingsmenschen etwas verändert?</p><div className="moral-options">{[["stay","Ich bleibe bei meiner Sicht"],["convinced","Mein Lieblingsmensch hat mich umgestimmt"],["unsure","Ich bin mir weniger sicher"]].map(([id,label])=><button key={id} className={`moral-option ${choice===id?"chosen":""}`} disabled={!!ownMind||busy} onClick={()=>setChoice(id)}><span>{choice===id?<Check size={16}/>:<Sparkles size={16}/>}</span><p>{label}</p></button>)}</div><Button disabled={!choice||!!ownMind||busy} onClick={()=>submit("change_mind",{choice})}>{ownMind?"Privat gespeichert":"Reflexion festhalten"}</Button>{ownMind&&<p className="field-note">Deine Reflexion bleibt privat, bis ihr beide gewählt habt.</p>}</Card>}
     {error&&<p className="notice" role="status">{error}</p>}
   </div>;

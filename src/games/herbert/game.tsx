@@ -634,15 +634,15 @@ export function Herbert(p: PlayProps) {
             Noch nicht
           </Button>
           <Button
-            onClick={() => {
-              confirm.current?.close();
-              void act("call");
+            onClick={async () => {
+              if (await act("call")) confirm.current?.close();
             }}
             disabled={unavailable}
           >
             FERTIG! rufen
           </Button>
         </div>
+        {message && <p role="status">{message}</p>}
       </dialog>
     </div>
   );

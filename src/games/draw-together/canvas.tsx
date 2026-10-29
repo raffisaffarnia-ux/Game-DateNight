@@ -86,8 +86,8 @@ export function DrawingCanvas({
       className="drawing-canvas"
       aria-label={
         disabled
-          ? "Shared drawing canvas, view only"
-          : "Shared canvas. Draw with a mouse, touch or stylus."
+          ? "Gemeinsame Zeichnung, nur ansehen"
+          : "Gemeinsame Leinwand. Zeichne mit Maus, Finger oder Stift."
       }
       role="img"
       onPointerDown={(e) => {

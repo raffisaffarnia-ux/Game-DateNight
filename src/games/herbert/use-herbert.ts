@@ -58,6 +58,16 @@ export function useHerbert(p: GameViewProps) {
         payload,
       };
       try {
+        // FERTIG is legal even off-turn. A partner becoming ready or moving must
+        // not silently reject the confirmation because its displayed revision lags.
+        if (action === "call") {
+          const { data: fresh, error: readError } = await getSupabase()
+            .from("game_sessions").select("revision,state").eq("id", request.target).single();
+          if (readError) throw readError;
+          if (fresh.state.round_no !== (current.session.state as unknown as HerbertState).round_no)
+            throw new Error("Eine neue Runde hat begonnen. Bitte prüfe deine Karten.");
+          request.expected_revision = fresh.revision;
+        }
         const { data, error } = await getSupabase().rpc(
           "herbert_action",
           request,

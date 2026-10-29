@@ -13,7 +13,7 @@ export function RankDrawSetup({
   command,
   busy,
 }: Pick<GameViewProps, "session" | "command" | "busy">) {
-  const [count, setCount] = useState(session.total_rounds || 6);
+  const count = session.total_rounds || 6;
   return (
     <div className="rank-setup">
       <span className="eyebrow">RANK</span>
@@ -27,9 +27,8 @@ export function RankDrawSetup({
               key={value}
               className={count === value ? "selected" : ""}
               aria-pressed={count === value}
-              disabled={busy}
+              disabled={busy || session.ready.length > 0}
               onClick={() => {
-                setCount(value);
                 void command("configure", { count: value });
               }}
             >

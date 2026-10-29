@@ -720,3 +720,17 @@ body:has(.play-page) {
   .play-page .ready-card .new-game-setup { max-height: 42dvh; }
   .play-page .ready-card .new-game-setup .category-pills button { min-height: 26px; font-size: 10px; }
 }
+
+/* Keep the result and its replay action inside short phone viewports. */
+@media (max-width: 700px) {
+  .game-content .flipper-result-scores { margin: 6px 0; gap: 8px; }
+  .game-content .flipper-result-scores > div { flex-direction: column; align-items: flex-start; gap: 4px; padding: 10px; min-width: 0; }
+  .game-content .flipper-result-scores > div span { overflow-wrap: anywhere; }
+}
+@media (max-height: 650px) {
+  .play-page .game-content > .game-results { gap: 6px; padding-block: 8px; }
+  .play-page .game-results .result-trophy { display: none; }
+  .play-page .game-results > .button { margin-top: 6px; flex-shrink: 0; }
+  .play-page .game-results > p { font-size: 14px; line-height: 1.35; }
+  .play-page .game-results > h2 { font-size: 23px; line-height: 1.1; }
+}
