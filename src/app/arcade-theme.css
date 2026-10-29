@@ -304,3 +304,21 @@ body:has(.play-page),.game-shell[data-game] {
  .play-page .game-content .rank-reveal > p:not(.field-note) { display:none; }
  .play-page .game-content .ranking-list { gap:4px; }
 }
+
+/* On short phones, keep settings instead of clipping them behind the ready panel. */
+@media (max-width:700px) and (max-height:850px) {
+  .play-page .game-shell[data-game="moral-sync"] .ready-card .new-game-setup {
+    flex:0 0 auto; max-height:none; gap:8px; overflow:visible;
+  }
+  .game-shell[data-game="moral-sync"] .ready-card .new-game-setup > .eyebrow,
+  .game-shell[data-game="moral-sync"] .ready-card .new-game-setup > h2,
+  .game-shell[data-game="moral-sync"] .ready-card .new-game-setup > p,
+  .game-shell[data-game="moral-sync"] .ready-card > .ready-emblem,
+  .game-shell[data-game="moral-sync"] .ready-card > .ready-players { display:none; }
+  .game-shell[data-game="moral-sync"] .ready-card .setup-control { flex-direction:row; align-items:center; gap:8px; }
+  .game-shell[data-game="moral-sync"] .ready-card .segmented-control { width:auto; flex:1; }
+  .game-shell[data-game="moral-sync"] .ready-card .toggle-row { padding:6px 8px; min-height:40px; }
+  .game-shell[data-game="moral-sync"] .ready-card .toggle-row small { display:none; }
+  .play-page .game-shell[data-game="moral-sync"] .ready-card .category-pills { gap:4px; }
+  .play-page .game-shell[data-game="moral-sync"] .ready-card .category-pills button { min-height:32px; padding-inline:8px; font-size:11px; }
+}
