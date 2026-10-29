@@ -146,7 +146,7 @@ export function DotsDates({ session, players, userId, online, connected, busy, r
       <div className="dots-turn-copy">
         <Flag size={16} />
         <span>{whoseTurn ? (whoseTurn.user_id === userId ? "Du bist am Zug" : whoseTurn.name + " ist am Zug") : "Zug wird geladen"}</span>
-        <small>{lastPlayer && state.last_move !== null && state.last_move !== undefined ? (lastPlayer.user_id === userId ? "Du" : lastPlayer.name) + " hat die letzte Linie gesetzt" + (state.last_box !== null && state.last_box !== undefined ? " · Feld geschlossen · Extra-Zug" : "") : "Schließt ihr ein Feld, bleibt ihr am Zug."}</small>
+        <small>{lastPlayer && state.last_move !== null && state.last_move !== undefined ? (lastPlayer.user_id === userId ? "Du hast" : lastPlayer.name + " hat") + " die letzte Linie gesetzt" + (state.last_box !== null && state.last_box !== undefined ? " · Feld geschlossen · Extra-Zug" : "") : "Schließt ihr ein Feld, bleibt ihr am Zug."}</small>
       </div>
       <span className="dots-card-legend"><MessageCircle size={14} aria-hidden="true" /> Gesprächskarte</span>
       <span className={"dots-connection " + (connected && online.length === 2 ? "is-ready" : "")}><i />{connected && online.length === 2 ? "Beide verbunden" : "Warte auf Verbindung"}</span>
