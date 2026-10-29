@@ -56,7 +56,7 @@ export function useSession(roomId: string, sessionId: string) {
       } catch {
         if (!disposed)
           setError(
-            "Could not restore this game. Check your connection and retry.",
+            "Das Spiel konnte nicht geladen werden. Prüfe deine Verbindung und versuche es erneut.",
           );
       } finally {
         pending = false;

@@ -6,7 +6,7 @@ import { AnswerForm } from "../shared/shell";
 import { Button, Card, Loading } from "@/components/ui";
 import { Flame, Sun } from "lucide-react";
 import { RoundMoment } from "../shared/effects";
-export function DailyUs({ session, players, userId }: GameViewProps) {
+export function DailyUs({ session, players, userId, replay, busy }: GameViewProps & { replay: () => void }) {
   const daily = useDaily(session.room_id);
   const dateLabel = (day: string) =>
     new Intl.DateTimeFormat("de", {
@@ -65,6 +65,7 @@ export function DailyUs({ session, players, userId }: GameViewProps) {
           <>
             <RoundMoment title="Ein Tag näher." />
             {renderAnswers(current)}
+            {session.state.wheel_mode === true && <Button disabled={busy} onClick={replay}>Neues Spiel drehen</Button>}
           </>
         ) : mine ? (
           <div role="status">

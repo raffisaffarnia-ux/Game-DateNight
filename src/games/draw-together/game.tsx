@@ -100,7 +100,7 @@ export function DrawTogether(props: GameViewProps & { replay: () => void }) {
           {guessing
             ? canDraw
               ? `Zeichne: ${word || "Lädt …"}`
-              : `Errate die Zeichnung von ${artist?.name}s Zeichnung`
+              : `Errate die Zeichnung von ${artist?.name}`
             : "Eine Leinwand. Zwei Ideen."}
         </h2>
         {!guessing && session.status === "playing" && (

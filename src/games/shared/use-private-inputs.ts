@@ -17,17 +17,32 @@ export function usePrivateInputs(session: GameSession) {
   const [error, setError] = useState("");
   useEffect(() => {
     let active = true;
-    void getSupabase()
-      .from("couple_game_inputs")
-      .select("round,user_id,kind,value,revealed,created_at")
-      .eq("session_id", session.id)
-      .then(({ data, error: queryError }) => {
-        if (!active) return;
-        setError(queryError ? "Der gemeinsame Spielstand konnte nicht vollständig geladen werden." : "");
-        if (data) setInputs(data as PrivateInput[]);
-      });
+    let retry: ReturnType<typeof setTimeout> | undefined;
+    let pending = false;
+    const refresh = async () => {
+      if (!active || pending) return;
+      pending = true;
+      if (retry) clearTimeout(retry);
+      try {
+        const { data, error: queryError } = await getSupabase()
+          .from("couple_game_inputs")
+          .select("round,user_id,kind,value,revealed,created_at")
+          .eq("session_id", session.id);
+        if (queryError) throw queryError;
+        if (active) { setInputs(data as PrivateInput[]); setError(""); }
+      } catch {
+        if (active) {
+          setError("Der gemeinsame Spielstand wird erneut geladen …");
+          retry = setTimeout(() => void refresh(), 2500);
+        }
+      } finally { pending = false; }
+    };
+    void refresh();
+    window.addEventListener("online", refresh);
     return () => {
       active = false;
+      if (retry) clearTimeout(retry);
+      window.removeEventListener("online", refresh);
     };
   }, [session.id, session.revision]);
   return { inputs, error };
