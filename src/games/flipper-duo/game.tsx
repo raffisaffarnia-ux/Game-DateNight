@@ -588,8 +588,9 @@ function drawFlipperTable(ctx: CanvasRenderingContext2D, state: FlipperState | n
   ctx.fillStyle = "#c2a15f";
   ctx.fillRect(56, 496, 58, 6); ctx.fillRect(366, 496, 58, 6);
   const leftHeld = state?.leftHeld || false, rightHeld = state?.rightHeld || false;
-  drawFlipper(ctx, 164, 604, leftHeld ? 230 : 86, leftHeld ? 556 : 616, "#db8273");
-  drawFlipper(ctx, 316, 604, rightHeld ? 250 : 394, rightHeld ? 556 : 616, "#78bba7");
+  ctx.strokeStyle="#a0aaa0"; ctx.lineWidth=7; ctx.beginPath(); ctx.moveTo(35,500); ctx.lineTo(155,585); ctx.moveTo(445,500); ctx.lineTo(325,585); ctx.stroke();
+  drawFlipper(ctx, 164, 604, 230, leftHeld ? 570 : 630, "#db8273");
+  drawFlipper(ctx, 316, 604, 250, rightHeld ? 570 : 630, "#78bba7");
   ctx.fillStyle = "#101c18";
   ctx.fillRect(182, 660, 116, 20);
   ctx.fillStyle = "#745342"; ctx.font = "10px monospace";

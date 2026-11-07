@@ -6,7 +6,8 @@ test("new sessions never reuse allocated questions, including another room with 
   const { db, as, room, open } = await database();
   try {
     const seen = new Set<string>();
-    for (let i = 0; i < 15; i++) {
+    const available=(await db.query<{n:number}>("select count(*)::integer n from public.game_content where game='this-or-that' and selectable")).rows[0].n;
+    for (let i = 0; i < Math.floor(available/10)-1; i++) {
       const id = await open("this-or-that");
       const { question_ids } = (
         await db.query<{ question_ids: string[] }>(
@@ -44,6 +45,7 @@ test("new sessions never reuse allocated questions, including another room with 
       )
     ).rows[0].question_ids;
     assert.ok(questions.every((q) => !seen.has(q)));
+    await assert.rejects(db.query("select public.open_game($1,'this-or-that',true)",[second]),/bereits gespielt/);
     await assert.rejects(db.query("select * from private.question_history"));
     await as(2);
     await assert.rejects(

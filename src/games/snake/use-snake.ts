@@ -78,7 +78,7 @@ export function useSnake({
         accept(data.session);
         setError("");
       } catch {
-        if (alive.current) setError("Reconnecting to the game…");
+        if (alive.current) setError("Verbindung zum Spiel wird wiederhergestellt …");
       } finally {
         pending.current = false;
       }

@@ -6,6 +6,10 @@ import { database, users } from "./database.ts";
 
 test("Herbert: authoritative two-player lifecycle, privacy and edge cases", async (t) => {
   const { db, as, open, action: generic, room } = await database();
+  // These edge-case fixtures deliberately use partial decks. The full-deck invariant
+  // is exercised independently in gameplay-polish.test.ts with real dealt games.
+  await db.exec("reset role; alter table private.herbert_games drop constraint herbert_unique_deck");
+  await as(0);
   let sid = await open("herbert");
   const session = async () =>
     (

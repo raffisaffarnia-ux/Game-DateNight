@@ -105,16 +105,6 @@ function PlayingCard({
     </button>
   );
 }
-function TurnTimer({ deadline }: { deadline: string | null | undefined }) {
-  const [now, setNow] = useState(Date.now());
-  useEffect(() => { const id = setInterval(() => setNow(Date.now()), 100); return () => clearInterval(id); }, []);
-  const left = deadline ? Math.max(0, Math.min(20, (Date.parse(deadline) - now) / 1000)) : 20;
-  return <div className={"hb-turn-timer " + (left <= 5 ? "is-urgent" : "")}>
-    <span>{deadline ? "Zugzeit" : "Bereit, wenn ihr es seid"}</span>
-    <progress max="20" value={left} aria-label="Verbleibende Zugzeit" />
-    <strong>{deadline ? Math.ceil(left) + " s" : "20 s pro Zug"}</strong>
-  </div>;
-}
 export function Herbert(p: PlayProps) {
   const { state: s, drawn, peek, busy, message, act } = useHerbert(p);
   const [selectedHand, setSelectedHand] = useState<number | null>(null);
@@ -331,7 +321,7 @@ export function Herbert(p: PlayProps) {
       ref={table}
       className={
         "herbert-table " +
-        (s.caller ? "hb-last-round " : "") +
+        (s.caller ? "hb-last-round " : "") + (myTurn && !finished ? "hb-your-turn " : "") +
         (won ? "hb-victory" : "")
       }
     >
@@ -355,7 +345,7 @@ export function Herbert(p: PlayProps) {
           <CircleHelp size={22} />
         </button>
       </div>
-      {!finished && <TurnTimer deadline={s.turn_deadline} />}
+      {!finished && <div className="hb-turn-banner" role="status"><strong>{s.phase === "peek" ? "Merkt euch eure Karten" : myTurn ? "Du bist am Zug" : `${name(s.turn_user)} ist am Zug`}</strong><span>{s.phase === "peek" ? "Danach bestätigt ihr beide." : myTurn ? s.phase === "drawn" ? "Tausche eine eigene Karte oder drücke Weiter" : "Wähle Nachziehstapel oder Ablage · ohne Zeitlimit" : "Dein Lieblingsmensch überlegt · ohne Zeitlimit"}</span></div>}
       <aside className="hb-scoreboard" aria-label="Serienwertung">
         <strong>
           Runde {round}
@@ -582,7 +572,7 @@ export function Herbert(p: PlayProps) {
           <X />
         </button>
         <h2>So spielt ihr Herbert</h2>
-        <p>Gezogene Karten siehst nur du. Mit Weiter legst du sie offen ab und beendest deinen Zug. Du hast pro Zug 20 Sekunden. Wähle Nachziehen oder die offene Ablage. Läuft die Zeit ab, wird eine gezogene Karte abgelegt und dein Zug endet.</p>
+        <p>Gezogene Karten siehst nur du. Mit Weiter legst du sie offen ab und beendest deinen Zug. Für deinen Zug gibt es kein Zeitlimit. Wähle Nachziehen oder die offene Ablage.</p>
         <div className="hb-rule-cards" aria-hidden="true">
           <span>?</span>
           <span>?</span>

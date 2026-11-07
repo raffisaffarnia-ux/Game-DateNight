@@ -322,3 +322,97 @@ body:has(.play-page),.game-shell[data-game] {
   .play-page .game-shell[data-game="moral-sync"] .ready-card .category-pills { gap:4px; }
   .play-page .game-shell[data-game="moral-sync"] .ready-card .category-pills button { min-height:32px; padding-inline:8px; font-size:11px; }
 }
+/* Quality pass: generous desktop layouts, compact but complete phone controls. */
+.hb-turn-banner { grid-column:1/-1; display:flex; justify-content:center; align-items:center; flex-wrap:wrap; gap:8px 18px; min-height:48px; padding:8px 16px; border:1px solid #667c72; border-radius:12px; color:#d4dfd5; background:#10221f; }
+.hb-turn-banner strong { font-size:clamp(16px,2vw,23px); }
+.hb-turn-banner span { font-size:12px; }
+.hb-your-turn .hb-turn-banner { color:#ffdf9d; border-color:#cfb573; background:#293b2b; box-shadow:0 0 24px #dcbd7420; }
+.play-page .game-content .ranking-list li { grid-template-columns:28px 26px minmax(0,1fr) auto; gap:5px; transition:border-color .16s,background .16s; }
+.play-page .game-content .ranking-list li .rank-drag-handle { width:28px; height:44px; touch-action:none; cursor:grab; color:#c8b780; border:0; background:transparent; }
+.play-page .game-content .ranking-list li.rank-moved { border-color:#c8b780; background:#31413b; }
+.know-subject { color:#f1d491; border:1px solid #bca779; padding:8px 14px; }
+.drawing-category { display:flex; align-items:center; justify-content:center; gap:12px; font-size:13px; }
+.drawing-category select { max-width:65%; padding:9px; background:#203630; color:#f5e9d1; border:1px solid #6b7b6b; border-radius:8px; }
+.dots-answer-owner { font-size:13px; line-height:1.35; color:#e6c888; }
+.dots-conversation form { width:100%; }
+.dots-conversation label { display:flex; flex-direction:column; gap:6px; text-align:left; font-size:13px; }
+.dots-conversation input { width:100%; border:1px solid #9b9876; border-radius:8px; padding:12px; background:#142b27; color:#fff4dc; font-size:16px; }
+.dots-prompt-actions { display:flex; gap:8px; justify-content:center; margin-top:12px; }
+.dots-shared-answer { margin:4px 0; padding:12px; background:#ffffff0b; border-radius:8px; overflow-wrap:anywhere; }
+.dots-shared-answer p { margin:5px 0; }
+.dots-conversation > small { font-size:10px; opacity:.7; }
+@media(max-width:700px) and (max-height:740px) {
+ .hb-turn-banner { min-height:36px; padding:5px; gap:3px; }
+ .hb-turn-banner strong { font-size:15px; }
+ .hb-turn-banner span { font-size:10px; }
+ .play-page .game-shell[data-game="moral-sync"] .ready-card { padding:10px; gap:6px; justify-content:center; }
+ .play-page .game-shell[data-game="moral-sync"] .ready-card .new-game-setup { gap:5px; padding:0; margin:0; }
+ .play-page .game-shell[data-game="moral-sync"] .ready-card .toggle-row { min-height:34px; padding:4px 8px; }
+ .play-page .game-shell[data-game="moral-sync"] .ready-card .category-pills button { min-height:29px; }
+ .play-page .game-shell[data-game="moral-sync"] .ready-card > .field-note { margin:0; font-size:10px; }
+ .dots-conversation { padding:12px; gap:6px; }
+ .dots-conversation h2 { font-size:18px; margin:4px 0; }
+ .dots-answer-owner { margin:4px 0; font-size:11px; }
+ .dots-prompt-actions .button { min-height:40px; padding:8px; font-size:11px; }
+}
+@media(prefers-reduced-motion:reduce) {
+ .rank-moved { transition:none!important; }
+}
+
+.play-page .game-shell[data-game="draw-together"] .game-content { width:100%; max-width:1500px; }
+.play-page .game-shell[data-game="draw-together"] .drawing-canvas { width:100%; height:auto; max-height:none; min-height:80px; aspect-ratio:auto; flex:1 1 0; }
+@media(max-width:700px){
+ .play-page .game-shell[data-game="draw-together"] .drawing-toolbar { gap:5px; padding:5px; }
+ .play-page .game-shell[data-game="draw-together"] .drawing-toolbar label { font-size:10px; }
+}
+@media(max-width:700px) and (max-height:740px) {
+ .play-page .game-shell .game-player { grid-template-columns:minmax(0,1fr) 6px; min-height:28px; height:28px; padding:3px 8px; gap:5px; }
+ .play-page .game-shell .game-player > .player-look,.play-page .game-shell .game-player > small { display:none; }
+ .play-page .game-shell .game-player > span:not(.presence-dot) { grid-column:1; grid-row:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:11px; }
+ .play-page .game-shell .game-player > .presence-dot { grid-column:2; grid-row:1; }
+ .play-page .moral-game .game-progress { gap:5px; flex-wrap:wrap; }
+ .play-page .moral-game .moral-round { display:none; }
+ .play-page .moral-game .skip-question-button { min-height:30px; width:auto; padding:4px 8px; font-size:11px; }
+ .play-page .moral-game .game-progress progress { flex-basis:100%; height:4px; }
+ .play-page .moral-game .moral-discussion { gap:6px; }
+ .play-page .moral-game .moral-discussion > .eyebrow { font-size:9px; }
+ .play-page .moral-game .moral-discussion h2 { font-size:18px; margin:0; }
+ .play-page .moral-game .moral-reveals > div { padding:6px; }
+ .play-page .moral-game .moral-reveals strong { font-size:18px; margin:2px 0; }
+ .play-page .moral-game .moral-reveals p { font-size:11px; }
+ .play-page .moral-game .moral-discussion h3 { font-size:13px; }
+ .play-page .moral-game .moral-discussion li { font-size:11px; }
+ .play-page .moral-game .moral-discussion li:not(:first-child) { display:none; }
+ .play-page .moral-game .moral-discussion > .button { min-height:42px; margin-top:0; }
+ .play-page .moral-game .moral-discussion > .field-note { font-size:10px; }
+ .play-page .game-shell[data-game="moral-sync"] .ready-card .new-game-setup { display:flex; flex-direction:column; }
+ .play-page .game-shell[data-game="moral-sync"] .ready-card .toggle-row { flex:none; margin:4px 0; }
+ .play-page .game-shell[data-game="moral-sync"] .ready-card .toggle-row input { min-height:0; width:19px; height:19px; }
+}
+.hb-your-turn .hb-stack.can-draw .hb-card { box-shadow:0 0 0 2px #d6bb7d,0 0 22px #d6bb7d38; }
+@media(max-width:700px) and (max-height:740px) {
+ .play-page .moral-game { gap:5px; }
+ .play-page .moral-game .game-progress { display:grid; grid-template-columns:1fr auto; grid-template-rows:auto 4px; gap:4px; margin:0; height:auto; min-height:0; }
+ .play-page .moral-game .game-progress progress { grid-column:1/-1; width:100%; margin:0; }
+ .play-page .moral-game .moral-scenario { padding:9px 11px; }
+ .play-page .moral-game .moral-scenario h2 { font-size:18px; margin:3px 0 5px; }
+ .play-page .moral-game .moral-scenario p { font-size:12px; line-height:1.25; margin:0; }
+ .play-page .moral-game .moral-scenario .eyebrow { font-size:9px; }
+ .play-page .moral-game .moral-options { gap:4px; flex:none; }
+ .play-page .moral-game .moral-option { min-height:38px; padding:5px 7px; gap:5px; }
+ .play-page .moral-game .moral-option p { font-size:12px; line-height:1.25; margin:0; }
+ .play-page .moral-game > .button { min-height:40px; padding:7px 12px; flex:none; }
+ .play-page .moral-game > .field-note { font-size:10px; line-height:1.2; }
+}
+.game-shell .dots-conversation { display:flex; flex-direction:column; align-items:stretch; gap:10px; background:#22332f; color:#f2e7cf; border:1px solid #ad986b; }
+.game-shell .dots-conversation > .eyebrow { color:#dfbd79; }
+.game-shell .dots-conversation > h2 { color:#f2e7cf; margin:0; }
+.game-shell .dots-conversation > p { margin:0; }
+.game-shell .dots-conversation > .button { align-self:center; flex:none; }
+.game-shell .dots-conversation > small { display:block; color:#c9d1c6; line-height:1.4; }
+.game-shell .dots-conversation .dots-shared-answer { margin:0; color:#fff1cf; }
+.game-shell .dots-conversation .dots-shared-answer p { color:#e8e2d2; }
+@media(max-width:700px) and (max-height:740px) {
+ .game-shell .dots-conversation { gap:7px; padding:12px; }
+ .game-shell .dots-conversation .dots-shared-answer { padding:8px; }
+}

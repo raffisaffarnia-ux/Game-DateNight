@@ -1,3 +1,4 @@
+import { extraDots } from "../shared/editorial-extras.ts";
 export const DOT_ROWS = 4;
 export const DOT_COLS = 4;
 export const DOT_EDGE_COUNT = 40;
@@ -13,6 +14,7 @@ export type DotsState = {
   conversation_boxes: Record<string, string>;
   pending_prompts?: {id:string;box:number}[];
   active_prompt: string | null;
+  prompt_answer?: string;
   active_prompt_box: number | null;
   last_move: number | null;
   last_player: string | null;
@@ -61,6 +63,8 @@ export const conversationCards: Record<string, string> = {
   dd39: "Wofür sollten wir uns öfter bewusst Zeit nehmen?",
   dd40: "Welche gemeinsame Kleinigkeit macht deinen Alltag schöner?",
 };
+
+Object.assign(conversationCards, Object.fromEntries(extraDots.map((text,i)=>[`dd-de26-${i+1}`,text])));
 
 export function getConversationCard(id: string): string {
   return conversationCards[id] ?? "Diese Gesprächskarte ist gerade nicht verfügbar. Überspringt sie und spielt weiter.";

@@ -1,5 +1,5 @@
 import type { Direction, Position, SnakeState, SnakeMode } from "./types";
-export const GRID = 24;
+export const GRID = 23;
 export const TICK_MS = 360;
 export const MIN_TICK_MS = 120;
 export const SPEED_PER_HEART_MS = 12;

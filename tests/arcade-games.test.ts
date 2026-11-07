@@ -66,14 +66,22 @@ test("Dots & Dates serializes two-player turns, extra moves, fresh cards, comple
     assert.equal((await db.query("select * from public.game_answers where session_id=$1", [id])).rows.length, 0);
     assert.equal((await db.query("select * from public.couple_game_inputs where session_id=$1", [id])).rows.length, 0);
 
+    await as(0);
+    await assert.rejects(dotsAction(db,id,current.revision,"answer_prompt",{prompt_id:current.state.active_prompt,answer:"Fremde Antwort"}),/Feld geschlossen/);
+    await as(1);
+    await dotsAction(db,id,current.revision,"answer_prompt",{prompt_id:current.state.active_prompt,answer:"Ein Spaziergang am See"});
+    current=await session(db,id);
+    await as(0);
+    assert.equal((await session(db,id)).state.prompt_answer,"Ein Spaziergang am See");
     let prompts=1;
     await dotsAction(db, id, current.revision, "dismiss_prompt", { prompt_id: current.state.active_prompt });
+    assert.equal((await session(db,id)).state.prompt_answer,undefined);
     for (let edge = 0; edge < 40; edge++) {
       current = await session(db, id);
       if (current.status === "finished") break;
       while (current.state.phase === "prompt") {
         prompts++;
-        await as(0);
+        await as(current.state.last_player === users[0] ? 0 : 1);
         await dotsAction(db, id, current.revision, "dismiss_prompt", { prompt_id: current.state.active_prompt });
         current = await session(db, id);
       }
@@ -85,7 +93,7 @@ test("Dots & Dates serializes two-player turns, extra moves, fresh cards, comple
     current = await session(db, id);
     while (current.state.phase === "prompt") {
         prompts++;
-      await as(0);
+      await as(current.state.last_player === users[0] ? 0 : 1);
       await dotsAction(db, id, current.revision, "dismiss_prompt", { prompt_id: current.state.active_prompt });
       current = await session(db, id);
     }
@@ -178,3 +186,4 @@ test("Flipper Duo starts once, fences the host, pauses and persists only the fin
     await db.close();
   }
 });
+

@@ -1,3 +1,4 @@
+import { editorialChoices, editorialKnow, editorialTalk, editorialWords } from "./editorial-content.ts";
 import type { Question } from "./types.ts";
 import { germanText } from "./german-content.ts";
 import {
@@ -521,6 +522,21 @@ for (const [bank, extra] of [
     }
   }
 }
+for (const [bank, extras] of [[thisOrThatQuestions,editorialChoices],[knowMeQuestions,editorialKnow],[deepTalkQuestions,editorialTalk],[drawingWords,editorialWords]]) {
+  const key = (q: Question) => q.optionA ? [q.optionA,q.optionB].sort().join("|").toLowerCase() : q.prompt.toLowerCase();
+  const existing = new Set(bank.map(key));
+  for (const q of extras) if (!existing.has(key(q))) {bank.push(q);existing.add(key(q));}
+}
+const dailyCopy: Record<string,string> = {
+  "Worauf freust du dich, das wir gemeinsam tun?": "Auf welche gemeinsame Unternehmung freust du dich gerade?",
+  "Was möchtest du aneinander noch entdecken?": "Was möchtest du noch über mich erfahren?",
+  "Was fühlt sich daran besonders gut an, ein Team zu sein?": "Was magst du daran, dass wir ein Team sind?",
+  "Über welchen Ort bist du froh?": "An welchem Ort fühlst du dich besonders wohl?",
+  "Was gehörte zu deinem perfekten Wochenende?": "Was gehört für dich zu einem perfekten Wochenende?",
+  "Welcher Tag macht dich zufrieden?": "Was muss an einem Tag passieren, damit du abends zufrieden bist?",
+};
+for (const q of dailyQuestions) q.prompt = dailyCopy[q.prompt] || q.prompt;
+
 export const content: Question[] = [
   ...thisOrThatQuestions,
   ...knowMeQuestions,
@@ -528,3 +544,6 @@ export const content: Question[] = [
   ...drawingWords,
   ...dailyQuestions,
 ];
+
+/** Legacy entries remain readable in old sessions; only reviewed prompts enter new decks. */
+export const activeContent = content.filter(q => !q.id.startsWith("fresh-") && (!["this-or-that","do-you-know-me","deep-talk"].includes(q.game) || q.id.startsWith("de26-")));

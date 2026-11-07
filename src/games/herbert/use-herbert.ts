@@ -102,13 +102,7 @@ export function useHerbert(p: GameViewProps) {
     const timer = setInterval(() => void act("settle"), 700);
     return () => clearInterval(timer);
   }, [state.phase, p.connected, act]);
-  useEffect(() => {
-    if (!state.turn_deadline || !p.connected || !["turn", "drawn"].includes(state.phase)) return;
-    const timer = setInterval(() => {
-      if (Date.now() >= Date.parse(state.turn_deadline!)) void act("timeout");
-    }, 500);
-    return () => clearInterval(timer);
-  }, [state.turn_deadline, state.phase, p.connected, act]);
+
   return {
     state,
     drawn: privateDraw?.session === p.session.id && privateDraw.revision === p.session.revision && state.turn_user === p.userId && state.phase === "drawn" ? privateDraw.card : null,

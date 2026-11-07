@@ -17,10 +17,8 @@ test("question banks meet the requested sizes and contain stable unique IDs", ()
     [dailyQuestions, 100],
   ] as const) {
     assert.ok(questions.length >= minimum);
-    assert.equal(
-      new Set(questions.map((q) => q.prompt)).size,
-      questions === thisOrThatQuestions ? 1 : questions.length,
-    );
+    const fingerprints=questions.map(q=>q.optionA ? [q.optionA,q.optionB].sort().join("|") : q.prompt);
+    assert.equal(new Set(fingerprints).size,questions.length);
   }
   assert.equal(new Set(content.map((q) => q.id)).size, content.length);
   assert.ok(
