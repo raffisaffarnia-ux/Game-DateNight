@@ -59,7 +59,7 @@ export function serveFlipperBall(state: FlipperState): FlipperState {
   return {
     ...state,
     ballActive: true,
-    ball: { x: 420, y: 590, vx: -95, vy: -760 },
+    ball: { x: 420, y: 590, vx: -100 - ((state.tick + state.ballsRemaining * 17) % 25), vy: -730 - ((state.tick + state.ballsRemaining * 13) % 35) },
     lastEvent: "serve",
     eventId: state.eventId + 1,
   };
@@ -96,10 +96,19 @@ function flipperCollision(
 ): boolean {
   const ax = side === "left" ? 164 : 316;
   const ay = 604;
-  const bx = side === "left" ? (held ? 230 : 86) : (held ? 250 : 394);
-  const by = held ? 556 : 616;
+  const bx = side === "left" ? 230 : 250;
+  const by = held ? 570 : 630;
   const closest = pointSegmentDistance(ball.x, ball.y, ax, ay, bx, by);
   if (closest.distance > 18 || ball.vy < -40) return false;
+  // A resting paddle is a slope into the drain, not an automatic launcher.
+  // Only pressing the paddle can send a falling ball back into play.
+  if (!held) {
+    ball.x = closest.x + (side === "left" ? 8 : -8);
+    ball.y = closest.y + 19;
+    ball.vx = side === "left" ? 90 : -90;
+    ball.vy = Math.max(180, ball.vy * 0.55);
+    return false;
+  }
   const normalX = side === "left" ? 0.45 : -0.45;
   ball.x = closest.x + normalX * 20;
   ball.y = closest.y - 15;
@@ -130,7 +139,7 @@ export function stepFlipper(state: FlipperState, input: FlipperInput, playerIds:
   if (!state.ballActive) return next;
   next.rampCooldown = Math.max(0, next.rampCooldown - 1);
   next.targetCooldown = Math.max(0, next.targetCooldown - 1);
-  next.ball.vy = Math.min(780, next.ball.vy + 560 * FLIPPER_STEP_SECONDS);
+  next.ball.vy = Math.min(560, next.ball.vy + 560 * FLIPPER_STEP_SECONDS);
   next.ball.x += next.ball.vx * FLIPPER_STEP_SECONDS;
   next.ball.y += next.ball.vy * FLIPPER_STEP_SECONDS;
 
@@ -180,6 +189,15 @@ export function stepFlipper(state: FlipperState, input: FlipperInput, playerIds:
     next.rampCooldown = 90;
   }
 
+  // Lower guides lead falling balls onto the paddles, instead of into an outlane.
+  for (const [ax, ay, bx, by] of [[35,500,155,585],[445,500,325,585]]) {
+    const contact=pointSegmentDistance(next.ball.x,next.ball.y,ax,ay,bx,by);
+    if(contact.distance<13 && next.ball.vy>0) {
+      const left=ax<240;
+      next.ball.x=contact.x+(left?12:-12); next.ball.y=contact.y-10;
+      next.ball.vx=left?130:-130; next.ball.vy=Math.min(220,next.ball.vy);
+    }
+  }
   const hitLeft = flipperCollision(next.ball, "left", input.left);
   const hitRight = !hitLeft && flipperCollision(next.ball, "right", input.right);
   if (hitLeft) {
@@ -190,6 +208,8 @@ export function stepFlipper(state: FlipperState, input: FlipperInput, playerIds:
     next.lastFlipper = "right";
   }
 
+  const speed=Math.hypot(next.ball.vx,next.ball.vy);
+  if(speed>800){next.ball.vx*=800/speed;next.ball.vy*=800/speed;}
   if (next.ball.y > TABLE_HEIGHT - 8) return loseBall(next);
   return next;
 }

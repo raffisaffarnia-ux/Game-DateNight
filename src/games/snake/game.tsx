@@ -271,7 +271,7 @@ export function SnakeGame(props: GameViewProps & { replay: () => void }) {
       >
         <svg
           viewBox={`0 0 ${GRID} ${GRID}`}
-          style={{ "--snake-step-duration": tickIntervalMs(teamScore) + "ms" } as CSSProperties}
+          style={{ "--snake-step-duration": Math.min(100, tickIntervalMs(teamScore) * .35) + "ms" } as CSSProperties}
           role="img"
           aria-label="Gemeinsames Snake-Spielfeld"
         >
@@ -367,16 +367,16 @@ export function SnakeGame(props: GameViewProps & { replay: () => void }) {
         )}
       </div>
       <div className="direction-pad" aria-label="Snake-Steuerung">
-        <Button secondary aria-label="Nach oben" onClick={() => turn("up")}>
+        <Button secondary aria-label="Nach oben" onPointerDown={(e) => { e.preventDefault(); turn("up"); }} onKeyDown={(e) => { if(e.key === "Enter" || e.key === " ") { e.preventDefault(); turn("up"); } }}>
           <ArrowUp />
         </Button>
-        <Button secondary aria-label="Nach links" onClick={() => turn("left")}>
+        <Button secondary aria-label="Nach links" onPointerDown={(e) => { e.preventDefault(); turn("left"); }} onKeyDown={(e) => { if(e.key === "Enter" || e.key === " ") { e.preventDefault(); turn("left"); } }}>
           <ArrowLeft />
         </Button>
-        <Button secondary aria-label="Nach unten" onClick={() => turn("down")}>
+        <Button secondary aria-label="Nach unten" onPointerDown={(e) => { e.preventDefault(); turn("down"); }} onKeyDown={(e) => { if(e.key === "Enter" || e.key === " ") { e.preventDefault(); turn("down"); } }}>
           <ArrowDown />
         </Button>
-        <Button secondary aria-label="Nach rechts" onClick={() => turn("right")}>
+        <Button secondary aria-label="Nach rechts" onPointerDown={(e) => { e.preventDefault(); turn("right"); }} onKeyDown={(e) => { if(e.key === "Enter" || e.key === " ") { e.preventDefault(); turn("right"); } }}>
           <ArrowRight />
         </Button>
       </div>

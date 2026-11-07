@@ -29,6 +29,7 @@ export function DrawingSetup({
           </button>
         ))}
       </div>
+      {session.state.mode === "guess" && <label className="drawing-category">Zeichenaufgaben<select value={String(session.state.drawing_category || "Random")} disabled={busy || session.ready.length > 0} onChange={e => void command("mode", {mode:"guess", category:e.target.value})}>{[["Random","Alles gemischt"],["Tiere","Tiere"],["Dates","Dates & gemeinsame Momente"],["Knifflig","Knifflige Szenen"]].map(([value,label])=><option key={value} value={value}>{label}</option>)}</select></label>}
     </div>
   );
 }

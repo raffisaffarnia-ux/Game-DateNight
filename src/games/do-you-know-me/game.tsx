@@ -1,4 +1,5 @@
 "use client";
+import { editorialGuess } from "../shared/editorial-content";
 import { knowMeQuestions } from "../shared/content";
 import type { GameViewProps } from "../shared/types";
 import { Button, Card } from "@/components/ui";
@@ -8,6 +9,7 @@ import { nativePrediction } from "../shared/native-prompts";
 const possessive = (name: string) => `${name}${/[sxz]$/i.test(name) ? "'" : "s"}`;
 
 const guessPrompt = (prompt: string, name: string, id?: string) => {
+  if (id?.startsWith("de26-know-")) return editorialGuess(id, name) || prompt;
   const fresh = id?.match(/^fresh-know-(\d+)-(\d+)$/);
   if (fresh) return nativePrediction(Number(fresh[1]), Number(fresh[2]), name);
   const prompts: Record<string, string> = {
@@ -115,7 +117,7 @@ export function KnowMe({
               <span>
                 {answers.find((a) => a.round === index)?.accepted ? "✓" : "↔"}
               </span>
-              <span>{knowMeQuestions.find((q) => q.id === id)?.prompt}</span>
+              <span>{editorialGuess(id, players.find(p=>p.seat === index % 2 + 1)?.name || "dein Lieblingsmensch") || knowMeQuestions.find((q) => q.id === id)?.prompt}</span>
             </li>
           ))}
         </ol>
@@ -125,14 +127,14 @@ export function KnowMe({
     <>
       <GameProgress round={session.round} total={session.total_rounds} onSkip={() => void command("skip")} skipDisabled={busy || !!mine || session.status === "round_end"} />
       <Card className="question-stage" key={session.round}>
-        <div className="role-chip">
-          {isSubject ? "Das echte Ich" : "Gedankenleser"}
+        <div className="role-chip know-subject" role="status">
+          {isSubject ? `Du antwortest über dich: ${subject.name}` : `Du rätst über ${subject.name}`}
           <span>{subject.name[0]}</span>
         </div>
         <span className="eyebrow">
           {isSubject ? "ÜBER DICH" : `WIE WÜRDE ${subject.name} ANTWORTEN?`}
         </span>
-        <h2>{isSubject ? question?.prompt : guessPrompt(question?.prompt || "", subject.name, question?.id)}</h2>
+        <h2>{question?.id.startsWith("de26-know-") ? editorialGuess(question.id, subject.name) : isSubject ? question?.prompt : guessPrompt(question?.prompt || "", subject.name, question?.id)}</h2>
         {session.status === "round_end" ? (
           <div className="reveal">
             <div className="answer-pair">

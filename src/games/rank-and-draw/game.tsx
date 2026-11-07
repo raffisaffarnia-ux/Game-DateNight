@@ -1,6 +1,6 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
-import { ArrowDown, ArrowUp, Check, Sparkles } from "lucide-react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { ArrowDown, ArrowUp, Check, GripVertical, Sparkles } from "lucide-react";
 import { Button, Card } from "@/components/ui";
 import { GameProgress, GameResults } from "../shared/shell";
 import { germanCategory } from "../shared/german-content";
@@ -70,15 +70,26 @@ export function RankAndDraw({
     }).length;
     return { matches, total: rounds.length };
   }, [inputs]);
-  function move(index: number, direction: -1 | 1) {
-    setRanking((current) => {
-      const next = [...current];
-      const target = index + direction;
-      if (target < 0 || target >= next.length) return current;
-      [next[index], next[target]] = [next[target], next[index]];
-      return next;
-    });
+  const list=useRef<HTMLOListElement>(null);
+  const before=useRef(new Map<string,number>());
+  const dragged=useRef<string|null>(null);
+  const [moved,setMoved]=useState("");
+  function reorder(from:number,to:number){
+    if(own||busy||from===to||from<0||to<0||to>=ranking.length)return;
+    before.current=new Map(Array.from(list.current?.children||[]).map(el=>[(el as HTMLElement).dataset.item!,el.getBoundingClientRect().top]));
+    setMoved(ranking[from]);
+    setRanking(current=>{const next=[...current];const [item]=next.splice(from,1);next.splice(to,0,item);return next;});
   }
+  function move(index:number,direction:-1|1){reorder(index,index+direction);}
+  useLayoutEffect(()=>{
+    if(window.matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+    for(const el of Array.from(list.current?.children||[])){
+      const old=before.current.get((el as HTMLElement).dataset.item!);
+      if(old!==undefined){const dy=old-el.getBoundingClientRect().top;if(dy)el.animate([{transform:`translateY(${dy}px)`},{transform:"translateY(0)"}],{duration:220,easing:"ease-out"});}
+    }
+    before.current.clear();
+  },[ranking]);
+
   if (session.status === "finished") {
     return (
       <GameResults
@@ -105,10 +116,11 @@ export function RankAndDraw({
         <Card className="question-stage rank-prompt">
           <span className="eyebrow">{germanCategory(set.category)}</span>
           <h2>{set.title}</h2>
-          <p>Sortiere nach deinem Gefühl.</p>
-          <ol className="ranking-list">
+          <p>Ziehe die Elemente oder nutze die Pfeile.</p>
+          <ol className="ranking-list" ref={list}>
             {ranking.map((item, index) => (
-              <li key={item}>
+              <li key={item} data-item={item} data-index={index} className={moved===item?"rank-moved":""}>
+                <button className="rank-drag-handle" aria-label={`${item} ziehen; alternativ Pfeiltasten verwenden`} disabled={!!own||busy} onPointerDown={e=>{e.preventDefault();dragged.current=item;e.currentTarget.setPointerCapture(e.pointerId);}} onPointerMove={e=>{if(!dragged.current)return;const hit=document.elementFromPoint(e.clientX,e.clientY)?.closest<HTMLElement>("li[data-index]");if(hit&&list.current?.contains(hit))reorder(ranking.indexOf(dragged.current),Number(hit.dataset.index));}} onPointerUp={()=>{dragged.current=null;}} onPointerCancel={()=>{dragged.current=null;}} onKeyDown={e=>{if(e.key==="ArrowUp"||e.key==="ArrowDown"){e.preventDefault();move(index,e.key==="ArrowUp"?-1:1);}}}><GripVertical size={18}/></button>
                 <span className="rank-index">{index + 1}</span>
                 <strong>{item}</strong>
                 <div>
@@ -118,6 +130,7 @@ export function RankAndDraw({
               </li>
             ))}
           </ol>
+          <span className="sr-only" role="status">{moved ? `${moved}: Platz ${ranking.indexOf(moved)+1}` : ""}</span>
           <Button disabled={!!own || busy || ranking.length !== 5} onClick={() => void command("lock", { rank: ranking })}>
             <Check size={16} />{own ? "Reihenfolge gespeichert" : "Reihenfolge festlegen"}
           </Button>

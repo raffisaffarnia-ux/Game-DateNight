@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState, type CSSProperties } from "react";
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { Check, CircleHelp, Flag, MessageCircle, SkipForward } from "lucide-react";
 import { Button } from "@/components/ui";
 import { GameResults } from "../shared/shell";
@@ -16,6 +16,8 @@ const DOT_COLORS = ["#de8774", "#79b8a7"];
 export function DotsDates({ session, players, userId, online, connected, busy, replay, refresh }: GameViewProps & { replay: () => void }) {
   const [saving, setSaving] = useState(false);
   const actionLock = useRef(false);
+  const [answer,setAnswer]=useState("");
+  useEffect(()=>setAnswer(""),[session.state.active_prompt]);
   const [error, setError] = useState("");
   const state = session.state as unknown as Partial<DotsState>;
   const validBoard = Array.isArray(state.lines) && state.lines.length === 40 && Array.isArray(state.boxes) && state.boxes.length === 16;
@@ -31,7 +33,7 @@ export function DotsDates({ session, players, userId, online, connected, busy, r
   const winnerId = validBoard ? dotsWinner(gameState) : null;
   const winner = players.find((player) => player.user_id === winnerId);
 
-  async function action(name: "move" | "dismiss_prompt", payload: Record<string, unknown>) {
+  async function action(name: "move" | "dismiss_prompt" | "answer_prompt", payload: Record<string, unknown>) {
     if (!ready || actionLock.current) return;
     actionLock.current = true;
     setSaving(true);
@@ -134,11 +136,9 @@ export function DotsDates({ session, players, userId, online, connected, busy, r
       {state.phase === "prompt" && prompt && <div className="card dots-conversation" role="dialog" aria-labelledby="dots-question">
         <span className="eyebrow"><CircleHelp size={14} /> DATE-NIGHT-KARTE</span>
         <h2 id="dots-question">{prompt}</h2>
-        <p>Beantwortet die Frage laut oder spielt direkt weiter. Eure Antwort wird nicht gespeichert.</p>
-        <div className="dots-prompt-actions">
-          <Button secondary disabled={!ready} onClick={() => void action("dismiss_prompt", { prompt_id: state.active_prompt })}><SkipForward size={15} /> Überspringen</Button>
-          <Button disabled={!ready} onClick={() => void action("dismiss_prompt", { prompt_id: state.active_prompt })}><Check size={16} /> Weiter spielen</Button>
-        </div>
+        <p className="dots-answer-owner">{state.last_player === userId ? "Du hast das Kästchen geschlossen – deine Antwort ist gefragt." : `${lastPlayer?.name || "Dein Lieblingsmensch"} hat das Kästchen geschlossen und antwortet.`}</p>
+        {state.prompt_answer ? <><blockquote className="dots-shared-answer"><strong>{lastPlayer?.name}</strong><p>{state.prompt_answer}</p></blockquote><Button disabled={!ready} onClick={()=>void action("dismiss_prompt",{prompt_id:state.active_prompt})}>Weiter spielen</Button></> : state.last_player === userId ? <form onSubmit={e=>{e.preventDefault();void action("answer_prompt",{prompt_id:state.active_prompt,answer});}}><label>Deine Antwort<input value={answer} maxLength={280} onChange={e=>setAnswer(e.target.value)} autoComplete="off" /></label><div className="dots-prompt-actions"><Button secondary type="button" disabled={!ready} onClick={()=>void action("dismiss_prompt",{prompt_id:state.active_prompt})}><SkipForward size={15}/>Überspringen</Button><Button type="submit" disabled={!ready||!answer.trim()}><Check size={16}/>Antwort teilen</Button></div></form> : <p role="status">Warte auf die Antwort von {lastPlayer?.name} …</p>}
+        <small>Die Antwort wird nur hier gezeigt und beim Weiterspielen entfernt.</small>
       </div>}
     </div>
 
