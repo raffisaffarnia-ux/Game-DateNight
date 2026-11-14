@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getSupabase, identity } from "./supabase";
 
 /** Read-only shared state adapter. Each game owns its validated move RPC. */
 export function useGameState<T>(roomId: string, gameId: string) {
+  const refreshRef = useRef<(() => Promise<void>) | null>(null);
   const [snapshot, setSnapshot] = useState<{
     state: T;
     revision: number;
@@ -23,7 +24,9 @@ export function useGameState<T>(roomId: string, gameId: string) {
       await identity();
       if (cancelled) return;
       const db = getSupabase();
+      let readVersion = 0;
       const refresh = async () => {
+        const version = ++readVersion;
         const { data, error } = await db
           .from("game_states")
           .select("state,revision")
@@ -37,13 +40,19 @@ export function useGameState<T>(roomId: string, gameId: string) {
           setSnapshot((previous) =>
             data && (!previous || data.revision >= previous.revision)
               ? { state: data.state as T, revision: data.revision }
-              : previous,
+              : data || version !== readVersion ? previous
+                : null,
           );
         }
         setLoading(false);
       };
+      refreshRef.current = refresh;
+      await db.realtime.setAuth();
+      if (cancelled) return;
       const channel = db
-        .channel(`room:${roomId}:game:${gameId}`, { config: { private: true } })
+        .channel(`room:${roomId}:game:${gameId}`, {
+          config: { private: true, postgres_changes_options: { wait: true } },
+        })
         .on(
           "postgres_changes",
           {
@@ -57,7 +66,7 @@ export function useGameState<T>(roomId: string, gameId: string) {
         .subscribe((status) => {
           if (status === "SUBSCRIBED") void refresh();
           else if (status === "CHANNEL_ERROR" && !cancelled)
-            setError("Reconnecting to your game…");
+            setError("Die Spielverbindung wird wiederhergestellt …");
         });
       const timer = setInterval(() => void refresh(), 15000);
       cleanup = () => {
@@ -74,10 +83,13 @@ export function useGameState<T>(roomId: string, gameId: string) {
 
     return () => {
       cancelled = true;
+      refreshRef.current = null;
       cleanup();
     };
   }, [roomId, gameId]);
 
-  return { snapshot, loading, error };
+  return { snapshot, loading, error, refresh: () => refreshRef.current?.() };
 }
+
+
 

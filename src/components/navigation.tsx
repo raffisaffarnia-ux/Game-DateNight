@@ -4,7 +4,8 @@ import { usePathname } from "next/navigation";
 import { ArrowUpRight } from "lucide-react";
 import { ProfileButton } from "./profile/provider";
 export function Navigation() {
-  const inRoom = usePathname().startsWith("/room/");
+  const pathname = usePathname();
+  const inRoom = pathname.startsWith("/room/") || pathname === "/games/BuildUp";
   const brand = (
     <>
       DateNight<span className="brand-period">.io</span>
@@ -41,3 +42,4 @@ export function Footer() {
     </footer>
   );
 }
+
