@@ -1,6 +1,6 @@
 import { createContext, useContext, useState } from "react";
 import type { Topic } from "./topics";
-import { localPhoto } from "./assets";
+import { localPhoto, breakfast } from "./assets";
 import { Illustration } from "./illustrations";
 export type PhotoAsset = { src: string; author: string; link: string };
 export const PhotoContext = createContext<Record<string, PhotoAsset>>({});
@@ -36,10 +36,15 @@ export function PhotoCredits() {
   const unique = [
     ...new Map(Object.values(manifest).map((p) => [p.link, p])).values(),
   ];
-  if (!unique.length) return null;
+
   return (
     <details className="bu-credits">
       <summary>Bildnachweise</summary>
+      {breakfast.map((photo) => (
+        <a key={photo.link} href={photo.link} target="_blank" rel="noreferrer">
+          {photo.author} auf Unsplash
+        </a>
+      ))}
       {unique.map((photo) => (
         <a key={photo.link} href={photo.link} target="_blank" rel="noreferrer">
           {photo.author} auf Pexels

@@ -14,7 +14,7 @@ Die Route nutzt die bestehenden Supabase-Identitäten, privaten Räume, Mitglied
 
 Die Aufdeckung entsteht atomar, wenn beide finalisiert haben. Nach einem Reload werden bestätigte Entwürfe geladen. Eine noch unbestätigte Auswahl bleibt lokal. Die nächste Runde beginnt erst nach beiden Bestätigungen. Das X beendet BuildUp für beide und führt zurück in die bestehende Raumansicht.
 
-Die drei additiven Migrationen sind `20261113194000_buildup.sql`, `20261114121500_buildup_sync.sql` und `20261114132500_buildup_images_reveal.sql`.
+Die urspr�nglichen additiven Migrationen sind `20261113194000_buildup.sql`, `20261114121500_buildup_sync.sql` und `20261114132500_buildup_images_reveal.sql`.
 
 ## Themen und Darstellung erweitern
 
@@ -34,3 +34,19 @@ KI-Bilder werden derzeit nicht erzeugt. Ein späterer Generator kann die gespeic
 
 Die Datenbanktests prüfen beide Modi über mehrere Runden, geheime Antworten, ungültige Optionen, fremde Identitäten, doppelte und verspätete Aktionen, Bildquellen, Neustart und das gemeinsame Weitergehen. Die Gesamtberechnung ist auch für verschieden lange Runden getestet. Browserprüfungen verwenden zwei getrennte Profile und mobile Viewports.
 
+## Design-Update und vier Varianten
+
+Alle 95 Schritte der 19 Themen bieten genau vier Optionen. Die Migration
+`20261114190000_buildup_four_options.sql` erweitert nur den Validierungskatalog
+der bestehenden Funktion. Sie muss vor dem neuen Frontend eingespielt werden.
+Bestehende Kennungen und gespeicherte Partien bleiben g�ltig.
+
+Die Ergebnis-Mosaike trennen Bild und Beschriftung. Szenen-SVG-Gr��en gelten
+ausschlie�lich f�r ganze Szenen, niemals f�r verschachtelte Optionssymbole.
+BuildUp verwendet die dunklen DateNight-Farben, Schriften und roten Aktionen.
+
+Vier Reisefotos und vier Fr�hst�cksfotos werden lokal ausgeliefert; daf�r ist kein
+API-Schl�ssel n�tig. Quellen und Fotografen der Fr�hst�cksbilder stehen in
+`assets.ts` und in den aufklappbaren Bildnachweisen.
+Alle vier Fr�hst�cksfotos stehen unter der [Unsplash-Lizenz](https://unsplash.com/license).
+Die zus�tzlichen Fotos werden in Auswahl und Ergebnis identisch dargestellt.

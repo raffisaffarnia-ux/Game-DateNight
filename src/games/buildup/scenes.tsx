@@ -169,7 +169,7 @@ export function PizzaScene({ picks }: { picks: number[] }) {
         cx="150"
         cy="109"
         r="80"
-        fill={dough === 2 ? "#ad7743" : "#d99b52"}
+        fill={dough === 2 ? "#ad7743" : dough === 3 ? "#c18b52" : "#d99b52"}
         stroke="#ae703b"
         strokeWidth="2"
       />
@@ -177,7 +177,7 @@ export function PizzaScene({ picks }: { picks: number[] }) {
         cx="150"
         cy="109"
         r={dough === 1 ? 65 : 71}
-        fill={["#b44d37", "#6e8848", "#eddfb5"][sauce ?? 0]}
+        fill={["#b44d37", "#6e8848", "#eddfb5", "#713c2a"][sauce ?? 0]}
       />
       <defs>
         <clipPath id={id}>
@@ -199,7 +199,13 @@ export function PizzaScene({ picks }: { picks: number[] }) {
               <ellipse
                 rx="16"
                 ry="11"
-                fill={cheese === 1 ? "#cad1b2" : "#f8e9b6"}
+                fill={
+                  cheese === 1
+                    ? "#cad1b2"
+                    : cheese === 3
+                      ? "#eed184"
+                      : "#f8e9b6"
+                }
               />
               {cheese === 1 && (
                 <path
@@ -221,6 +227,8 @@ export function PizzaScene({ picks }: { picks: number[] }) {
                   d="M0 10Q-15 -5 -7 -11L0 -5L7 -11Q15 -5 0 10"
                   fill="#7e8d53"
                 />
+              ) : topping === 3 ? (
+                <path d="M-8 -9Q10 -12 8 8L3 9Q6 -3 -5 -4Z" fill="#d74d36" />
               ) : null}
               {extra === 0 ? (
                 <ellipse
@@ -240,6 +248,16 @@ export function PizzaScene({ picks }: { picks: number[] }) {
                   stroke="#4a783f"
                   strokeWidth="2"
                 />
+              ) : extra === 3 ? (
+                <ellipse
+                  cx="12"
+                  cy="8"
+                  rx="5"
+                  ry="7"
+                  fill="#35382a"
+                  stroke="#878750"
+                  strokeWidth="2"
+                />
               ) : null}
             </g>
           );
@@ -250,7 +268,7 @@ export function PizzaScene({ picks }: { picks: number[] }) {
 }
 export function CarScene({ picks }: { picks: number[] }) {
   const [type, color, wheels, inside, extra] = picks;
-  const body = ["#ac4a52", "#91a28b", "#53555e"][color ?? 0];
+  const body = ["#ac4a52", "#91a28b", "#53555e", "#243d60"][color ?? 0];
   return (
     <svg viewBox="0 0 300 220" role="img" aria-label="Dein gestaltetes Auto">
       <path d="M18 169H282" stroke="#796b61" />
@@ -264,11 +282,13 @@ export function CarScene({ picks }: { picks: number[] }) {
       />
       <path
         d={
-          type === 1
-            ? "M42 134L57 88H208L246 129L273 138V157H28V139Z"
-            : type === 0
-              ? "M32 139L71 129H188L231 130L270 142V158H30Z"
-              : "M31 139L71 125L110 88H170L222 129L269 140V158H30Z"
+          type === 3
+            ? "M30 134L57 78H204L242 126L274 133V158H28Z"
+            : type === 1
+              ? "M42 134L57 88H208L246 129L273 138V157H28V139Z"
+              : type === 0
+                ? "M32 139L71 129H188L231 130L270 142V158H30Z"
+                : "M31 139L71 125L110 88H170L222 129L269 140V158H30Z"
         }
         fill={body}
         stroke="#383b40"
@@ -276,13 +296,19 @@ export function CarScene({ picks }: { picks: number[] }) {
       />
       {type !== 0 && (
         <path
-          d={type === 1 ? "M68 95H199L224 124H60Z" : "M113 96H168L201 124H88Z"}
+          d={
+            type === 3
+              ? "M67 86H198L225 119H58Z"
+              : type === 1
+                ? "M68 95H199L224 124H60Z"
+                : "M113 96H168L201 124H88Z"
+          }
           fill="#7f9a9f"
         />
       )}
       <path
         d="M99 123V111Q103 98 115 111V124M154 124V111Q159 98 172 112V126"
-        fill={["#9b6c4f", "#88817a", "#915e70"][inside ?? 0]}
+        fill={["#9b6c4f", "#88817a", "#915e70", "#505e65"][inside ?? 0]}
       />
       <path d="M74 127L69 104" stroke="#495961" strokeWidth="4" />
       <path d="M130 129V155M214 136V152" stroke="#fff" opacity=".25" />
@@ -295,7 +321,9 @@ export function CarScene({ picks }: { picks: number[] }) {
             cx={x}
             cy="158"
             r="14"
-            fill={wheels === 2 ? "#454650" : "#d2c6b7"}
+            fill={
+              wheels === 2 ? "#454650" : wheels === 3 ? "#86959e" : "#d2c6b7"
+            }
           />
           {wheels === 0 ? (
             [0, 60, 120].map((a) => (
@@ -317,6 +345,14 @@ export function CarScene({ picks }: { picks: number[] }) {
           )}
         </g>
       ))}
+      {extra === 3 && (
+        <path
+          d="M72 83V71H194V83M81 65V77M185 65V77"
+          fill="none"
+          stroke="#748b98"
+          strokeWidth="4"
+        />
+      )}
       {extra === 0 && type !== 0 && (
         <path d="M118 90H168" stroke="#cbd7d5" strokeWidth="5" />
       )}
