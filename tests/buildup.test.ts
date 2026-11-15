@@ -11,7 +11,7 @@ import {
 test("BuildUp validates topics and weights real decisions", () => {
   assert.equal(new Set(topics.map((t) => t.id)).size, 19);
   for (const topic of topics)
-    for (const step of topic.steps) assert.ok(new Set(step.options).size >= 3);
+    for (const step of topic.steps) assert.equal(new Set(step.options).size, 4);
   const result = score({
     topic: "ball",
     builds: [
@@ -196,4 +196,52 @@ test("BuildUp weights total decisions and both prediction directions", () => {
     { hits: [2, 3], matches: 5, total: 6 },
   );
   assert.equal(percent(5 + 1, 6 + 2), 75);
+});
+
+test("all 19 topics accept four variants and reveal the fourth choice for both players", async () => {
+  const { db, room, as } = await database();
+  try {
+    const move = (action: string, payload: object = {}) =>
+      db.query("select public.buildup_move($1,$2,$3)", [
+        room,
+        action,
+        JSON.stringify(payload),
+      ]);
+    const read = async () =>
+      (
+        await db.query<{ s: BuildState }>(
+          "select state s from public.game_states where room_id=$1 and game_id='buildup'",
+          [room],
+        )
+      ).rows[0].s;
+    for (const topic of topics) {
+      await as(0);
+      await move("start", { mode: "same", rounds: 3, topics: [topic.id] });
+      const state = await read();
+      for (const player of [0, 1]) {
+        await as(player);
+        const payload = {
+          session: state.session,
+          phase: "build",
+          round: 0,
+          picks: [3, 3, 3, 3, 3],
+        };
+        await move("save", payload);
+        await move("lock", payload);
+      }
+      const result = await read();
+      assert.equal(result.phase, "reveal", topic.id);
+      assert.deepEqual(
+        result.history[0].builds,
+        [
+          [3, 3, 3, 3, 3],
+          [3, 3, 3, 3, 3],
+        ],
+        topic.id,
+      );
+      await move("leave");
+    }
+  } finally {
+    await db.close();
+  }
 });
